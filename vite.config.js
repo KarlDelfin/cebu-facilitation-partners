@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // base: '/cebu-upskill',
+  base: '/cebu-upskill',
   build: {
     outDir: 'docs',
   },
