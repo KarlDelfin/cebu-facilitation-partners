@@ -194,7 +194,7 @@
         <div class="footer_con">
             <div class="footer_cta">
                 <h2>Ready to build your team's bootcamp?</h2>
-                <a class="footer_link" href="mailto:hello@upskillcebu.com">Start the conversation</a>
+                <a class="footer_link" href="mailto:yencamingawan@gmail.com">Start the conversation</a>
             </div>
             <div class="footer_meta">
                 <p>&copy; 2026 Upskill Facilitation Partners · Cebu, Philippines</p>
@@ -213,7 +213,6 @@
 <script>
 import { gsapController } from '../utils/gsap'
 export default {
-    name: 'HomePage',
     mounted() {
         gsapController()
     },
