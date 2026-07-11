@@ -58,7 +58,7 @@
         <div class="middle_con">
             <div class="middle_info">
                 <h2>Welcome to<span>Upskills Facilitation Partners</span></h2>
-                <p>Based in <b>Cebu</b>, Upskill Facilitation Partners accelerates professional readiness by transforming your unique corporate objectives into high-impact, tailor-made training programs. We collaborate closely with your organization to design bespoke bootcamps that directly address your specific operational needs. Guided by our core values of <b>Growth, Leadership, and Excellence</b>, we empower local talent to meet evolving industry demands, establishing Cebu as a premier destination for world-class, future-ready professionals.</p>
+                <p>Based in <b>Cebu</b>, <mark>Upskill Facilitation Partners</mark> accelerates professional readiness by transforming your unique corporate objectives into high-impact, tailor-made training programs. We collaborate closely with your organization to design bespoke bootcamps that directly address your specific operational needs. Guided by our core values of <b>Growth, Leadership, and Excellence</b>, we empower local talent to meet evolving industry demands, establishing Cebu as a premier destination for world-class, future-ready professionals.</p>
             </div>
         </div>
         <div class="middle_img">
@@ -142,7 +142,7 @@
                 </svg>
                 <div class="mission">
                     <h2>Mission</h2>
-                    <p>Upskill Facilitation Partners delivers client-curated bootcamps that bridge skill gaps and accelerate professional readiness within Cebu's growing business community. We transform corporate objectives into targeted, high-impact training tracks that empower local talent and drive organizational growth.</p>
+                    <p><mark>Upskill Facilitation Partners</mark> delivers client-curated bootcamps that bridge skill gaps and accelerate professional readiness within Cebu's growing business community. We transform corporate objectives into targeted, high-impact training tracks that empower local talent and drive organizational growth.</p>
                 </div>
                 <div class="vision">
                     <h2>Vision</h2>
@@ -220,7 +220,7 @@
                 <a class="footer_link" href="mailto:yencamingawan@gmail.com">Start the conversation</a>
             </div>
             <div class="footer_meta">
-                <p>&copy; 2026 Upskill Facilitation Partners · Cebu, Philippines</p>
+                <p>&copy; 2026 <mark>Upskill Facilitation Partners</mark> · Cebu, Philippines</p>
                 <nav>
                     <ul>
                         <li><a href="#banner">Home</a></li>

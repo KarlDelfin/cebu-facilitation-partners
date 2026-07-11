@@ -30,7 +30,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 button, html input[type=button], input[type=reset], input[type=submit] { -webkit-appearance: button; cursor: pointer; }
 input:not([type='radio']):not([type='checkbox']), textarea, select { -webkit-appearance: none; }
 form, label { -webkit-text-size-adjust: 100%; }
-mark { background-color: transparent; color: var(--secColor); font-family: var(--secFont); font-style: italic; }
+mark { background-color: transparent; color: var(--secColor); font-family: var(--secFont); font-weight: 600}
 body, html { overflow-x: hidden; }
 body.active { overflow: hidden; width: 100%; height: 100%; position: fixed !important; }
 a { text-decoration: none; -webkit-transition: all .3s linear; transition: all .3s linear; color: inherit; }
