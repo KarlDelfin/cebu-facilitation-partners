@@ -11,8 +11,8 @@
         <nav id="nav">
             <ul>
                 <li><a href="#banner">Home</a></li>
-                <li><a href="#services">Services</a></li>
                 <li><a href="#main">About</a></li>
+                <li><a href="#services">Services</a></li>
                 <li><a href="#team">Team</a></li>
                 <li><a href="#footer">Contact</a></li>
             </ul>
@@ -33,8 +33,8 @@
             <div class="nav_top nav_border nav_panel" id="navTop">
                 <ul class="nav_list">
                     <li class="nav_item"><a class="nav_link" href="#banner">Home</a></li>
-                    <li class="nav_item"><a class="nav_link" href="#services">Services</a></li>
                     <li class="nav_item"><a class="nav_link" href="#main">About</a></li>
+                    <li class="nav_item"><a class="nav_link" href="#services">Services</a></li>
                     <li class="nav_item"><a class="nav_link" href="#team">Team</a></li>
                     <li class="nav_item"><a class="nav_link" href="#footer">Contact</a></li>
                 </ul>
@@ -65,6 +65,47 @@
             <img src="../assets/image/middle.jpg" alt="Bootcamp participants collaborating during a session">
         </div>
     </div>
+
+    <!-- MAIN -->
+    <main id="main">
+        <div class="main_con">
+            <div class="founded_info">
+                <section>
+                    <h3>Founded</h3>
+                    <div><p>2026</p></div>
+                </section>
+                <section>
+                    <h3>Founders</h3>
+                    <div><p>Reb Camacho &amp; Myrene Camingawan </p></div>
+                </section>
+                <section>
+                    <h3>Based in</h3>
+                    <div><p>Cebu, Philippines</p></div>
+                </section>
+            </div>
+            <div class="foundational_guiding">
+                <svg class="pathway_line" viewBox="0 0 3 600" preserveAspectRatio="none">
+                    <path d="M 1.5 0 L 1.5 600" />
+                </svg>
+                <div class="mission">
+                    <h2>Mission</h2>
+                    <p><mark>Upskill Facilitation Partners</mark> delivers client-curated bootcamps that bridge skill gaps and accelerate professional readiness within Cebu's growing business community. We transform corporate objectives into targeted, high-impact training tracks that empower local talent and drive organizational growth.</p>
+                </div>
+                <div class="vision">
+                    <h2>Vision</h2>
+                    <p>To be Cebu's premier learning facilitation partner, transforming the region into a world-class hub for agile, future-ready professional talent.</p>
+                </div>
+                <div class="core_values">
+                    <h2>Core Values</h2>
+                    <ul>
+                        <li><b>Growth</b> — Driving continuous learning and performance evolution.</li>
+                        <li><b>Leadership</b> — Cultivating accountability and strategic vision.</li>
+                        <li><b>Excellence</b> — Maintaining uncompromising standards for measurable results.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <!-- SERVICES -->
     <div id="services">
@@ -119,47 +160,7 @@
         </div>
     </div>
 
-    <!-- MAIN -->
-    <main id="main">
-        <div class="main_con">
-            <div class="founded_info">
-                <section>
-                    <h3>Founded</h3>
-                    <div><p>2026</p></div>
-                </section>
-                <section>
-                    <h3>Founders</h3>
-                    <div><p>Reb Camacho &amp; Myrene Camingawan </p></div>
-                </section>
-                <section>
-                    <h3>Based in</h3>
-                    <div><p>Cebu, Philippines</p></div>
-                </section>
-            </div>
-            <div class="foundational_guiding">
-                <svg class="pathway_line" viewBox="0 0 3 600" preserveAspectRatio="none">
-                    <path d="M 1.5 0 L 1.5 600" />
-                </svg>
-                <div class="mission">
-                    <h2>Mission</h2>
-                    <p><mark>Upskill Facilitation Partners</mark> delivers client-curated bootcamps that bridge skill gaps and accelerate professional readiness within Cebu's growing business community. We transform corporate objectives into targeted, high-impact training tracks that empower local talent and drive organizational growth.</p>
-                </div>
-                <div class="vision">
-                    <h2>Vision</h2>
-                    <p>To be Cebu's premier learning facilitation partner, transforming the region into a world-class hub for agile, future-ready professional talent.</p>
-                </div>
-                <div class="core_values">
-                    <h2>Core Values</h2>
-                    <ul>
-                        <li><b>Growth</b> — Driving continuous learning and performance evolution.</li>
-                        <li><b>Leadership</b> — Cultivating accountability and strategic vision.</li>
-                        <li><b>Excellence</b> — Maintaining uncompromising standards for measurable results.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </main>
-
+    <!-- GALLERY -->
     <div id="gallery">
         <div class="gallery_con">
             <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&auto=format&fit=crop" alt="Business Meeting">
@@ -224,8 +225,10 @@
                 <nav>
                     <ul>
                         <li><a href="#banner">Home</a></li>
+                        <li><a href="#main">About</a></li>
                         <li><a href="#services">Services</a></li>
                         <li><a href="#team">Team</a></li>
+                        <li><a href="#footer">Contact</a></li>
                     </ul>
                 </nav>
             </div>

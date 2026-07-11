@@ -52,7 +52,7 @@ em, i { font-style: italic; }
     .header_con { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; position: fixed; width: 100%; z-index: 10; color: var(--priColor); background: var(--priColor); min-height: 90px}
     header p { mix-blend-mode: difference; font-family: var(--secFont); font-size: 1.1rem; letter-spacing: .02em; }
     header p span { display: block; font-family: var(--priFont); font-weight: 700; font-size: 1.25rem; letter-spacing: -.01em; }
-    .company_logo { width: 150px; background: var(--defaultColor); padding: 25px; position: absolute; border-radius: 0 0 12px 12px; top: -45px; display: flex; align-items: center; border: 1px solid #e1e1e1;}
+    .company_logo { width: 150px; background: var(--defaultColor); padding: 25px; position: absolute; border-radius: 0 0 50% 50%; top: -45px; display: flex; align-items: center; border: 1px solid #e1e1e1;}
 
 
     nav ul { display: flex; gap: 2rem; }
@@ -137,7 +137,7 @@ em, i { font-style: italic; }
 
     .vision h2::before { background: var(--secColor); }
 
-    .core_values h2::before { background: var(--thiColor); }
+    .core_values h2::before { background: var(--priColor); }
 
     .foundational_guiding p { color: var(--bodyColor); line-height: 1.75; margin: 0 0 2rem; }
 
@@ -149,28 +149,28 @@ em, i { font-style: italic; }
     .core_values ul li b { font-family: var(--secFont); font-style: italic; }
 
 #gallery {min-height: 100vh;}
-    .gallery_con {position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bodyColor); z-index: 1;}
+    .gallery_con {position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--defaultColor); z-index: 1;}
     .gallery_con img{position:absolute; transform:translate(-50%, -50%); top: 50%; left:50%; height: 250px; width: 200px; object-fit: cover;}
-    .gallery_con p {color: var(--thiColor); font-size: 4rem; font-family: var(--secFont); position: relative; z-index: 1; font-weight: 600;}
+    .gallery_con p {color: var(--bodyColor); font-size: 4rem; font-family: var(--secFont); position: relative; z-index: 1; font-weight: 600; text-shadow: 1px 1px 1px var(--defaultColor);}
 
-#team { padding: 6rem 2rem; background: var(--priColor); }
+#team { padding: 6rem 2rem; background: var(--bodyColor); }
     .team_con { max-width: var(--wrapper); margin: 0 auto; }
     .team_head { max-width: 600px; margin-bottom: 3.5rem; }
-    .team_head h2 { font-size: 1rem; text-align: left; margin: 0 0 .5rem; font-weight: 600; font-family: var(--priFont); letter-spacing: .1em; text-transform: uppercase; color: var(--thiColor); }
-    .team_head h2 span {font-size: clamp(2rem, 5vw, 3.4rem); display: block; font-family: var(--secFont); font-weight: 500; color: var(--secColor); text-transform: none; letter-spacing: -.01em; margin-top: .35rem;}
+    .team_head h2 { font-size: 1rem; text-align: left; margin: 0 0 .5rem; font-weight: 600; font-family: var(--priFont); letter-spacing: .1em; text-transform: uppercase; color: var(--secColor); }
+    .team_head h2 span {font-size: clamp(2rem, 5vw, 3.4rem); display: block; font-family: var(--secFont); font-weight: 500; color: var(--thiColor); text-transform: none; letter-spacing: -.01em; margin-top: .35rem;}
 
     .team_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-    .team_card { border-top: 3px solid var(--secColor); padding-top: 1.75rem; }
-    .team_card:nth-child(2) { border-top-color: var(--thiColor); }
-    .team_avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--secFont); font-size: 1.3rem; color: var(--priColor); background: var(--secColor); margin-bottom: 1.25rem; }
-    .team_card:nth-child(2) .team_avatar { background: var(--thiColor); }
-    .team_card h3 { font-family: var(--secColor); font-size: 1.4rem; font-weight: 600; color: var(--secColor); }
-    .team_card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--thiColor); margin: .25rem 0 1.25rem; }
+    .team_card { border-top: 3px solid var(--priColor); padding-top: 1.75rem; }
+    .team_card:nth-child(2) { border-top-color: var(--secColor); }
+    .team_avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--secFont); font-size: 1.3rem; color: var(--defaultColor); background: var(--priColor); margin-bottom: 1.25rem; }
+    .team_card:nth-child(2) .team_avatar { background: var(--secColor); }
+    .team_card h3 { font-family: var(--secFont); font-size: 1.4rem; font-weight: 600; color: var(--thiColor); }
+    .team_card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--secColor); margin: .25rem 0 1.25rem; }
     .team_card .bio { color: var(--thiColor); line-height: 1.7; margin-bottom: 1.5rem; font-size: .98rem; }
     .team_card .credentials { display: flex; flex-direction: column; gap: .35rem; font-size: .88rem; }
     .team_card .credentials span { color: var(--thiColor); }
 
-#footer { background: var(--bodyColor); color: var(--thiColor); padding: 5rem 2rem 2rem; margin: 0 auto; border-radius: 0 0 25px 25px; margin-bottom: 79px;}
+#footer { background: var(--priColor); color: var(--thiColor); padding: 5rem 2rem 2rem; margin: 0 auto; border-radius: 0 0 25px 25px; margin-bottom: 79px;}
     .footer_con { max-width: var(--wrapper); margin: 0 auto; }
     .footer_con ul li a {color: var(--thiColor);}
     .footer_cta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(254,253,223,.15); }
@@ -178,7 +178,7 @@ em, i { font-style: italic; }
     .footer_cta a.footer_link { display: inline-flex; align-items: center; gap: .6rem; border: 1px solid rgba(254,253,223,.4); border-radius: 999px; padding: .9rem 1.75rem; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; transition: background .25s ease, color .25s ease; }
     .footer_cta a.footer_link:hover { background: var(--secColor); border-color: var(--secColor); }
     .footer_meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: .82rem;color: var(--thiColor); }
-    .footer_meta nav ul { display: flex; gap: 1.5rem; }
+    .footer_meta nav ul { display: flex; gap: 1rem; }
 
 
 
