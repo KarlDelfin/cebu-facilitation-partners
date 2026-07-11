@@ -2,12 +2,12 @@
     <div class="header_con">
         <!-- HEADER -->
         <header id="header">
-            <div class="company_name">
-                <p>Cebu<span>Upskill</span></p>
+            <div class="company_logo">
+                <img src="../assets/image/logo.png" alt="Upskills Facilitation Partners Logo">
             </div>
         </header>
 
-        <!-- NAVIGATION -->
+        <!-- NAVIGATION DESKTOP -->
         <nav id="nav">
             <ul>
                 <li><a href="#banner">Home</a></li>
@@ -17,6 +17,29 @@
                 <li><a href="#footer">Contact</a></li>
             </ul>
         </nav>
+
+        <!-- NAVIGATION MOBILE -->
+        <button class="menu_toggle" id="menu_toggle">
+            <svg width="40" height="40" viewBox="0 0 20 20" fill="none">
+                <line class="bar bar-top" x1="3" y1="7" x2="17" y2="7" stroke="var(--defaultColor)" stroke-width="1.5" stroke-linecap="round"/>
+                <line class="bar bar-mid" x1="3" y1="10" x2="17" y2="10" stroke="var(--defaultColor)" stroke-width="1.5" stroke-linecap="round"/>
+                <line class="bar bar-bot" x1="3" y1="13" x2="17" y2="13" stroke="var(--defaultColor)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </button>
+            
+    
+        <div class="nav" id="nav_mobile">
+            <div class="nav_bg"></div>
+            <div class="nav_top nav_border nav_panel" id="navTop">
+                <ul class="nav_list">
+                    <li class="nav_item"><a class="nav_link" href="#banner">Home</a></li>
+                    <li class="nav_item"><a class="nav_link" href="#services">Services</a></li>
+                    <li class="nav_item"><a class="nav_link" href="#main">About</a></li>
+                    <li class="nav_item"><a class="nav_link" href="#team">Team</a></li>
+                    <li class="nav_item"><a class="nav_link" href="#footer">Contact</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- BANNER -->
@@ -127,7 +150,7 @@
                 </div>
                 <div class="core_values">
                     <h2>Core Values</h2>
-                    <ul class="bullet">
+                    <ul>
                         <li><b>Growth</b> — Driving continuous learning and performance evolution.</li>
                         <li><b>Leadership</b> — Cultivating accountability and strategic vision.</li>
                         <li><b>Excellence</b> — Maintaining uncompromising standards for measurable results.</li>
@@ -211,10 +234,11 @@
 </template>
 
 <script>
-import { gsapController } from '../utils/gsap'
+import { gsapController, gsapSidebarController } from '../utils/gsap'
 export default {
     mounted() {
         gsapController()
+        gsapSidebarController()
     },
 }
 </script>
