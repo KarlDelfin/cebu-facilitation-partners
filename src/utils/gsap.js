@@ -15,6 +15,11 @@ export function gsapController() {
         lenis.raf(time * 1000)
     })
     gsap.ticker.lagSmoothing(0)
+    /* HEADER */
+    gsap.from('.company_logo', {
+        y: -200,
+        delay: .5,
+    })
 
     /* BANNER */
     gsap.from('.banner_con img', {
@@ -25,10 +30,9 @@ export function gsapController() {
 
     const bannerTextsST = new SplitText(['header p', 'nav ul li a', '.banner_info p'], {
         type: 'lines',
-        linesClass: 'line',
     })
     gsap.timeline().from(bannerTextsST.lines, {
-        y: 200,
+        y: 50,
         opacity: 0,
         ease: 'back.out',
         stagger: { each: 0.1 },
@@ -50,7 +54,6 @@ export function gsapController() {
 
     const middleTextsST = new SplitText(['.middle_con h2', '.middle_con p'], {
         type: 'lines',
-        linesClass: 'line',
     })
     gsap.timeline({
         scrollTrigger: { trigger: '.middle_con', start: 'top 75%' },
@@ -103,7 +106,7 @@ export function gsapController() {
     /* MAIN */
     const mainTextsST = new SplitText(
         ['.founded_info section h3', '.founded_info section p', '.foundational_guiding h2', '.foundational_guiding p', '.foundational_guiding ul'],
-        { type: 'lines', linesClass: 'line' }
+        { type: 'lines' }
     )
     gsap.from(mainTextsST.lines, {
         y: 50,

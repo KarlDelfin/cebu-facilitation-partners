@@ -3,7 +3,7 @@
         <!-- HEADER -->
         <header id="header">
             <div class="company_logo">
-                <img src="../assets/image/logo.png" alt="Upskills Facilitation Partners Logo">
+                <img src="../assets/image/logo.webp" alt="Upskills Facilitation Partners Logo">
             </div>
         </header>
 
@@ -45,7 +45,7 @@
     <!-- BANNER -->
     <div id="banner">
         <div class="banner_con">
-            <img src="../assets/image/banner.jpg" alt="Facilitators leading a corporate bootcamp session in Cebu">
+            <img src="../assets/image/banner.webp" alt="Facilitators leading a corporate bootcamp session in Cebu">
             <div class="banner_info">
                 <p>Upskills<span>Facilitation <mark>Partners</mark></span></p>
             </div>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="middle_img">
-            <img src="../assets/image/middle.jpg" alt="Bootcamp participants collaborating during a session">
+            <img src="../assets/image/middle.webp" alt="Bootcamp participants collaborating during a session">
         </div>
     </div>
 
@@ -163,16 +163,16 @@
     <!-- GALLERY -->
     <div id="gallery">
         <div class="gallery_con">
-            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&auto=format&fit=crop" alt="Business Meeting">
-            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&auto=format&fit=crop" alt="Corporate Training">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&auto=format&fit=crop" alt="Team Collaboration">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop" alt="Office Team">
-            <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&auto=format&fit=crop" alt="Business Workshop">
-            <img src="https://images.unsplash.com/photo-1515169067868-5387ec356754?w=1200&auto=format&fit=crop" alt="Presentation">
-            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop" alt="Leadership">
-            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop" alt="Startup Team">
-            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200&auto=format&fit=crop" alt="Business Discussion">
-            <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&auto=format&fit=crop" alt="Modern Office">
+            <img src="../assets/image/our-works/1.webp" alt="Business Meeting">
+            <img src="../assets/image/our-works/2.webp" alt="Corporate Training">
+            <img src="../assets/image/our-works/3.webp" alt="Team Collaboration">
+            <img src="../assets/image/our-works/4.webp" alt="Office Team">
+            <img src="../assets/image/our-works/5.webp" alt="Business Workshop">
+            <img src="../assets/image/our-works/6.webp" alt="Presentation">
+            <img src="../assets/image/our-works/7.webp" alt="Leadership">
+            <img src="../assets/image/our-works/8.webp" alt="Startup Team">
+            <img src="../assets/image/our-works/9.webp" alt="Business Discussion">
+            <img src="../assets/image/our-works/10.webp" alt="Modern Office">
             <p>Our Works</p>
         </div>
     </div>
@@ -204,7 +204,7 @@
                     <div class="credentials">
                         <span>Bachelor in Secondary Education, Major in Filipino</span>
                         <span>Licensed Professional Teacher · TEFL Certified</span>
-                        <span>Business Development Executive, Kenneth &amp; Co. (2024–2025)</span>
+                        <span>High School Teacher, Bright Academy Cebu</span>
                         <span>Facilitator &amp; Summer Camp Director, Enfants du Mekong (2016–2023)</span>
                     </div>
                 </article>
@@ -218,7 +218,10 @@
         <div class="footer_con">
             <div class="footer_cta">
                 <h2>Ready to build your team's bootcamp?</h2>
-                <a class="footer_link" href="mailto:yencamingawan@gmail.com">Start the conversation</a>
+                <div class="footer_btn_con">
+                    <a class="footer_link" href="mailto:rebbymarc@gmail.com">Talk to Reb</a>
+                    <a class="footer_link" href="mailto:yencamingawan@gmail.com">Talk to Myrene</a>
+                </div>
             </div>
             <div class="footer_meta">
                 <p>&copy; 2026 <mark>Upskill Facilitation Partners</mark> · Cebu, Philippines</p>
