@@ -219,8 +219,7 @@
             <div class="footer_cta">
                 <h2>Ready to build your team's bootcamp?</h2>
                 <div class="footer_btn_con">
-                    <a class="footer_link" href="mailto:rebbymarc@gmail.com">Talk to Reb</a>
-                    <a class="footer_link" href="mailto:yencamingawan@gmail.com">Talk to Myrene</a>
+                    <a class="footer_link" @click="openForm('Book Now')">Book Now</a>
                 </div>
             </div>
             <div class="footer_meta">
@@ -237,11 +236,46 @@
             </div>
         </div>
     </footer>
+
+    <BookingForm :isOpenForm="dialog.bookingForm"/>
+
 </template>
 
 <script>
 import { gsapController, gsapSidebarController } from '../utils/gsap'
+import gsap from 'gsap/all'
+import BookingForm from '@/components/BookingForm.vue';
 export default {
+    components: {BookingForm},
+    data(){
+        return{
+            dialog: {
+                bookingForm: false,
+            },
+        }
+    },
+    methods: {
+        
+        openForm(title){
+            if(title == 'Book Now') {
+                this.dialog.bookingForm = true
+            }
+            gsap.fromTo('#bookingForm', {
+                opacity: 0,
+                y: 300,
+                
+            }, {
+                visibility: 'visible',
+                opacity: 1,
+                y: 0,
+                ease: 'back.out'
+            })
+
+        },
+        clear() {
+            this.dialog.bookingForm = false
+        }
+    },
     mounted() {
         gsapController()
         gsapSidebarController()

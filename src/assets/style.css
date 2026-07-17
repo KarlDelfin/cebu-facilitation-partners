@@ -3,12 +3,12 @@
 :root {
     --priColor: #136cb3;
     --secColor: #feb841;
-    --thiColor: #FEFDDF;
+    --thiColor: #fff;
 
     --defaultColor: #fff;
     --bodyColor: #333;
 
-    --ink: #a2a291;
+    --ink: #fff;
 
     --priFont: "Inter";
     --secFont: "Lora";
@@ -40,6 +40,12 @@ iframe { border: none; width: 100%; }
 ul, h1, h2, h3, h4 { margin: 0; padding: 0; list-style: none; }
 strong, b { font-weight: 700; }
 em, i { font-style: italic; }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none !important; margin: 0 !important; }
+
+/* Firefox */
+input[type=number] { -moz-appearance: textfield !important; appearance: textfield !important; }
 
 .wrapper {}
 .line { overflow: hidden; }
@@ -82,7 +88,7 @@ em, i { font-style: italic; }
     .middle_con { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 70vh; padding: 6rem 2rem 3rem; max-width: var(--wrapper); margin: 0 auto; }
     .middle_con h2 { font-size: 1rem; text-align: left; margin: 0 0 .5rem; font-weight: 600; font-family: var(--priFont); letter-spacing: .1em; text-transform: uppercase; color: var(--priColor); }
     .middle_con h2 span { font-size: clamp(2rem, 5vw, 3.4rem); display: block; font-family: var(--secFont); font-weight: 500; color: var(--bodyColor); text-transform: none; letter-spacing: -.01em; margin-top: .35rem; }
-    .middle_con p { max-width: 760px; width: 100%; margin: 1.5rem 0 0; font-size: 1.1rem; line-height: 1.75; color: var(--bodyColor); text-align: justify;}
+    .middle_con p { max-width: 760px; width: 100%; margin: 1.5rem 0 0; font-size: 1.1rem; line-height: 1.75; color: var(--bodyColor);}
     .middle_con p b { font-family: var(--secFont); font-style: italic; color: var(--secColor); font-weight: 600; }
 
     .middle_img { position: relative; }
@@ -139,7 +145,7 @@ em, i { font-style: italic; }
 
     .core_values h2::before { background: var(--priColor); }
 
-    .foundational_guiding p { color: var(--bodyColor); line-height: 1.75; margin: 0 0 2rem; text-align: justify;}
+    .foundational_guiding p { color: var(--bodyColor); line-height: 1.75; margin: 0 0 2rem;}
 
     .core_values ul li { margin-bottom: .85rem; font-size: 1.02rem; }
     .core_values ul li::before { top: 9px; }
@@ -166,8 +172,8 @@ em, i { font-style: italic; }
     .team_card:nth-child(2) .team_avatar { background: var(--secColor); }
     .team_card h3 { font-family: var(--secFont); font-size: 1.4rem; font-weight: 600; color: var(--thiColor); }
     .team_card .role { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--secColor); margin: .25rem 0 1.25rem; }
-    .team_card .bio { color: var(--thiColor); line-height: 1.7; margin-bottom: 1.5rem; font-size: .98rem; text-align: justify;}
-    .team_card .credentials { display: flex; flex-direction: column; gap: .35rem; font-size: .88rem; }
+    .team_card .bio { color: var(--thiColor); line-height: 1.7; margin-bottom: 1.5rem; font-size: 1rem;}
+    .team_card .credentials { display: flex; flex-direction: column; gap: .35rem; font-size: 1rem; }
     .team_card .credentials span { color: var(--thiColor); }
 
 #footer { background: var(--priColor); color: var(--thiColor); padding: 5rem 2rem 2rem; margin: 0 auto; border-radius: 0 0 25px 25px; margin-bottom: 79px;}
@@ -194,8 +200,6 @@ em, i { font-style: italic; }
 .nav_list {list-style:none; display:flex; flex-direction:column; gap:0; flex:1; justify-content:center;}
 .nav_item {overflow:hidden;}
 .nav_link {display:block; text-decoration:none; color:var(--thiColor); padding:10px 0; font-size:clamp(1.5rem, 4vw, 1.8rem); font-weight:600; line-height:1.1; letter-spacing:-0.03em;}
-
-
 
 @media (max-width: 1000px) {
     .main_con { flex-direction: column; gap: 3rem; }

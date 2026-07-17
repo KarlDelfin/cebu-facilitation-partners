@@ -7,6 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  assetsInclude: ['**/*.woff2'], 
   base: '/cebu-facilitation-partners/',
   build: {
     outDir: 'docs',
