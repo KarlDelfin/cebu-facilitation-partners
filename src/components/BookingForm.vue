@@ -252,7 +252,7 @@ export default {
 
 .steps_con {display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:40px;}
 .step_item {display:flex; flex-direction:column; align-items:center; text-align:center; width:220px;}
-.step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}
+.step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(--bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}
 .step_item.active .step_circle, .step_item.completed .step_circle {border-color:var(--priColor); color:var(--priColor);}
 .step_item.active .step_title {color:var(--priColor);}
 .step_title {font-weight:700; color:var(--bodyColor); font-size:.95rem;}
