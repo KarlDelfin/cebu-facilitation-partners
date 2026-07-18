@@ -31,7 +31,7 @@
                 v-for="(service, index) in services"
                 :key="index"
                 class="service_card"
-                :class="{ active: selectedService === service.id }"
+                :class="{ active: bookingForm.serviceId === service.id }"
                 @click="handleSelectService(service.id)"
             >
                 <div class="service_header">
@@ -65,6 +65,21 @@
     <div class="field_group">
       <label class="field_label">Preferred Date</label>
       <VCalendar expanded @dayclick="handleSelectDate" :min-date="new Date()" :attributes="vCalendarEvents"/>
+    </div>
+   <div class="field_group">
+      <label class="field_label">Preferred Time</label>
+      <div class="time_buttons">
+      <button
+          v-for="slot in timeSlots"
+          :key="slot.value"
+          class="time_btn"
+          :class="{ active: selectedTime === slot.value, disabled: slot.disabled }"
+          @click="!slot.disabled && handleSelectTime(slot.value)"
+          :disabled="slot.disabled"
+      >
+          {{ slot.label }}
+      </button>
+      </div>
     </div>
     <div class="form_nav">
       <button class="btn_back" @click="goToStep(1, 'prev')"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -123,17 +138,29 @@ import { supabase } from '@/utils/supabaseClient';
 import { ElMessage } from 'element-plus';
 import gsap from 'gsap/all'
 import moment from 'moment'
+import { v4 as uuidv4 } from 'uuid'
 export default {
     data(){
       return{
-        selectedService: '',
+        selectedTime: '',
+        timeSlots: [
+          { label: '9:00 AM', value: '09:00:00', disabled: true },
+          { label: '10:00 AM', value: '10:00:00', disabled: true },
+          { label: '11:00 AM', value: '11:00:00', disabled: true },
+          { label: '12:00 PM', value: '12:00:00', disabled: true },
+          { label: '1:00 PM', value: '13:00:00', disabled: true },
+          { label: '2:00 PM', value: '14:00:00', disabled: true },
+          { label: '3:00 PM', value: '15:00:00', disabled: true },
+          { label: '4:00 PM', value: '16:00:00', disabled: true },
+          { label: '5:00 PM', value: '17:00:00', disabled: true },
+          { label: '6:00 PM', value: '18:00:00', disabled: true },
+        ],
         services: [],
         formStep: 1,
         bookingForm: {
             serviceId: '',
             clientId: '',
-            bookingDate: '',
-            bookingTime: '',
+            bookingDateTime: '',
             status: 'confirmed',
             fullName: '',
             email: '',
@@ -143,7 +170,7 @@ export default {
         vCalendarEvents: [],
       }
     },
-    methods: { 
+    methods: {
       /* PREV/NEXT CONTROLLER */
       goToStep(step, action) {
         if (action === 'prev') {
@@ -152,12 +179,17 @@ export default {
         }
 
         if (!this.bookingForm.serviceId && this.formStep === 1) {
-          ElMessage.warning('Please select service')
+          ElMessage.warning('Please select a service.')
           return
         }
 
-        if (!this.bookingForm.bookingDate && this.formStep === 2) {
-          ElMessage.warning('Please select preferred date')
+        if (!this.bookingForm.bookingDateTime && this.formStep === 2) {
+          ElMessage.warning('Please select preferred date.')
+          return
+        }
+
+        if(this.selectedTime === '' && this.formStep === 2){
+          ElMessage.warning('Please select preferred time.')
           return
         }
 
@@ -167,24 +199,54 @@ export default {
       
       /* HANDLE SELECT SERVICE */
       handleSelectService(serviceId){
-          this.selectedService = serviceId
           this.bookingForm.serviceId = serviceId
       },
 
       /* HANDLE SELECT DATE */
-      handleSelectDate(day){
-        if (moment(new Date()).startOf('day') > moment(day.date).startOf('day')) {
-          ElMessage.warning('Cannot select past date')
-          return
-        }
-        this.bookingForm.bookingDate = moment(day.date).format('YYYY-MM-DD')
-        this.vCalendarEvents = []
-        this.vCalendarEvents.push({
-          highlight: {
-            backgroundColor: '#ff8080',
-          },
-          dates: new Date(day.date),
-        })
+      async handleSelectDate(day) {
+          if (moment(new Date()).startOf('day') > moment(day.date).startOf('day')) {
+              ElMessage.warning('Cannot select past date');
+              return;
+          }
+          this.bookingForm.bookingDateTime = moment(day.date).format('YYYY-MM-DD');
+          this.vCalendarEvents = [];
+          this.vCalendarEvents.push({
+              highlight: {
+                  backgroundColor: '#ff8080',
+              },
+              dates: new Date(day.date),
+          });
+
+          const selectedDate = moment(day.date).format('YYYY-MM-DD');
+          
+          const { data, error } = await supabase
+              .from('Booking')
+              .select('bookingDateTime')
+              .gte('bookingDateTime', `${selectedDate} 00:00:00`)
+              .lt('bookingDateTime', `${selectedDate} 23:59:59`);
+
+          if (error) {
+              console.error(error);
+              return;
+          }
+
+          const bookedTimes = data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'));
+
+          this.timeSlots = this.timeSlots.map(slot => ({
+              ...slot,
+              disabled: bookedTimes.includes(slot.value)
+          }));
+      },
+
+      /* HANDLE SELECT TIME */
+      handleSelectTime(time) {
+          this.selectedTime = time
+          const current = moment(this.bookingForm.bookingDateTime || new Date());
+          const [hours, minutes] = time.split(':').map(Number);
+          current.hours(hours).minutes(minutes).seconds(0);
+          current.add(8, 'hours');
+          this.bookingForm.bookingDateTime = current.toISOString();
+          console.log(this.bookingForm.bookingDateTime);
       },
       
       /* SUBMIT BOOKING */
@@ -192,7 +254,34 @@ export default {
         try {
           const isValid = this.$refs.bookingFormRef.validate()
           if(!isValid) return
-          
+          const clientId = uuidv4()
+          const bookingPayload = {
+            clientId: clientId,
+            serviceId: this.bookingForm.serviceId,
+            bookingDateTime: this.bookingForm.bookingDateTime,
+            status: 'confirmed'
+          }
+
+          const clientPayload = {
+            id: clientId,
+            fullName: this.bookingForm.fullName,
+            email: this.bookingForm.email,
+            phone: this.bookingForm.phone,
+            noOfParticipants: this.bookingForm.noOfParticipants
+          }
+
+           await supabase
+            .from('Client')
+            .insert(clientPayload)
+
+          const {data, error} = await supabase
+            .from('Booking') 
+            .insert(bookingPayload)
+
+          if(error) throw error
+
+          ElMessage.success('Booking submitted successfully.')
+          this.clear()
 
         } catch (e) {
           console.error(e)
@@ -217,22 +306,20 @@ export default {
       clear(){
           this.bookingForm.serviceId = ''
           this.bookingForm.clientId = ''
-          this.bookingForm.bookingDate = ''
-          this.bookingForm.bookingTime = ''
+          this.bookingForm.bookingDateTime = ''
           this.bookingForm.status = 'confirmed'
           this.bookingForm.fullName = ''
           this.bookingForm.email = ''
           this.bookingForm.phone = ''
           this.bookingForm.noOfParticipants = 1
-          this.selectedService = ''
-          this.formStep = 1
           this.vCalendarEvents = []
+          this.formStep = 1
           
           gsap.to('#bookingForm', {
               opacity: 0,
               y: 300,
-              visibility: 'hidden',
-              duration: .5
+              duration: .5,
+              ease: 'back.in'
               
           })
       },
@@ -240,7 +327,6 @@ export default {
 
     async mounted() {
         await this.getServices()
-        console.log(this.formStep)
     }
 }
 </script>
@@ -280,6 +366,12 @@ export default {
 
 .form_panel form {display: grid; grid-template-columns: repeat(2,1fr); gap: 0 1rem}
 .field_label {display:block; font-weight:700; color:var(--bodyColor); margin-bottom:8px; font-size:.9rem;}
+
+.time_buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+.time_btn { padding: 8px 16px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; cursor: pointer; transition: 0.2s;width: 19%; }
+.time_btn.active { background: var(--priColor); color: #fff; }
+.time_btn.active:hover {background: var(--secColor); }
+.time_btn:hover { background: #e9e9e9; }
 
 .form_nav {display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid #eee; padding-top:24px;}
 .btn_back, .btn_next, .btn_submit {padding:12px 28px; border-radius:8px; font-weight:700; cursor:pointer; border:none; font-size:.95rem;}

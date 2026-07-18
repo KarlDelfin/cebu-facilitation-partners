@@ -13,11 +13,29 @@ const router = createRouter({
       name: 'test',
       component: () => import('../views/TestView.vue'),
     },
-    
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/AdminView.vue'),
+      children: [
+        {
+          path: 'booking',
+          name: 'booking',
+          component: () => import('../views/BookingView.vue'),
+        },
+        {
+          path: 'client',
+          name: 'client',
+          component: () => import('../views/ClientView.vue'),
+        },
+        {
+          path: 'service',
+          name: 'service',
+          component: () => import('../views/ServiceView.vue'),
+        },
+      ]
+    },
   ],
-  // scrollBehavior(to, from, savedPosition) {
-  //   return { top: 0 } 
-  // }
 })
 
 export default router
