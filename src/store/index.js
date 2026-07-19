@@ -3,34 +3,18 @@ import { createStore } from 'vuex';
 export const store = createStore({
   state: {
     user: null,
-    calendarId: null,
-    sharedCalendarId: null,
   },
   mutations: {
     SET_USER(state, user) {
       state.user = user;
     },
-    SET_CALENDAR_ID(state, calendarId) {
-      state.calendarId = calendarId;
-    },
-    SET_SHARED_CALENDAR_ID(state, sharedCalendarId) {
-      state.sharedCalendarId = sharedCalendarId;
-    }
   },
   actions: {
     setUser({ commit }, user) {
       commit('SET_USER', user);
     },
-    setCalendarId({ commit }, calendarId) {
-      commit('SET_CALENDAR_ID', calendarId);
-    },
-    setSharedCalendarId({ commit }, sharedCalendarId) {
-      commit('SET_SHARED_CALENDAR_ID', sharedCalendarId);
-    },
   },
   getters: {
     getUser: (state) => state.user,
-    getCalendarId: (state) => state.calendarId,
-    getSharedCalendarId: (state) => state.sharedCalendarId
   }
 });

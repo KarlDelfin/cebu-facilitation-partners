@@ -19,18 +19,13 @@ const router = createRouter({
       component: () => import('../views/AdminView.vue'),
       children: [
         {
-          path: 'booking',
-          name: 'booking',
+          path: 'bookings',
+          name: 'bookings',
           component: () => import('../views/BookingView.vue'),
         },
         {
-          path: 'client',
-          name: 'client',
-          component: () => import('../views/ClientView.vue'),
-        },
-        {
-          path: 'service',
-          name: 'service',
+          path: 'services',
+          name: 'services',
           component: () => import('../views/ServiceView.vue'),
         },
       ]

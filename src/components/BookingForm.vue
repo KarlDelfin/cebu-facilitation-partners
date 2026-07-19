@@ -82,7 +82,7 @@
       </div>
     </div>
     <div class="form_nav">
-      <button class="btn_back" @click="goToStep(1, 'prev')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <button class="btn_back" @click="goToStep(1, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
       <button class="btn_next" @click="goToStep(3, 'next')">Next <i class="fa-solid fa-arrow-right"></i></button>
     </div>
   </div>
@@ -117,15 +117,10 @@
         ]">
         <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
       </el-form-item>
-      <el-form-item 
-        label="No. of Participants"
-        prop="noOfParticipants">
-        <el-input-number v-model="bookingForm.noOfParticipants" :min="1" :max="25" />
-      </el-form-item>
     </el-form>
  
     <div class="form_nav">
-      <button class="btn_back" @click="goToStep(2, 'prev')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <button class="btn_back" @click="goToStep(2, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
       <button class="btn_submit" @click="submitBooking">Confirm Booking <i class="fa-solid fa-check"></i></button>
     </div>
   </div>
@@ -165,7 +160,6 @@ export default {
             fullName: '',
             email: '',
             phone: '',
-            noOfParticipants: 1,
         },
         vCalendarEvents: [],
       }
@@ -173,7 +167,7 @@ export default {
     methods: {
       /* PREV/NEXT CONTROLLER */
       goToStep(step, action) {
-        if (action === 'prev') {
+        if (action === 'back') {
           this.formStep = step
           return
         }
@@ -208,6 +202,7 @@ export default {
               ElMessage.warning('Cannot select past date');
               return;
           }
+          
           this.bookingForm.bookingDateTime = moment(day.date).format('YYYY-MM-DD');
           this.vCalendarEvents = [];
           this.vCalendarEvents.push({
@@ -253,30 +248,21 @@ export default {
       async submitBooking(){
         try {
           const isValid = this.$refs.bookingFormRef.validate()
+          
           if(!isValid) return
-          const clientId = uuidv4()
-          const bookingPayload = {
-            clientId: clientId,
+
+          const payload = {
             serviceId: this.bookingForm.serviceId,
             bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'confirmed'
-          }
-
-          const clientPayload = {
-            id: clientId,
+            status: 'confirmed',
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
-            noOfParticipants: this.bookingForm.noOfParticipants
           }
-
-           await supabase
-            .from('Client')
-            .insert(clientPayload)
 
           const {data, error} = await supabase
             .from('Booking') 
-            .insert(bookingPayload)
+            .insert(payload)
 
           if(error) throw error
 
