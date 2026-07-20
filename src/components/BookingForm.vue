@@ -299,8 +299,12 @@ export default {
           this.bookingForm.phone = ''
           this.bookingForm.noOfParticipants = 1
           this.vCalendarEvents = []
-          this.formStep = 1
+          this.selectedTime = ''
           
+          
+          setTimeout(() => {
+            this.formStep = 1
+          }, 500)
           gsap.to('#bookingForm', {
               opacity: 0,
               y: 300,
@@ -358,6 +362,7 @@ export default {
 .time_btn.active { background: var(--priColor); color: #fff; }
 .time_btn.active:hover {background: var(--secColor); }
 .time_btn:hover { background: #e9e9e9; }
+.time_btn.disabled { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
 
 .form_nav {display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid #eee; padding-top:24px;}
 .btn_back, .btn_next, .btn_submit {padding:12px 28px; border-radius:8px; font-weight:700; cursor:pointer; border:none; font-size:.95rem;}

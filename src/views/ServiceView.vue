@@ -9,7 +9,8 @@
           class="w-80"
           :prefix-icon="SearchIcon"
           clearable
-          @input="getServices"
+          @input="searchService"
+          @clear="clear"
         />
         <el-button type="primary" color="#136cb3" class="font-semibold" @click="formController('Create Service', {})">
           Create Service
@@ -106,7 +107,7 @@
         <el-input v-model="serviceForm.price" placeholder="Enter price"/>
       </el-form-item>
       <div class="flex justify-end !mt-5">
-        <el-button type="primary">Confirm</el-button>
+        <el-button type="primary" @click="submitForm" :loading="loading">Confirm</el-button>
       </div>
     </el-form>
   </el-dialog>
@@ -117,6 +118,7 @@ import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { supabase } from '@/utils/supabaseClient';
 import moment from 'moment';
+import debounce from 'lodash/debounce'
 
 export default {
   data() {
@@ -130,6 +132,7 @@ export default {
       },
 
       serviceForm: {
+        id: '',
         name: '',
         description: '',
         price: ''
@@ -149,12 +152,68 @@ export default {
     }
   },
   methods: {
-    async submitForm(){
-       const isValid = this.$refs.serviceFormRef.validate()
-          
-        if(!isValid) return
+    /* SEARCH SERVICE */
+    searchService() {
+      if (!this.debouncedSearch) {
+        this.debouncedSearch = debounce(() => {
+          this.getServices()
+        }, 500)
+      }
+
+      this.debouncedSearch(this.search.serviceName)
     },
 
+    /* SUBMIT FORM */
+    async submitForm(){
+      try{
+        const isValid = this.$refs.serviceFormRef.validate()
+        
+        if(!isValid) return
+
+        if(this.title == 'Create Service') {
+          const payload = {
+            name: this.serviceForm.name,
+            description: this.serviceForm.description,
+            price: this.serviceForm.price,
+          }
+
+          const { data, error} = await supabase
+            .from('Service')
+            .insert(payload)
+
+            if(error) throw error
+
+            ElMessage.success('Service created successfully.')
+            this.getServices()
+            this.clear()
+        }
+
+        if(this.title == 'Edit Service') {
+          const payload = {
+            name: this.serviceForm.name,
+            description: this.serviceForm.description,
+            price: this.serviceForm.price,
+          }
+
+          const { data, error} = await supabase
+            .from('Service')
+            .update(payload)
+            .eq('id', this.serviceForm.id)
+
+          if(error) throw error
+
+          ElMessage.success('Service updated successfully.')
+          this.getServices()
+          this.clear()
+        }
+      }
+      catch(error) {
+        console.error(error)
+      }
+
+    },
+
+    /* GET SERVICES */
     async getServices() {
       try {
         this.loading = true;
@@ -203,41 +262,29 @@ export default {
       }
 
       if(title == 'Edit Service') {
+        this.serviceForm.id = data.id
         this.serviceForm.name = data.name
         this.serviceForm.description = data.description
         this.serviceForm.price = data.price
       }
     },
 
+    /* DELETE SERVICE */
     async deleteService(serviceId) {
       try{
-        await ElMessageBox.confirm(
-          'Do you want to delete this service?',
-          'Warning',
-          {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
-            type: 'warning',
-            center: true,
-          }
-        )
-        .then(() => {
-          const { data, error } = supabase
-            .from('Service')
-            .delete()
-            .eq('id', serviceId)
+        await ElMessageBox.confirm( 'Do you want to delete this service?', 'Warning', { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning', } )
+        const { data, error } = await supabase
+          .from('Service')
+          .delete()
+          .eq('id', serviceId)
 
-            if(error) throw error
+          if(error) throw error
 
-            this.clear()
-            this.getServices()
-            ElMessage.success('Service deleted successfully.')
-        })
-        .catch(() => {
-        })
+          this.clear()
+          this.getServices()
+          ElMessage.success('Service deleted successfully.')
       }
       catch(error) {
-        console.log(error)
       }
     },
 

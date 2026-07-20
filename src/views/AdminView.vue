@@ -4,7 +4,7 @@
 
     <el-container>
       <el-header class="dashboard-header">
-        <div class="header-title">{{  }}</div>
+        <div class="header-title">Dashboard</div>
         <div class="header-right-controls">
           <el-button 
             type="danger" 
@@ -97,7 +97,7 @@ export default {
 
         this.session = session;
         if (session && (this.$route.path === '/admin' || this.$route.path === '/admin/')) {
-          this.$router.push('/admin/booking');
+          this.$router.push('/admin/bookings');
         }
       } catch (err) {
         ElMessage.error(`Authorization engine error: ${err.message}`);
