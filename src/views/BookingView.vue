@@ -6,15 +6,15 @@
           <template #header>
             <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Bookings</span>
           </template>
-          <div class="text-3xl font-bold text-slate-800">1,248</div>
+          <div class="text-3xl font-bold text-slate-800">{{ metrics.totalBookings }}</div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover" class="!rounded-lg">
           <template #header>
-            <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Pending Bootcamps</span>
+            <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Pending Bookings</span>
           </template>
-          <div class="text-3xl font-bold text-amber-500">4</div>
+          <div class="text-3xl font-bold text-amber-500">{{ metrics.pendingBookings }}</div>
         </el-card>
       </el-col>
       <el-col :span="8">
@@ -148,7 +148,7 @@
         <el-select 
           @click="getServices" 
           filterable 
-          :filter-method="searchService" 
+          @input="searchService" 
           :loading="loading" 
           placeholder="Select Service"
           v-model="bookingForm.serviceId"
@@ -232,17 +232,22 @@ export default {
       selectedTime: '',
       
       timeSlots: [
-          { label: '9:00 AM', value: '09:00:00', disabled: true },
-          { label: '10:00 AM', value: '10:00:00', disabled: true },
-          { label: '11:00 AM', value: '11:00:00', disabled: true },
-          { label: '12:00 PM', value: '12:00:00', disabled: true },
-          { label: '1:00 PM', value: '13:00:00', disabled: true },
-          { label: '2:00 PM', value: '14:00:00', disabled: true },
-          { label: '3:00 PM', value: '15:00:00', disabled: true },
-          { label: '4:00 PM', value: '16:00:00', disabled: true },
-          { label: '5:00 PM', value: '17:00:00', disabled: true },
-          { label: '6:00 PM', value: '18:00:00', disabled: true },
-        ],
+        { label: '9:00 AM', value: '09:00:00', disabled: true },
+        { label: '10:00 AM', value: '10:00:00', disabled: true },
+        { label: '11:00 AM', value: '11:00:00', disabled: true },
+        { label: '12:00 PM', value: '12:00:00', disabled: true },
+        { label: '1:00 PM', value: '13:00:00', disabled: true },
+        { label: '2:00 PM', value: '14:00:00', disabled: true },
+        { label: '3:00 PM', value: '15:00:00', disabled: true },
+        { label: '4:00 PM', value: '16:00:00', disabled: true },
+        { label: '5:00 PM', value: '17:00:00', disabled: true },
+        { label: '6:00 PM', value: '18:00:00', disabled: true },
+      ],
+
+      metrics: {
+        totalBookings: 0,
+        pendingBookings: 0
+      },
 
       bookingForm: {
         id: '',
@@ -373,7 +378,7 @@ export default {
     },
 
     /* FORM CONTROLLER */
-    formController(title, data) {
+    async formController(title, data) {
       this.title = title
       this.dialog.bookingForm = true
 
@@ -382,14 +387,23 @@ export default {
       }
 
       if(title == 'Edit Booking') {
-        this.bookingForm.serviceId = data.serviceId
-        this.bookingForm.fullName = data.fullName
-        this.bookingForm.email = data.email,
-        this.bookingForm.phone = data.phone,
+        this.bookingForm.serviceId = data.Service.id;
+        this.bookingForm.fullName = data.fullName;
+        this.bookingForm.email = data.email;
+        this.bookingForm.phone = data.phone;
 
-        this.handleSelectDate({date:moment(data.bookingDateTime).format('YYYY-MM-DD')})
-        this.handleSelectTime(moment(data.bookingDateTime).format('HH:mm:ss'))
-        console.log(moment(data.bookingDateTime).format('HH:mm:ss'))
+        this.handleSelectDate({ date: moment(data.bookingDateTime).format('YYYY-MM-DD') });
+        this.handleSelectTime(moment(data.bookingDateTime).format('HH:mm:ss'));
+
+        const { data: serviceData, error } = await supabase
+          .from('Service')
+          .select('*')
+          .eq('id', data.Service.id);
+
+        if (error) throw error
+        
+        this.services = serviceData
+
       }
     },
 
@@ -467,15 +481,15 @@ export default {
     searchService(e) {
       if (!this.debouncedSearch) {
         this.debouncedSearch = debounce(() => {
-          this.getServices()
+          this.getServices(e.target.value)
         }, 500)
       }
 
-      this.debouncedSearch(this.search.serviceName)
+      this.debouncedSearch()
     },
 
     /* GET SERVICES */
-    async getServices() {
+    async getServices(searchValue) {
       this.loading = true
       try {
         this.loading = true;
@@ -487,10 +501,10 @@ export default {
             .from('Service')
             .select('*', { count: 'exact' })
 
-        if (this.search.serviceName && this.search.serviceName.trim() !== '') {
-            const searchPattern = `%${this.search.serviceName}%`;
+        if (searchValue && searchValue.trim() !== '') {
+          const searchPattern = `%${searchValue}%`;
           
-          query = query.or(`fullName.ilike.${searchPattern},email.ilike.${searchPattern},phone.ilike.${searchPattern}`);
+          query = query.or(`name.ilike.${searchPattern},description.ilike.${searchPattern}`);
         }
 
         query = query.order('dateTimeCreated', { ascending: false }).range(from, to);
@@ -536,6 +550,26 @@ export default {
       }
     },
 
+    /* BOOKING METRICS */
+    async getBookingMetrics() {
+      try {
+        const [totalRes, pendingRes] = await Promise.all([
+          supabase.from('Booking').select('*', { count: 'exact', head: true }),
+          
+          supabase.from('Booking').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+        ]);
+
+        if (totalRes.error) throw totalRes.error;
+        if (pendingRes.error) throw pendingRes.error;
+
+        this.metrics.totalBookings = totalRes.count || 0;
+        this.metrics.pendingBookings = pendingRes.count || 0;
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     /* CLEAR */
     clear() {
       this.bookingForm.serviceId = ''
@@ -554,6 +588,7 @@ export default {
   },
   mounted() {
     this.getBookings()
+    this.getBookingMetrics()
   }
 }
 </script>
@@ -563,4 +598,5 @@ export default {
 .el-form-item__content button.active { background: #409eff !important; color: #fff !important; }
 
 .el-form-item__content button.disabled { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
+
 </style>

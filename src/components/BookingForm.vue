@@ -190,7 +190,6 @@ export default {
         this.formStep = step
       },
 
-      
       /* HANDLE SELECT SERVICE */
       handleSelectService(serviceId){
           this.bookingForm.serviceId = serviceId
@@ -245,11 +244,9 @@ export default {
       },
       
       /* SUBMIT BOOKING */
-      async submitBooking(){
+      async submitBooking() {
         try {
-          const isValid = this.$refs.bookingFormRef.validate()
-          
-          if(!isValid) return
+          await this.$refs.bookingFormRef.validate()
 
           const payload = {
             serviceId: this.bookingForm.serviceId,
@@ -260,11 +257,11 @@ export default {
             phone: this.bookingForm.phone,
           }
 
-          const {data, error} = await supabase
+          const { data, error } = await supabase
             .from('Booking') 
             .insert(payload)
 
-          if(error) throw error
+          if (error) throw error
 
           ElMessage.success('Booking submitted successfully.')
           this.clear()
