@@ -121,14 +121,22 @@ export default {
     async handleGoogleLogin() {
       try {
         this.loading = true;
+        
+        // 1. Calculate base path dynamically
         const baseHref = document.querySelector('base')?.getAttribute('href') || '/cebu-facilitation-partners/';
         const cleanBase = baseHref.endsWith('/') ? baseHref : baseHref + '/';
-        const absoluteRedirectUrl = `${window.location.origin}${cleanBase}admin`;
+        
+        // 🌟 Target the exact /admin/bookings route!
+        const absoluteRedirectUrl = `${window.location.origin}${cleanBase}admin/bookings`;
 
+        // 2. Pass it directly into Supabase OAuth options
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: absoluteRedirectUrl }
+          options: { 
+            redirectTo: absoluteRedirectUrl 
+          }
         });
+        
         if (error) throw error;
       } catch (err) {
         ElMessage.error(`OAuth Initialization failure: ${err.message}`);
