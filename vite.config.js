@@ -18,7 +18,6 @@ export default defineConfig({
     tailwindcss(),
     vueJsx(),
     vueDevTools(),
-    {src: '~/utils/vue-recaptcha-v3.js', mode: 'client' },
   ],
   resolve: {
     alias: {
