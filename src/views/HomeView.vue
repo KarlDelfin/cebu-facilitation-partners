@@ -239,9 +239,13 @@
 
     <BookingForm :isOpenForm="dialog.bookingForm"/>
 
+    <div class="fixed bottom-5 right-5 z-50">
+        <button @click="$router.push('/admin')" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>
+    </div>
 </template>
 
 <script>
+import { Setting } from '@element-plus/icons-vue'
 import { gsapController, gsapSidebarController } from '../utils/gsap'
 import gsap from 'gsap/all'
 import BookingForm from '@/components/BookingForm.vue';
