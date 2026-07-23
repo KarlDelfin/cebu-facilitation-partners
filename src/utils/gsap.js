@@ -115,8 +115,8 @@ export function gsapController() {
         stagger: { each: 0.08 },
         scrollTrigger: { trigger: '.main_con', start: 'top 70%' },
     })
-    gsap.from('.pathway_line path', {
-        drawSVG: '0%',
+    gsap.to('.pathway_line path', {
+        drawSVG: '100%',
         duration: 1.5,
         ease: 'none',
         scrollTrigger: { trigger: '.foundational_guiding', start: 'top 60%', end: 'bottom 80%', scrub: true },
@@ -138,7 +138,7 @@ export function gsapController() {
             rotation: 'random(-20, 20)',
             scale: 1,
             duration: 1.5,
-            ease: "none",
+            ease: "expo.out",
         }, 0);
     });
 

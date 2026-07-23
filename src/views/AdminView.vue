@@ -1,16 +1,16 @@
 <template>
-  <el-container v-if="session" class="dashboard-container">
+  <el-container v-if="$store.getters.getUser" class="h-screen bg-slate-50 text-slate-800">
     <AdminSidebar />
 
-    <el-container>
-      <el-header class="dashboard-header">
-        <div class="header-title">Dashboard</div>
-        <div class="header-right-controls">
+    <el-container class="flex flex-col">
+      <el-header class="!flex bg-white border-b border-slate-200 flex justify-end !items-center px-6 h-16">
+        
+        <div class="flex items-center gap-3 justify-end items-center">
+          
           <el-button 
             type="danger" 
             size="small" 
             plain 
-            style="margin-left: 12px;" 
             @click="handleSignOut"
           >
             Sign Out
@@ -18,28 +18,38 @@
         </div>
       </el-header>
 
-      <el-main class="dashboard-main">
+      <el-main class="p-6 overflow-y-auto bg-slate-50">
         <RouterView />
       </el-main>
     </el-container>
   </el-container>
 
-  <div v-else class="login-overlay" v-loading="loading">
-    <el-card class="login-card" shadow="always">
-      <div class="login-brand">
-        <h2>Upskills Partners</h2>
-        <p>Internal Operations Management Gateway</p>
+  <div v-else class="h-screen w-screen flex justify-center items-center bg-slate-100" v-loading="loading">
+    <el-card class="w-[420px] p-5 rounded-xl text-center border-none" shadow="always">
+      <div class="flex flex-col gap-1 mb-2">
+        <h2 class="text-[#136cb3] text-2xl font-extrabold tracking-wide uppercase m-0">
+          Cebu Facilitation Partners
+        </h2>
+        <p class="text-slate-500 text-xs font-medium m-0">
+          Admin Gateway
+        </p>
       </div>
-      <el-divider />
-      <div class="login-action">
+      
+      <el-divider class="my-4" />
+      
+      <div class="mt-6">
         <el-button 
           type="primary" 
           size="large" 
-          class="google-btn"
+          class="w-full font-semibold flex items-center justify-center gap-2.5 transition-all duration-200"
           color="#136cb3" 
           @click="handleGoogleLogin"
         >
-          <img src="https://authjs.dev/img/providers/google.svg" alt="Google Logo" class="google-icon" />
+          <img 
+            src="https://authjs.dev/img/providers/google.svg" 
+            alt="Google Logo" 
+            class="w-[18px] h-[18px] p-[1px] !mr-1" 
+          />
           Continue with Google
         </el-button>
       </div>
@@ -59,16 +69,14 @@ export default {
   },
   data() {
     return {
-      session: null,
       loading: true,
       isValidating: false
     };
   },
-
   methods: {
     async validateAndSetSession(session) {
       if (!session || !session.user) {
-        this.session = null;
+        this.$store.dispatch('setUser', null);
         this.loading = false;
         return;
       }
@@ -90,24 +98,26 @@ export default {
 
         if (!data) {
           ElMessage.error(`Access Denied: ${userEmail} is not authorized.`);
-          this.session = null;
+          this.$store.dispatch('setUser', null);
           await supabase.auth.signOut(); 
           return;
         }
 
-        this.session = session;
-        if (session && (this.$route.path === '/admin' || this.$route.path === '/admin/')) {
+        this.$store.dispatch('setUser', session);
+        
+        if (this.$route.path === '/admin' || this.$route.path === '/admin/') {
           this.$router.push('/admin/bookings');
         }
       } catch (err) {
         ElMessage.error(`Authorization engine error: ${err.message}`);
-        this.session = null;
+        this.$store.dispatch('setUser', null);
         await supabase.auth.signOut();
       } finally {
         this.loading = false;
         this.isValidating = false;
       }
     },
+
     async handleGoogleLogin() {
       try {
         this.loading = true;
@@ -125,12 +135,13 @@ export default {
         this.loading = false;
       }
     },
+    
     async handleSignOut() {
       await supabase.auth.signOut();
+      this.$store.dispatch('setUser', null); 
       ElMessage.info('Logged out securely.');
       this.$router.push('/admin');
     },
-    
   }, 
   mounted() {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -139,7 +150,7 @@ export default {
 
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
-        this.session = null;
+        this.$store.dispatch('setUser', null);
         this.loading = false;
         return;
       }
@@ -148,105 +159,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.dashboard-container {
-  --priColor: #136cb3;
-  --secColor: #feb841;
-  --thiColor: #fff;
-  --defaultColor: #fff;
-  --bodyColor: #333;
-
-  height: 100vh;
-  background-color: #f8fafc;
-  color: var(--bodyColor);
-}
-
-.dashboard-header {
-  background-color: var(--defaultColor);
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-}
-
-.header-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--bodyColor);
-}
-
-.header-right-controls {
-  display: flex;
-  align-items: center;
-}
-
-.location-badge {
-  background-color: #f1f5f9;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--priColor);
-  border: 1px solid #cbd5e1;
-}
-
-.dashboard-main {
-  padding: 24px;
-  overflow-y: auto;
-}
-
-/* 🔒 Portal Lock Overlay Styles */
-.login-overlay {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f1f5f9;
-}
-
-.login-card {
-  width: 420px;
-  padding: 20px 10px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.login-brand h2 {
-  color: #136cb3;
-  margin: 0 0 4px 0;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.login-brand p {
-  color: #64748b;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.login-action {
-  margin-top: 24px;
-}
-
-.google-btn {
-  width: 100%;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.google-icon {
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 2px;
-  padding: 1px;
-  margin-right: 5px
-}
-
-</style>

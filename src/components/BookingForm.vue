@@ -266,6 +266,8 @@ export default {
 
       /* HANDLE SELECT DATE */
       async handleSelectDate(day) {
+          this.bookingForm.bookingDateTime = ''
+          this.selectedTime = ''
           if (moment(new Date()).startOf('day') > moment(day.date).startOf('day')) {
               ElMessage.warning('Cannot select past date');
               return;

@@ -52,7 +52,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Client" min-width="200">
+        <el-table-column label="Client" min-width="150">
           <template #default="scope">
             <div class="flex flex-col">
               <div class="font-bold text-slate-800 text-sm">{{ scope.row.fullName }}</div>
@@ -63,7 +63,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Service" min-width="180">
+        <el-table-column label="Service" min-width="100">
           <template #default="scope">
             <el-tooltip
               :content="scope.row.Service.description"
@@ -76,12 +76,21 @@
             </el-tooltip>
             
             <div class="text-xs text-slate-500 mt-1">
-              Rate: ₱{{ scope.row.Service.price.toLocaleString() }}
+              Rate: ₱{{ scope.row.Service.price.toLocaleString() }} | Total: ₱{{ (scope.row.Service.price * scope.row.noOfParticipants).toLocaleString() }}
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="Scheduled Date" min-width="160">
+        <el-table-column label="No of Participants" align="center">
+          <template #default="scope">
+            <div class="inline-flex items-center gap-2 bg-slate-100 !px-2 py-1 rounded-md text-slate-700 font-semibold text-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <!-- Status dot indicator -->
+              <span>{{ scope.row.noOfParticipants }}</span>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="Scheduled Date" align="center">
           <template #default="scope">
             <div class="text-slate-800 font-medium text-sm">
               <el-tag>{{ scope.row.bookingDateTime }}</el-tag>
@@ -205,6 +214,15 @@
           ]">
           <el-input v-model="bookingForm.phone" placeholder="Enter Client Phone"/>
         </el-form-item>
+
+        <el-form-item 
+          label="No of Participants" 
+          prop="noOfParticipants"
+          :rules="[
+            { required: true, message: 'Please input a digit', trigger: 'blur', },
+          ]">
+          <el-input-number v-model="bookingForm.noOfParticipants" placeholder="Enter No of Participants"/>
+        </el-form-item>
       </div>
       <div class="mt-5 flex justify-end">
         <el-button type="primary" @click="submitForm">Confirm</el-button>
@@ -257,7 +275,8 @@ export default {
         fullName: '',
         email: '',
         phone: '',
-        status: 'confirmed'
+        status: 'confirmed',
+        noOfParticipants: 1
       },
 
       dialog: {
@@ -270,7 +289,7 @@ export default {
       },
 
       bookingPagination: {
-        elementsPerPage: 10,
+        elementsPerPage: 5,
         currentPage: 1,
         totalElements: 0
       }, 
@@ -285,44 +304,49 @@ export default {
   methods: {
     /* HANDLE SELECT DATE */
     async handleSelectDate(day) {
-        if (moment(new Date()).startOf('day') > moment(day.date).startOf('day')) {
+        const selected = moment(day.date).startOf('day');
+        const today = moment().startOf('day');
+        
+        if (selected.isBefore(today)) {
             ElMessage.warning('Cannot select past date');
             return;
         }
         
-        this.bookingForm.bookingDateTime = moment(day.date).format('YYYY-MM-DD');
-        this.vCalendarEvents = [];
-        this.vCalendarEvents.push({
-            highlight: {
-                backgroundColor: '#ff8080',
-            },
-            dates: new Date(day.date),
-        });
+        this.bookingForm.bookingDateTime = selected.format('YYYY-MM-DD');
+        this.vCalendarEvents = [{
+            highlight: { backgroundColor: '#ff8080' },
+            dates: day.date instanceof Date ? day.date : new Date(day.date)
+        }];
 
-        const selectedDate = moment(day.date).format('YYYY-MM-DD');
-        
-        const { data, error } = await supabase
-            .from('Booking')
-            .select('bookingDateTime')
-            .gte('bookingDateTime', `${selectedDate} 00:00:00`)
-            .lt('bookingDateTime', `${selectedDate} 23:59:59`);
+        try {
+            const startOfDay = selected.format('YYYY-MM-DD HH:mm:ss');
+            const endOfDay = selected.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+            
+            const { data, error } = await supabase
+                .from('Booking')
+                .select('bookingDateTime')
+                .gte('bookingDateTime', startOfDay)
+                .lt('bookingDateTime', endOfDay);
 
-        if (error) {
-            console.error(error);
-            return;
+            if (error) throw error;
+
+            const bookedTimes = new Set(
+                data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'))
+            );
+
+            this.timeSlots = this.timeSlots.map(slot => ({
+                ...slot,
+                disabled: bookedTimes.has(slot.value)
+            }));
+
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+            ElMessage.error('Failed to load available times');
         }
-
-        const bookedTimes = data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'));
-
-        this.timeSlots = this.timeSlots.map(slot => ({
-            ...slot,
-            disabled: bookedTimes.includes(slot.value)
-        }));
     },
 
     /* HANDLE SELECT TIME */
     handleSelectTime(time) {
-      console.log(time)
         this.selectedTime = time
         const current = moment(this.bookingForm.bookingDateTime || new Date());
         const [hours, minutes] = time.split(':').map(Number);
@@ -332,9 +356,33 @@ export default {
         console.log(this.bookingForm.bookingDateTime);
     },
 
+    /* HANDLE STATUS CHANGE */
+    async handleStatusChange(row) {
+      try {
+        this.loading = true;
+        const { data, error } = await supabase
+          .from('Booking')
+          .update({ status: row.status })
+          .eq('id', row.id);
+
+        if (error) throw error;
+
+        ElMessage.success('Booking status updated successfully.');
+        this.getBookings();
+        this.getBookingMetrics();
+      } catch (error) {
+        console.error(error);
+        ElMessage.error(`Error updating booking status: ${error.message}`);
+      } finally {
+        this.loading = false;
+      }
+    },
+
     /* SUBMIT FORM */
     async submitForm() {
       try {
+        this.loading = true
+
         const isValid = await this.$refs.bookingFormRef.validate()
             
         if(!isValid) return
@@ -347,6 +395,7 @@ export default {
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
+            noOfParticipants: this.bookingForm.noOfParticipants
           }
 
           const {data, error} = await supabase
@@ -368,12 +417,27 @@ export default {
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
+            noOfParticipants: this.bookingForm.noOfParticipants
           }
+
+          const {data, error} = await supabase
+            .from('Booking') 
+            .update(payload)
+            .eq('id', this.bookingForm.id)
+
+          if(error) throw error
+
+          ElMessage.success('Booking updated successfully.')
+          this.clear()
+          this.getBookings()
 
         }
       }
       catch(error){
         console.error(error)
+      }
+      finally {
+        this.loading = false
       }
     },
 
@@ -387,6 +451,7 @@ export default {
       }
 
       if(title == 'Edit Booking') {
+        this.bookingForm.id = data.id;
         this.bookingForm.serviceId = data.Service.id;
         this.bookingForm.fullName = data.fullName;
         this.bookingForm.email = data.email;
@@ -459,6 +524,7 @@ export default {
             email: item.email,
             phone: item.phone,
             dateTimeCreated: moment(item.dateTimeCreated).format('LLL'),
+            noOfParticipants: item.noOfParticipants,
             Service: {
               id: item.Service.id,
               name: item.Service.name,
@@ -553,17 +619,19 @@ export default {
     /* BOOKING METRICS */
     async getBookingMetrics() {
       try {
-        const [totalRes, pendingRes] = await Promise.all([
+        const [totalBookings, totalPending, totalValue] = await Promise.all([
           supabase.from('Booking').select('*', { count: 'exact', head: true }),
-          
-          supabase.from('Booking').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+          supabase.from('Booking').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+          // supabase.from('Booking').select('price', { count: 'exact', head: true }).eq('status', 'confirmed')
         ]);
 
-        if (totalRes.error) throw totalRes.error;
-        if (pendingRes.error) throw pendingRes.error;
+        if (totalBookings.error) throw totalBookings.error;
+        if (totalPending.error) throw totalPending.error;
+        // if (totalValue.error) throw totalValue.error;
 
-        this.metrics.totalBookings = totalRes.count || 0;
-        this.metrics.pendingBookings = pendingRes.count || 0;
+        this.metrics.totalBookings = totalBookings.count || 0;
+        this.metrics.pendingBookings = totalPending.count || 0;
+        // this.metrics.totalValue = totalValue.count || 0;
 
       } catch (error) {
         console.error(error);

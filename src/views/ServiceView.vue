@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-5 gap-4">
         <el-input
           v-model="search.serviceName"
-          placeholder="Search service..."
+          placeholder="Search by service..."
           class="w-80"
           :prefix-icon="SearchIcon"
           clearable

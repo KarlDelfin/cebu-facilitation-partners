@@ -240,7 +240,7 @@
     <BookingForm :isOpenForm="dialog.bookingForm"/>
 
     <div class="fixed bottom-5 right-5 z-50">
-        <button @click="$router.push('/admin')" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>
+        <button @click="gotoAdmin()" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>
     </div>
 </template>
 
@@ -249,6 +249,7 @@ import { Setting } from '@element-plus/icons-vue'
 import { gsapController, gsapSidebarController } from '../utils/gsap'
 import gsap from 'gsap/all'
 import BookingForm from '@/components/BookingForm.vue';
+import {ElLoading} from 'element-plus'
 export default {
     components: {BookingForm},
     data(){
@@ -259,6 +260,21 @@ export default {
         }
     },
     methods: {
+        async gotoAdmin() {
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+            })
+            
+            try {
+                await this.$router.push('/admin')
+            } catch (error) {
+                console.error('Navigation error:', error)
+            } finally {
+                loading.close()
+            }
+        },
         
         openForm(title){
             if(title == 'Book Now') {
