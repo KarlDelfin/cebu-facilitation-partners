@@ -223,7 +223,8 @@ export default {
 
           ElMessage.success('Booking submitted successfully.')
           this.clear()
-
+          console.log(this.bookingForm)
+          
         } catch (e) {
           console.error("Submission crash caught: ", e)
         } finally {
@@ -338,6 +339,11 @@ export default {
           this.bookingForm.noOfParticipants = 1
           this.vCalendarEvents = []
           this.selectedTime = ''
+
+          this.timeSlots = this.timeSlots.map(slot => ({
+              ...slot,
+              disabled: true
+          }));
           
           
           setTimeout(() => {
