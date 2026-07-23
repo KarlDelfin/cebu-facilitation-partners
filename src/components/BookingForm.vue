@@ -89,7 +89,8 @@
  
   <!-- STEP 3: BOOKING FORM -->
   <div class="form_panel" v-else>
-    <el-form ref="bookingFormRef" label-position="top" :model="bookingForm">
+    <el-form ref="bookingFormRef" label-position="top" :model="bookingForm" :diabled="true">
+
       <el-form-item 
         label="Full Name" 
         prop="fullName"
@@ -99,6 +100,7 @@
         >
         <el-input v-model="bookingForm.fullName" placeholder="John Doe"/>
       </el-form-item>
+
       <el-form-item 
           label="Email" 
           prop="email"
@@ -108,6 +110,7 @@
           ]">
         <el-input v-model="bookingForm.email" placeholder="johndoe@example.com" />
       </el-form-item>
+
       <el-form-item 
         label="Phone" 
         prop="phone"
@@ -117,11 +120,22 @@
         ]">
         <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
       </el-form-item>
+
+      <el-form-item>
+        <VueHcaptcha
+          ref="hcaptchaRef" 
+          sitekey="10000000-ffff-ffff-ffff-000000000001" 
+          size="normal" 
+          @verify="onVerify" 
+          @expired="onExpired" 
+        />
+      </el-form-item>
+      
     </el-form>
  
     <div class="form_nav">
       <button class="btn_back" @click="goToStep(2, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn_submit" @click="submitBooking">Confirm Booking <i class="fa-solid fa-check"></i></button>
+      <button class="btn_submit" @click="submitBooking" :disabled="loading">Confirm Booking <i class="fa-solid fa-check"></i></button>
     </div>
   </div>
 </div>
@@ -129,12 +143,14 @@
 </template>
 
 <script>
+import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
 import { supabase } from '@/utils/supabaseClient';
-import { ElMessage } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 import gsap from 'gsap/all'
 import moment from 'moment'
-import { v4 as uuidv4 } from 'uuid'
+
 export default {
+    components: {VueHcaptcha},
     data(){
       return{
         selectedTime: '',
@@ -162,9 +178,60 @@ export default {
             phone: '',
         },
         vCalendarEvents: [],
+        captchaToken: null,
+        loading: false,
       }
     },
     methods: {
+      onVerify(token) {
+        console.log("Token successfully caught:", token);
+        this.captchaToken = token;
+      },
+      onExpired() {
+        this.captchaToken = null;
+      },
+
+      async submitBooking() {
+        this.loading = true
+        const loading = ElLoading.service({
+          lock: true,
+          text: 'Loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+        })
+        try {
+          await this.$refs.bookingFormRef.validate()
+
+          if (!this.captchaToken) {
+            ElMessage.warning('Please check the security box before submitting.');
+            return;
+          }
+
+          const payload = {
+            serviceId: this.bookingForm.serviceId,
+            bookingDateTime: this.bookingForm.bookingDateTime,
+            status: 'confirmed',
+            fullName: this.bookingForm.fullName,
+            email: this.bookingForm.email,
+            phone: this.bookingForm.phone,
+          }
+
+          const { data, error } = await supabase
+            .from('Booking') 
+            .insert(payload)
+
+          if (error) throw error
+
+          ElMessage.success('Booking submitted successfully.')
+          this.clear()
+
+        } catch (e) {
+          console.error("Submission crash caught: ", e)
+        } finally {
+          this.loading = false
+          loading.close()
+        }
+      },
+     
       /* PREV/NEXT CONTROLLER */
       goToStep(step, action) {
         if (action === 'back') {
@@ -243,33 +310,7 @@ export default {
           console.log(this.bookingForm.bookingDateTime);
       },
       
-      /* SUBMIT BOOKING */
-      async submitBooking() {
-        try {
-          await this.$refs.bookingFormRef.validate()
-
-          const payload = {
-            serviceId: this.bookingForm.serviceId,
-            bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'confirmed',
-            fullName: this.bookingForm.fullName,
-            email: this.bookingForm.email,
-            phone: this.bookingForm.phone,
-          }
-
-          const { data, error } = await supabase
-            .from('Booking') 
-            .insert(payload)
-
-          if (error) throw error
-
-          ElMessage.success('Booking submitted successfully.')
-          this.clear()
-
-        } catch (e) {
-          console.error(e)
-        }
-      },
+      
 
       /* GET SERVICES */
       async getServices(){
