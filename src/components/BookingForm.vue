@@ -124,7 +124,7 @@
       <el-form-item>
         <VueHcaptcha
           ref="hcaptchaRef" 
-          sitekey="10000000-ffff-ffff-ffff-000000000001" 
+          :sitekey="sitekey" 
           size="normal" 
           @verify="onVerify" 
           @expired="onExpired" 
@@ -153,6 +153,7 @@ export default {
     components: {VueHcaptcha},
     data(){
       return{
+        sitekey: import.meta.env.VITE_HCAPTCHA_SITE_KEY,
         selectedTime: '',
         timeSlots: [
           { label: '9:00 AM', value: '09:00:00', disabled: true },
