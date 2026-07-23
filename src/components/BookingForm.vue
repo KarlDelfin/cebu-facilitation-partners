@@ -185,13 +185,14 @@ export default {
     },
     methods: {
       onVerify(token) {
-        console.log("Token successfully caught:", token);
         this.captchaToken = token;
       },
+      
       onExpired() {
         this.captchaToken = null;
       },
 
+      /* SUBMIT BOOKING */
       async submitBooking() {
         this.loading = true
         const loading = ElLoading.service({
@@ -224,7 +225,6 @@ export default {
 
           ElMessage.success('Booking submitted successfully.')
           this.clear()
-          console.log(this.bookingForm)
           
         } catch (e) {
           console.error("Submission crash caught: ", e)
@@ -309,11 +309,8 @@ export default {
           current.hours(hours).minutes(minutes).seconds(0);
           current.add(8, 'hours');
           this.bookingForm.bookingDateTime = current.toISOString();
-          console.log(this.bookingForm.bookingDateTime);
       },
       
-      
-
       /* GET SERVICES */
       async getServices(){
           try{
