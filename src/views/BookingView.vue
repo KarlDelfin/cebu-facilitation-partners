@@ -45,13 +45,13 @@
 
         <el-table class="!mt-5" :data="bookings" style="width: 100%" v-loading="loading" :row-class-name="tableRowClassName">
           
-          <el-table-column label="Date/Time Created" min-width="100">
+        <!--   <el-table-column label="Date/Time Created" min-width="100">
             <template #default="scope">
               <div class="text-slate-800 font-medium text-sm">
                 {{ scope.row.dateTimeCreated }}
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column label="Client" min-width="150">
             <template #default="scope">
@@ -64,7 +64,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Service" min-width="100">
+          <el-table-column label="Service" min-width="80">
             <template #default="scope">
               <el-tooltip
                 :content="scope.row.Service.description"
@@ -150,7 +150,7 @@
         />
       </el-card>
     </div>
-    <div class="w-[15%] rounded-xl bg-white !p-5 border border-slate-200 flex flex-col gap-4 shadow-sm">
+    <div v-loading="loading" class="w-[15%] rounded-xl bg-white !p-5 border border-slate-200 flex flex-col gap-4 shadow-sm">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex flex-col">
           <h3 class="font-bold text-slate-800 text-sm tracking-wide uppercase m-0">Upcoming Bookings</h3>
