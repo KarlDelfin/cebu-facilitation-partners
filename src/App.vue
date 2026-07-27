@@ -1,6 +1,4 @@
 <template>
   <RouterView />
 </template>
-
-<script>
-</script>
+<script> </script>

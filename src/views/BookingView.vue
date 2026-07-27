@@ -1,161 +1,208 @@
 <template>
-  <div class="space-y-6">
-    <el-row :gutter="20">
-      <el-col :span="8">
-        <el-card shadow="hover" class="!rounded-lg">
-          <template #header>
-            <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Bookings</span>
-          </template>
-          <div class="text-3xl font-bold text-slate-800">{{ metrics.totalBookings }}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card shadow="hover" class="!rounded-lg">
-          <template #header>
-            <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Pending Bookings</span>
-          </template>
-          <div class="text-3xl font-bold text-amber-500">{{ metrics.pendingBookings }}</div>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card shadow="hover" class="!rounded-lg">
-          <template #header>
-            <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Value</span>
-          </template>
-          <div class="text-3xl font-bold text-[#136cb3]">₱245,000</div>
-        </el-card>
-      </el-col>
-    </el-row>
+  <div class="flex w-full gap-x-4">
+    <div class="space-y-6 w-[85%]">
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-card shadow="hover" class="!rounded-lg">
+            <template #header>
+              <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Bookings</span>
+            </template>
+            <div class="text-3xl font-bold text-slate-800">{{ metrics.totalBookings }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="hover" class="!rounded-lg">
+            <template #header>
+              <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Pending Bookings</span>
+            </template>
+            <div class="text-3xl font-bold text-amber-500">{{ metrics.pendingBookings }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="hover" class="!rounded-lg">
+            <template #header>
+              <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Value</span>
+            </template>
+            <div class="text-3xl font-bold text-[#136cb3]">₱245,000</div>
+          </el-card>
+        </el-col>
+      </el-row>
 
-    <el-card shadow="never" class="!rounded-lg !border-slate-200 !mt-5">
-      <div class="flex justify-between items-center mb-6 gap-4">
-        <el-input
-          v-model="search.bookingName"
-          placeholder="Search by booking..."
-          class="w-96"
-          :prefix-icon="SearchIcon"
-          clearable
-          @input="searchBooking"
+      <el-card shadow="never" class="!rounded-lg !border-slate-200 !mt-5">
+        <div class="flex justify-between items-center mb-6 gap-4">
+          <el-input
+            v-model="search.bookingName"
+            placeholder="Search by booking..."
+            class="w-96"
+            :prefix-icon="SearchIcon"
+            clearable
+            @input="searchBooking"
+          />
+          <el-button type="primary" color="#136cb3" class="font-semibold" @click="formController('Create Booking')">
+            Create Booking
+          </el-button>
+        </div>
+
+        <el-table class="!mt-5" :data="bookings" style="width: 100%" v-loading="loading" :row-class-name="tableRowClassName">
+          
+          <el-table-column label="Date/Time Created" min-width="100">
+            <template #default="scope">
+              <div class="text-slate-800 font-medium text-sm">
+                {{ scope.row.dateTimeCreated }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Client" min-width="150">
+            <template #default="scope">
+              <div class="flex flex-col">
+                <div class="font-bold text-slate-800 text-sm">{{ scope.row.fullName }}</div>
+                <div class="text-xs text-slate-500 mt-0.5">
+                  {{ scope.row.email }} | {{ scope.row.phone }}
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Service" min-width="100">
+            <template #default="scope">
+              <el-tooltip
+                :content="scope.row.Service.description"
+                placement="top"
+                effect="dark"
+              >
+                <el-tag effect="plain" class="!border-[#136cb3] !text-[#136cb3] !font-bold !bg-white cursor-pointer">
+                  {{ scope.row.Service.name }}
+                </el-tag>
+              </el-tooltip>
+              
+              <div class="text-xs text-slate-500 mt-1">
+                Rate: ₱{{ scope.row.Service.price.toLocaleString() }} | Total: ₱{{ (scope.row.Service.price * scope.row.noOfParticipants).toLocaleString() }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="No of Participants" align="center">
+            <template #default="scope">
+              <div class="inline-flex items-center gap-2 bg-slate-100 !px-2 py-1 rounded-md text-slate-700 font-semibold text-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <!-- Status dot indicator -->
+                <span>{{ scope.row.noOfParticipants }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Scheduled Date" align="center">
+            <template #default="scope">
+              <div class="text-slate-800 font-medium text-sm">
+                <el-tag>{{ scope.row.bookingDateTime }}</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Status" width="130">
+            <template #default="scope">
+              <el-select 
+                v-model="scope.row.status" 
+                size="small" 
+                @change="handleStatusChange(scope.row)"
+              >
+                <el-option label="Pending" value="pending" />
+                <el-option label="Confirmed" value="confirmed" />
+                <el-option label="Cancelled" value="cancelled" />
+                <el-option label="Completed" value="completed" />
+              </el-select>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Operation" width="120" fixed="right" align="center">
+            <template #default="scope">
+              <el-button 
+                size="small" 
+                type="primary" 
+                link 
+                class="!text-[#136cb3] !font-bold"
+                @click="formController('Edit Booking', scope.row)"
+              >
+                Edit
+              </el-button>
+              <el-button 
+                size="small" 
+                type="primary" 
+                link 
+                class="!text-rose-500 !font-bold"
+                @click="deleteBooking(scope.row.id)"
+              >
+                Delete
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <el-pagination
+          class="mt-5! flex p-5!"
+          v-model:current-page="bookingPagination.currentPage"
+          v-model:page-size="bookingPagination.elementsPerPage"
+          :page-sizes="[5, 10, 25, 50]"
+          :total="bookingPagination.totalElements"
+          layout="total, sizes, prev, pager, next, jumper"
+          @current-change="getBookings"
+          @size-change="getBookings"
         />
-        <el-button type="primary" color="#136cb3" class="font-semibold" @click="formController('Create Booking')">
-          Create Booking
-        </el-button>
+      </el-card>
+    </div>
+    <div class="w-[15%] rounded-xl bg-white !p-5 border border-slate-200 flex flex-col gap-4 shadow-sm">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex flex-col">
+          <h3 class="font-bold text-slate-800 text-sm tracking-wide uppercase m-0">Upcoming Bookings</h3>
+        </div>
+        <span class="bg-[#136cb3]/10 text-[#136cb3] text-xs font-bold !px-2 py-0.5 rounded-full">
+          {{ upcomingBookings.length }}
+        </span>
       </div>
 
-      <el-table class="!mt-5" :data="bookings" style="width: 100%" v-loading="loading">
-        
-        <el-table-column label="Date/Time Created" min-width="160">
-          <template #default="scope">
-            <div class="text-slate-800 font-medium text-sm">
-              {{ scope.row.dateTimeCreated }}
+      <div class="flex flex-col divide-y divide-slate-100 overflow-y-auto max-h-[calc(100vh-200px)] custom-scrollbar !gap-y-4">
+        <div 
+          v-for="(upcomingBooking, index) in upcomingBookings" 
+          :key="index"
+          class="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0 group hover:bg-slate-50/50 transition-colors duration-150 rounded-lg px-1"
+        >
+          <div class="flex items-center gap-1.5">
+            <el-tag size="small" type="primary" effect="light" class="!font-semibold !text-[11px] !px-2">
+              {{ upcomingBooking.bookingDateTime }}
+            </el-tag>
+          </div>
+
+          <div class="flex flex-col pl-0.5">
+            <div class="font-bold text-slate-800 !text-xs group-hover:text-[#136cb3] transition-colors duration-150">
+              {{ upcomingBooking.fullName }}
             </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Client" min-width="150">
-          <template #default="scope">
-            <div class="flex flex-col">
-              <div class="font-bold text-slate-800 text-sm">{{ scope.row.fullName }}</div>
-              <div class="text-xs text-slate-500 mt-0.5">
-                {{ scope.row.email }} | {{ scope.row.phone }}
-              </div>
+            <div class="text-[11px] text-slate-500 !text-xs font-medium mt-0.5 break-all">
+              {{ upcomingBooking.email }}
             </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Service" min-width="100">
-          <template #default="scope">
-            <el-tooltip
-              :content="scope.row.Service.description"
-              placement="top"
-              effect="dark"
-            >
-              <el-tag effect="plain" class="!border-[#136cb3] !text-[#136cb3] !font-bold !bg-white cursor-pointer">
-                {{ scope.row.Service.name }}
-              </el-tag>
-            </el-tooltip>
-            
-            <div class="text-xs text-slate-500 mt-1">
-              Rate: ₱{{ scope.row.Service.price.toLocaleString() }} | Total: ₱{{ (scope.row.Service.price * scope.row.noOfParticipants).toLocaleString() }}
+            <div class="text-[11px] text-slate-400 !text-xs font-medium mt-0.5">
+              {{ upcomingBooking.phone }}
             </div>
-          </template>
-        </el-table-column>
+          </div>
+        </div>
 
-        <el-table-column label="No of Participants" align="center">
-          <template #default="scope">
-            <div class="inline-flex items-center gap-2 bg-slate-100 !px-2 py-1 rounded-md text-slate-700 font-semibold text-sm">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <!-- Status dot indicator -->
-              <span>{{ scope.row.noOfParticipants }}</span>
-            </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Scheduled Date" align="center">
-          <template #default="scope">
-            <div class="text-slate-800 font-medium text-sm">
-              <el-tag>{{ scope.row.bookingDateTime }}</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Status" width="130">
-          <template #default="scope">
-            <el-select 
-              v-model="scope.row.status" 
-              size="small" 
-              @change="handleStatusChange(scope.row)"
-            >
-              <el-option label="Pending" value="pending" />
-              <el-option label="Confirmed" value="confirmed" />
-              <el-option label="Cancelled" value="cancelled" />
-              <el-option label="Completed" value="completed" />
-            </el-select>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Operation" width="120" fixed="right" align="center">
-          <template #default="scope">
-            <el-button 
-              size="small" 
-              type="primary" 
-              link 
-              class="!text-[#136cb3] !font-bold"
-              @click="formController('Edit Booking', scope.row)"
-            >
-              Edit
-            </el-button>
-            <el-button 
-              size="small" 
-              type="primary" 
-              link 
-              class="!text-rose-500 !font-bold"
-              @click="deleteBooking(scope.row.id)"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-pagination
-        class="mt-5! flex p-5!"
-        v-model:current-page="bookingPagination.currentPage"
-        v-model:page-size="bookingPagination.elementsPerPage"
-        :page-sizes="[5, 10, 25, 50]"
-        :total="bookingPagination.totalElements"
-        layout="total, sizes, prev, pager, next, jumper"
-        @current-change="getBookings"
-        @size-change="getBookings"
-      />
-    </el-card>
+        <div v-if="upcomingBookings.length === 0" class="text-center py-8 flex flex-col items-center justify-center gap-2">
+          <el-empty description="No bookings yet."/>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- BOOKING FORM -->
   <el-dialog v-model="dialog.bookingForm" :title="title" center :before-close="clear">
-    <el-form ref="bookingFormRef" @submit.prevent="submitForm" label-position="top" :model="bookingForm">
-      <el-form-item label="Service">
+    <el-form ref="bookingFormRef" @submit.prevent="submitForm" label-position="top" :model="bookingForm" v-loading="loading">
+      <el-form-item 
+        label="Service"
+        prop="serviceId"
+        :rules="[
+          { required: true, message: 'Please select service', trigger: 'blur', },
+        ]">
         <el-select 
-          @click="getServices" 
+          @click="getServices('')" 
           filterable 
           @input="searchService" 
           :loading="loading" 
@@ -212,7 +259,7 @@
             { required: true, message: 'Please input phone number', trigger: 'blur', },
             { pattern: /^(\+?\d{10,15})$/, message: 'Please input correct phone number', trigger: ['blur', 'change'], },
           ]">
-          <el-input v-model="bookingForm.phone" placeholder="Enter Client Phone"/>
+          <el-input v-model="bookingForm.phone" maxlength="11" placeholder="Enter Client Phone Number"/>
         </el-form-item>
 
         <el-form-item 
@@ -237,16 +284,18 @@ import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import moment from 'moment';
 import debounce from 'lodash/debounce'
+import { markRaw } from 'vue'
 
 export default {
   data() {
     return {
       title: '',
       loading: false,
-      SearchIcon: Search,
+      SearchIcon: markRaw(Search),
       bookings: [],
       services: [],
       vCalendarEvents: [],
+      upcomingBookings: [],
       selectedTime: '',
       
       timeSlots: [
@@ -304,40 +353,40 @@ export default {
   methods: {
     /* HANDLE SELECT DATE */
     async handleSelectDate(day) {
-        const selected = moment(day.date).startOf('day');
-        const today = moment().startOf('day');
-        
-        if (selected.isBefore(today)) {
-            ElMessage.warning('Cannot select past date');
-            return;
-        }
-        
-        this.bookingForm.bookingDateTime = selected.format('YYYY-MM-DD');
-        this.vCalendarEvents = [{
-            highlight: { backgroundColor: '#ff8080' },
-            dates: day.date instanceof Date ? day.date : new Date(day.date)
-        }];
-
         try {
-            const startOfDay = selected.format('YYYY-MM-DD HH:mm:ss');
-            const endOfDay = selected.endOf('day').format('YYYY-MM-DD HH:mm:ss');
-            
-            const { data, error } = await supabase
-                .from('Booking')
-                .select('bookingDateTime')
-                .gte('bookingDateTime', startOfDay)
-                .lt('bookingDateTime', endOfDay);
+          const selected = moment(day.date).startOf('day');
+          const today = moment().startOf('day');
+          
+          if (selected.isBefore(today) && this.title === 'Create Booking') {
+              ElMessage.warning('Cannot select past date');
+              return;
+          }
+          
+          this.bookingForm.bookingDateTime = selected.format('YYYY-MM-DD');
+          this.vCalendarEvents = [{
+              highlight: { backgroundColor: '#ff8080' },
+              dates: day.date instanceof Date ? day.date : new Date(day.date)
+          }];
+          
+          const startOfDay = selected.format('YYYY-MM-DD HH:mm:ss');
+          const endOfDay = selected.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+          
+          const { data, error } = await supabase
+              .from('Booking')
+              .select('bookingDateTime')
+              .gte('bookingDateTime', startOfDay)
+              .lt('bookingDateTime', endOfDay);
 
-            if (error) throw error;
+          if (error) throw error;
 
-            const bookedTimes = new Set(
-                data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'))
-            );
+          const bookedTimes = new Set(
+              data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'))
+          );
 
-            this.timeSlots = this.timeSlots.map(slot => ({
-                ...slot,
-                disabled: bookedTimes.has(slot.value)
-            }));
+          this.timeSlots = this.timeSlots.map(slot => ({
+              ...slot,
+              disabled: bookedTimes.has(slot.value)
+          }));
 
         } catch (error) {
             console.error('Error fetching bookings:', error);
@@ -353,7 +402,6 @@ export default {
         current.hours(hours).minutes(minutes).seconds(0);
         current.add(8, 'hours');
         this.bookingForm.bookingDateTime = current.toISOString();
-        console.log(this.bookingForm.bookingDateTime);
     },
 
     /* HANDLE STATUS CHANGE */
@@ -430,7 +478,6 @@ export default {
           ElMessage.success('Booking updated successfully.')
           this.clear()
           this.getBookings()
-
         }
       }
       catch(error){
@@ -443,32 +490,40 @@ export default {
 
     /* FORM CONTROLLER */
     async formController(title, data) {
-      this.title = title
-      this.dialog.bookingForm = true
+      try{
+        this.title = title
+        this.dialog.bookingForm = true
+        this.loading = true
 
-      if(title == 'Create Booking') {
+        if(title == 'Create Booking') {
 
+        }
+
+        if(title == 'Edit Booking') {
+          this.bookingForm.id = data.id;
+          this.bookingForm.serviceId = data.Service.id;
+          this.bookingForm.fullName = data.fullName;
+          this.bookingForm.email = data.email;
+          this.bookingForm.phone = data.phone;
+
+          this.handleSelectDate({ date: moment(data.bookingDateTime).format('YYYY-MM-DD') });
+          this.handleSelectTime(moment(data.bookingDateTime).format('HH:mm:ss'));
+
+          const { data: serviceData, error } = await supabase
+            .from('Service')
+            .select('*')
+            .eq('id', data.Service.id);
+
+          if (error) throw error
+          
+          this.services = serviceData
+        }
       }
-
-      if(title == 'Edit Booking') {
-        this.bookingForm.id = data.id;
-        this.bookingForm.serviceId = data.Service.id;
-        this.bookingForm.fullName = data.fullName;
-        this.bookingForm.email = data.email;
-        this.bookingForm.phone = data.phone;
-
-        this.handleSelectDate({ date: moment(data.bookingDateTime).format('YYYY-MM-DD') });
-        this.handleSelectTime(moment(data.bookingDateTime).format('HH:mm:ss'));
-
-        const { data: serviceData, error } = await supabase
-          .from('Service')
-          .select('*')
-          .eq('id', data.Service.id);
-
-        if (error) throw error
-        
-        this.services = serviceData
-
+      catch(error) {
+        console.error(error)
+      }
+      finally {
+        this.loading = false
       }
     },
 
@@ -536,9 +591,50 @@ export default {
         this.bookingPagination.totalElements = count || 0
       }
       catch(error) {
-        console.log(error)
+        console.error(error)
       }
       finally {
+        this.loading = false;
+      }
+    },
+
+    /* GET UPCOMING BOOKINGS */
+    async getUpcomingBookings(searchValue = '') {
+      this.loading = true;
+      try {
+
+        let query = supabase
+          .from('Booking')
+          .select('*', { count: 'exact' });
+
+        const now = new Date();
+        query = query.gte('bookingDateTime', now.toISOString());
+
+        if (searchValue !== '') {
+          const searchPattern = `%${searchValue}%`;
+          query = query.or(`fullName.ilike.${searchPattern},email.ilike.${searchPattern}`);
+        }
+
+        query = query.order('bookingDateTime', { ascending: true });
+
+        const { data, error, count } = await query;
+
+        if (error) throw error;
+
+        this.upcomingBookings = data.map((item) => ({
+          id: item.id,
+          serviceId: item.serviceId,
+          fullName: item.fullName,
+          email: item.email,
+          phone: item.phone,
+          status: item.status,
+          noOfParticipants: item.noOfParticipants,
+          bookingDateTime: moment(item.bookingDateTime).format('MMMM DD, YYYY hh:mm A')
+        }));
+      }
+      catch (error) {
+        console.error(error);
+      } finally {
         this.loading = false;
       }
     },
@@ -567,7 +663,7 @@ export default {
             .from('Service')
             .select('*', { count: 'exact' })
 
-        if (searchValue && searchValue.trim() !== '') {
+        if (searchValue !== '') {
           const searchPattern = `%${searchValue}%`;
           
           query = query.or(`name.ilike.${searchPattern},description.ilike.${searchPattern}`);
@@ -613,6 +709,7 @@ export default {
           ElMessage.success('Booking deleted successfully.')
       }
       catch(error) {
+        throw error
       }
     },
 
@@ -622,19 +719,16 @@ export default {
         const [totalBookings, totalPending, totalValue] = await Promise.all([
           supabase.from('Booking').select('*', { count: 'exact', head: true }),
           supabase.from('Booking').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-          // supabase.from('Booking').select('price', { count: 'exact', head: true }).eq('status', 'confirmed')
         ]);
 
         if (totalBookings.error) throw totalBookings.error;
         if (totalPending.error) throw totalPending.error;
-        // if (totalValue.error) throw totalValue.error;
 
         this.metrics.totalBookings = totalBookings.count || 0;
         this.metrics.pendingBookings = totalPending.count || 0;
-        // this.metrics.totalValue = totalValue.count || 0;
 
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     },
 
@@ -651,12 +745,42 @@ export default {
       this.vCalendarEvents = []
       this.selectedTime = ''
 
+      this.timeSlots = this.timeSlots.map(slot => ({
+          ...slot,
+          disabled: false
+      }));
+
       this.dialog.bookingForm = false
-    }
+    },
+
+    tableRowClassName({ row }) {
+      if (row.status === 'confirmed') {
+        return 'primary-row'
+      }
+      if (row.status === 'completed') {
+        return 'success-row'
+      }
+      if (row.status === 'pending') {
+        return 'warning-row'
+      }
+      if (row.status === 'cancelled') {
+        return 'danger-row'
+      }
+    },
   },
-  mounted() {
-    this.getBookings()
-    this.getBookingMetrics()
+  async mounted() {
+    this.loading = true;
+    try {
+      await Promise.all([
+        this.getBookings(),
+        this.getBookingMetrics(),
+        this.getUpcomingBookings()
+      ]);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    } finally {
+      this.loading = false;
+    }
   }
 }
 </script>
@@ -666,5 +790,18 @@ export default {
 .el-form-item__content button.active { background: #409eff !important; color: #fff !important; }
 
 .el-form-item__content button.disabled { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
+
+.el-table .primary-row {
+  --el-table-tr-bg-color: var(--el-color-primary-light-9);
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+.el-table .danger-row {
+  --el-table-tr-bg-color: var(--el-color-danger-light-9);
+}
 
 </style>
