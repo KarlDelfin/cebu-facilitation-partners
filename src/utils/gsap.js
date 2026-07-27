@@ -15,7 +15,28 @@ export function gsapController() {
         lenis.raf(time * 1000)
     })
     gsap.ticker.lagSmoothing(0)
+
     /* HEADER */
+    ScrollTrigger.create({
+        start: "top top",
+        end: "max",
+        onUpdate: (self) => {
+            if (self.direction === 1) {
+            gsap.to(".header_con", { 
+                yPercent: -200, 
+                duration: 0.5, 
+                ease: "power2.out" 
+            });
+            } else {
+            gsap.to(".header_con", { 
+                yPercent: 0, 
+                duration: 0.5, 
+                ease: "power2.out" 
+            });
+            }
+        }
+        });
+   
     gsap.from('.company_logo', {
         y: -200,
         delay: .5,
@@ -71,13 +92,13 @@ export function gsapController() {
         y: 40,
         opacity: 0,
         duration: 0.8,
-        ease: 'power3.out',
+        ease: 'back.out',
         stagger: 0.15,
     }).from('.services_head p', {
         y: 40,
         opacity: 0,
         duration: 0.8,
-        ease: 'power3.out',
+        ease: 'back.out',
         stagger: 0.15,
     }, 0)
 
@@ -85,7 +106,7 @@ export function gsapController() {
         y: 40,
         opacity: 0,
         duration: 0.8,
-        ease: 'power3.out',
+        ease: 'back.out',
         stagger: 0.15,
         scrollTrigger: { trigger: '.pathway', start: 'top 75%' },
     })
@@ -126,7 +147,7 @@ export function gsapController() {
     let galleryImages = gsap.utils.toArray('.gallery_con img');
 
     let galleryTL = gsap.timeline({
-        scrollTrigger: {    trigger: ".gallery_con", start: "top top", end: "+=1000", scrub: true, pin: true }
+        scrollTrigger: { trigger: ".gallery_con", start: "top top", end: "+=1000", scrub: true, pin: true }
     })
     
     galleryImages.forEach((image, i) => {
@@ -147,13 +168,21 @@ export function gsapController() {
     }, 0)
 
     /* TEAM */
+    gsap.from('.team_head h2', {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'back.out',
+        stagger: 0.2,
+        scrollTrigger: { trigger: '.team_head h2', start: 'top 75%' },
+    })
     gsap.from('.team_card', {
         y: 40,
         opacity: 0,
         duration: 0.8,
-        ease: 'power3.out',
+        ease: 'back.out',
         stagger: 0.2,
-        scrollTrigger: { trigger: '.team_grid', start: 'top 75%' },
+        scrollTrigger: { trigger: '.team_card', start: 'top 75%' },
     })
 
     /* FOOTER */
@@ -169,6 +198,50 @@ export function gsapController() {
         scrollTrigger: { trigger: '#footer', start: 'top 80%' },
     })
 }
+
+export function gsapSlidesPinning() {
+    
+    var panels = gsap.utils.toArray(".packages_con");
+    panels.pop();
+
+    panels.forEach((panel, i) => {
+        let innerpanel = panel.querySelector(".packages_inner");
+        let panelHeight = innerpanel.offsetHeight;
+        let windowHeight = window.innerHeight;
+        let difference = panelHeight - windowHeight;
+        let fakeScrollRatio = difference > 0 ? (difference / (difference + windowHeight)) : 0;
+        
+        if (fakeScrollRatio) {
+            panel.style.marginBottom = panelHeight * fakeScrollRatio + "px";
+        }
+        
+        let tl = gsap.timeline({
+            scrollTrigger:{
+            trigger: panel,
+            start: "bottom bottom",
+            end: () => fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : "bottom top",
+            pinSpacing: false,
+            pin: true,
+            scrub: true
+            }
+        });
+        
+        // fake scroll. We use 1 because that's what the rest of the timeline consists of (0.9 scale + 0.1 fade)
+        if (fakeScrollRatio) {
+            tl.to(innerpanel, {yPercent:-100, y: window.innerHeight, duration: 1 / (1 - fakeScrollRatio) - 1, ease: "none"});
+        }
+        tl.fromTo(panel, {scale:1, opacity:1}, {scale: 0.7, opacity: 0.5, duration: 0.9})
+        .to(panel, {opacity:0, duration: 0.1});
+    });
+}
+
+
+
+
+
+
+
+
 
 
 

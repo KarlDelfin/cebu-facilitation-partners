@@ -1,5 +1,5 @@
 <template>
-<div class="booking_form" id="bookingForm">
+<div class="booking_form" id="bookingForm" v-loading="loading">
   <button class="booking_form_close" @click="clear">&times;</button>
  
   <!-- Step indicator -->
@@ -194,13 +194,8 @@ export default {
 
       /* SUBMIT BOOKING */
       async submitBooking() {
-        this.loading = true
-        const loading = ElLoading.service({
-          lock: true,
-          text: 'Loading',
-          background: 'rgba(0, 0, 0, 0.7)',
-        })
         try {
+          this.loading = true
           await this.$refs.bookingFormRef.validate()
 
           if (!this.captchaToken) {
@@ -226,11 +221,10 @@ export default {
           ElMessage.success('Booking submitted successfully.')
           this.clear()
           
-        } catch (e) {
-          console.error("Submission crash caught: ", e)
+        } catch (error) {
+          console.error(error)
         } finally {
           this.loading = false
-          loading.close()
         }
       },
      
@@ -316,6 +310,7 @@ export default {
       /* GET SERVICES */
       async getServices(){
           try{
+              this.loading = true
               const {data, e} = await supabase
                   .from('Service')
                   .select('*')
@@ -326,8 +321,12 @@ export default {
           catch(e) {
               console.error(e)
           }
+          finally {
+            this.loading = false
+          }
       },
 
+      /* CLEAR DATA */
       clear(){
           this.bookingForm.serviceId = ''
           this.bookingForm.clientId = ''
@@ -409,6 +408,7 @@ export default {
 .time_btn.disabled { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
 
 .form_nav {display:flex; justify-content:space-between; align-items:center; margin-top:30px; border-top:1px solid #eee; padding-top:24px;}
+.form_nav button:hover { background:var(--secColor); transition:all .3s ease; color:var(--defaultColor);}
 .btn_back, .btn_next, .btn_submit {padding:12px 28px; border-radius:8px; font-weight:700; cursor:pointer; border:none; font-size:.95rem;}
 .btn_back {background:var(--defaultColor); color:var(--bodyColor); border:1px solid #ddd;}
 .btn_next, .btn_submit {background:var(--priColor); color:var(--defaultColor);}

@@ -28,7 +28,7 @@
     <el-card class="w-[420px] p-5 rounded-xl text-center border-none" shadow="always">
       <div class="flex flex-col gap-1 mb-2">
         <h2 class="text-[#136cb3] text-2xl font-extrabold tracking-wide uppercase m-0">
-          <a href="/">Cebu Facilitation Partners</a>
+          <a href="/">Upskills Facilitation Partners</a>
         </h2>
         <p class="text-slate-500 text-xs font-medium m-0">
           Admin Gateway
@@ -66,10 +66,7 @@
 import AdminSidebar from '@/components/AdminSidebar.vue';
 import { supabase } from '@/utils/supabaseClient';
 import { ElMessage } from 'element-plus';
-import { useDark, useToggle } from '@vueuse/core'
 
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
 
 export default {
   name: 'AdminView',
@@ -78,13 +75,11 @@ export default {
   },
   data() {
     return {
-      isDark,
       loading: true,
       isValidating: false
     };
   },
   methods: {
-    toggleDark,
     async validateAndSetSession(session) {
       if (!session || !session.user) {
         this.$store.dispatch('setUser', null);
@@ -133,14 +128,11 @@ export default {
       try {
         this.loading = true;
         
-        // 1. Calculate base path dynamically
         const baseHref = document.querySelector('base')?.getAttribute('href') || '/cebu-facilitation-partners/';
         const cleanBase = baseHref.endsWith('/') ? baseHref : baseHref + '/';
         
-        // 🌟 Target the exact /admin/bookings route!
         const absoluteRedirectUrl = `${window.location.origin}${cleanBase}admin/bookings`;
 
-        // 2. Pass it directly into Supabase OAuth options
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: { 

@@ -58,7 +58,8 @@
         <div class="middle_con">
             <div class="middle_info">
                 <h2>Welcome to<span>Upskills Facilitation Partners</span></h2>
-                <p>Based in <b>Cebu</b>, <mark>Upskill Facilitation Partners</mark> accelerates professional readiness by transforming your unique corporate objectives into high-impact, tailor-made training programs. We collaborate closely with your organization to design bespoke bootcamps that directly address your specific operational needs. Guided by our core values of <b>Growth, Leadership, and Excellence</b>, we empower local talent to meet evolving industry demands, establishing Cebu as a premier destination for world-class, future-ready professionals.</p>
+                <p>Based in <b>Cebu</b>, we create training programs that fit your team's unique needs. Instead of using a one-size-fits-all approach, we work with you to design team-building experiences that help your people grow and achieve your business goals.</p>
+                <p>Driven by our values of <b>Transformation, Excellence, and Altruism</b>, we believe in developing people with both skill and purpose. We don't just provide training—we help build confident, capable, and future-ready professionals who can succeed in a changing world.</p>
             </div>
         </div>
         <div class="middle_img">
@@ -89,18 +90,18 @@
                 </svg>
                 <div class="mission">
                     <h2>Mission</h2>
-                    <p><mark>Upskill Facilitation Partners</mark> delivers client-curated bootcamps that bridge skill gaps and accelerate professional readiness within Cebu's growing business community. We transform corporate objectives into targeted, high-impact training tracks that empower local talent and drive organizational growth.</p>
+                    <p>To empower individuals and organizations through meaningful, customized learning experiences that inspire transformation, pursue excellence, and foster a culture of service.</p>
                 </div>
                 <div class="vision">
                     <h2>Vision</h2>
-                    <p>To be Cebu's premier learning facilitation partner, transforming the region into a world-class hub for agile, future-ready professional talent.</p>
+                    <p>To be Cebu's trusted partner in developing future-ready professionals and purpose-driven leaders who create lasting impact in their workplaces and communities.</p>
                 </div>
                 <div class="core_values">
                     <h2>Core Values</h2>
                     <ul>
-                        <li><b>Growth</b> — Driving continuous learning and performance evolution.</li>
-                        <li><b>Leadership</b> — Cultivating accountability and strategic vision.</li>
-                        <li><b>Excellence</b> — Maintaining uncompromising standards for measurable results.</li>
+                        <li><b>Transformation</b> — We drive continuous learning and performance evolution by embracing change, pursuing constant growth, and adaptively upskilling to meet the future.</li>
+                        <li><b>Excellence</b> — We maintain uncompromising standards for measurable results through disciplined execution, precise quality control, and an absolute refusal to settle for mediocrity.</li>
+                        <li><b>Altruism</b> — We practice unselfish concern for the well-being of others by actively investing our time, empathy, and resources into uplifting the broader community.</li>
                     </ul>
                 </div>
             </div>
@@ -160,6 +161,123 @@
         </div>
     </div>
 
+    <!-- PACKAGES -->
+    <div id="packages">
+        <div class="packages_con package1">
+            <div class="packages_inner">
+                <div class="package_header">
+                    <h2>MVP</h2>
+                    <p>The ultimate championship-level experience.</p>
+                </div>
+                
+                <div class="package_details">
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li class="premium-highlight">Food (AM & PM Snacks; 1 Lunch)</li>
+                            <li class="premium-highlight">Venue at Bayfront Hotel Cebu</li>
+                            <li>2 Team-Building Facilitators</li>
+                            <li>Event Banners</li>
+                            <li>4 Team Flags (Fire, Water, Air, Earth)</li>
+                            <li>50 Headbands (12-13 headbands for each team)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li class="hardware-highlight">7ft x 10 ft LED Wall Display</li>
+                            <li>2 UHF Wireless Microphones</li>
+                            <li>2 Active Speakers with Stands</li>
+                            <li>1 Mixer</li>
+                            <li>2-3 Minutes Video Highlights (SDE)</li>
+                            <li>Activity Materials</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="perks_box">
+                    <div class="perk_item"><span>FREE</span> 15 Medals</div>
+                    <div class="perk_item"><span>FREE</span> 50 Certificates</div>
+                    <div class="perk_item"><span>FREE</span> 2-3 client coordination meetings</div>
+                    <div class="perk_item"><span>FREE</span> FREE Customization of the Activities</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="packages_con package2">
+            <div class="packages_inner">
+                <div class="package_header">
+                    <h2>ALL-STAR</h2>
+                    <p>Elevated competition and enhanced experience.</p>
+                </div>
+                
+                <div class="package_details">
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li>2 Team-Building Facilitators</li>
+                            <li>Event Banners</li>
+                            <li>4 Team Flags (Fire, Water, Air, Earth)</li>
+                            <li>50 Headbands (12-13 headbands for each team)</li>
+                        </ul>
+                    </div>
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li class="hardware-highlight">7ft x 10 ft LED Wall Display</li>
+                            <li>2 UHF Wireless Microphones</li>
+                            <li>2 Active Speakers with Stands</li>
+                            <li>1 Mixer</li>
+                            <li>2-3 Minutes Video Highlights (SDE)</li>
+                            <li>Activity Materials</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="perks_box">
+                    <div class="perk_item"><span>FREE</span> 15 Medals</div>
+                    <div class="perk_item"><span>FREE</span> 50 Certificates of Participation</div>
+                    <div class="perk_item"><span>FREE</span> 2-3 meetings with client for coordination</div>
+                    <div class="perk_item"><span>FREE</span> FREE Customization of the Activities</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="packages_con package3">
+            <div class="packages_inner">
+                <div class="package_header">
+                    <h2>ROOKIE</h2>
+                    <p>Fundamental bonding and core teamwork.</p>
+                </div>
+                
+                <div class="package_details">
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li>2 Team-Building Facilitators</li>
+                            <li>Event Banners</li>
+                            <li>4 Team Flags (Fire, Water, Air, Earth)</li>
+                            <li>50 Headbands (12-13 headbands for each team)</li>
+                        </ul>
+                    </div>
+                    <div class="feature_col">
+                        <ul class="feature_list">
+                            <li>7ft by 10ft Tarpaulin Backdrop</li>
+                            <li>2 UHF Wireless Microphones</li>
+                            <li>2 Active Speakers with Stands</li>
+                            <li>1 Mixer</li>
+                            <li>2-3 Minutes Video Highlights (SDE)</li>
+                            <li>Activity Materials</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="perks_box">
+                    <div class="perk_item"><span>FREE</span> 15 Medals</div>
+                    <div class="perk_item"><span>FREE</span> 50 Certificates of Participation</div>
+                    <div class="perk_item"><span>FREE</span> 2-3 meetings with client for coordination</div>
+                    <div class="perk_item"><span>FREE</span> FREE Customization of the Activities</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- GALLERY -->
     <div id="gallery">
         <div class="gallery_con">
@@ -185,10 +303,12 @@
             </div>
             <div class="team_grid">
                 <article class="team_card">
-                    <div class="team_avatar">RC</div>
+                    <div class="team_avatar">
+                        <img src="../assets/image/team/reb-camacho.webp" alt="Reb Camacho">
+                    </div>
                     <h3>Reb Camacho</h3>
-                    <p class="role">Co-founder</p>
-                    <p class="bio">Reb brings years of hands-on experience in talent development, process improvement, and creative media. With a background as a BPO Trainer at Concentrix and Ambassador of Culture at Moder Solutions, Reb combines a Lean Six Sigma certification with a human-centric approach to training — using a deep creative portfolio to help local talent thrive in a fast-paced corporate environment.</p>
+                    <p class="role">Founder</p>
+                    <p class="bio">Reb Camacho is a Certified Lean Six Sigma Yellow Belt professional, youth leader, and digital storyteller committed to developing people and building meaningful communities. He has served as a facilitator since 2016, was appointed Camp Director in 2022, and has been mentoring emerging facilitators since then. Beyond youth leadership, Reb is a content creator and a founding member of the Archdiocese of Cebu's social media ministry, where he leverages creative media to inspire, educate, and strengthen faith-based engagement.</p>
                     <div class="credentials">
                         <span>BA in Marketing Communication (2026)</span>
                         <span>BPO Trainer, Concentrix (2025–2026)</span>
@@ -197,10 +317,12 @@
                     </div>
                 </article>
                 <article class="team_card">
-                    <div class="team_avatar">MC</div>
+                    <div class="team_avatar">
+                        <img src="../assets/image/team/myrene-camingawan.webp" alt="Myrene Camingawan">
+                    </div>
                     <h3>Myrene Camingawan</h3>
-                    <p class="role">Co-founder</p>
-                    <p class="bio">A Licensed Professional Teacher with extensive experience in both the classroom and the corporate sector, Myrene blends professional teaching expertise with a results-oriented business mindset — specializing in learning experiences that convert potential into professional readiness. From coordinating high-impact summer camps to performing as a spoken poetry artist, her background lets her design curriculum that engages, inspires, and delivers measurable outcomes.</p>
+                    <p class="role">Founder</p>
+                    <p class="bio">Yen Camingawan is a Licensed Professional Teacher and Cum Laude graduate with a Bachelor of Secondary Education major in Filipino. A dedicated youth leader and educator, she has served as a summer camp facilitator since 2016 and was appointed Summer Camp Director in 2023. Since then, she has also been mentoring and developing the next generation of facilitators, empowering young leaders through guidance, service, and values-based leadership.</p>
                     <div class="credentials">
                         <span>Bachelor in Secondary Education, Major in Filipino</span>
                         <span>Licensed Professional Teacher · TEFL Certified</span>
@@ -246,7 +368,7 @@
 
 <script>
 import { Setting } from '@element-plus/icons-vue'
-import { gsapController, gsapSidebarController } from '../utils/gsap'
+import { gsapController, gsapSidebarController, gsapSlidesPinning } from '../utils/gsap'
 import gsap from 'gsap/all'
 import BookingForm from '@/components/BookingForm.vue';
 import {ElLoading} from 'element-plus'
@@ -299,6 +421,7 @@ export default {
     mounted() {
         gsapController()
         gsapSidebarController()
+        gsapSlidesPinning()
     },
 }
 </script>

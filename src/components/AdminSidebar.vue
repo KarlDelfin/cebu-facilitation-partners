@@ -2,7 +2,7 @@
   <el-aside width="240px" class="h-screen flex flex-col bg-[#333]">
     <div class="p-6 text-center border-b border-slate-600">
       <h2 class="text-white m-0 text-lg font-bold tracking-wider uppercase !mb-3 !p-5">
-        <a href="/">Cebu Facilitation Partners</a>
+        <a href="/">Upskills Facilitation Partners</a>
       </h2>
     </div>
     
