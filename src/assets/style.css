@@ -103,18 +103,21 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .services_head h2 span  {font-size: clamp(2rem, 5vw, 3.4rem); display: block; font-family: var(--secFont); font-weight: 500; color: var(--secColor); text-transform: none; letter-spacing: -.01em; margin-top: .35rem;  }
     .services_head p { color: var(--ink); font-size: 1.05rem; line-height: 1.7; }
 
-    .pathway { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-bottom: 4rem; }
+    .pathway { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-bottom: 4rem; }
     .pathway_line { position: absolute; top: -1.5rem; left: 0; width: 100%; height: 40px; pointer-events: none; }
     .pathway_line path { fill: none; stroke: var(--thiColor); stroke-width: 2; stroke-dasharray: 6 8; }
 
-    .bootcamp_card { border: 1px solid rgba(254,253,223,.18); border-radius: 4px; padding: 2.25rem; position: relative; background: rgba(254,253,223,.03); }
+    .bootcamp_card { border: 1px solid rgba(254,253,223,.18); border-radius: 4px; position: relative; background: rgba(254,253,223,.03); padding: 0 0 60% 0;}
+    .bootcamp_card div {padding: 2.25rem;}
+    .bootcamp_card div p { color: var(--defaultColor); }
     .bootcamp_card .tier { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--thiColor); font-weight: 600; }
     .bootcamp_card h3 { font-family: var(--secFont); font-size: 1.6rem; margin: .6rem 0 1.25rem; font-weight: 500; color: var(--secColor);}
     .bootcamp_card dl { display: grid; grid-template-columns: auto 1fr; gap: .5rem 1rem; font-size: .92rem; margin-bottom: 1.5rem; }
     .bootcamp_card dt { color: var(--ink); }
     .bootcamp_card dd { color: var(--thiColor); }
-    .bootcamp_card .investment { font-family: var(--secFont); font-size: 1.3rem; padding-top: 1.25rem; border-top: 1px dashed rgba(254,253,223,.25); color: var(--thiColor);}
+    .bootcamp_card .investment { font-family: var(--secFont); font-size: 1.3rem; padding-top: 1.25rem; border-top: 1px dashed rgba(254,253,223,.25); color: var(--thiColor); margin-top: 1rem;}
     .bootcamp_card .investment span { display: block; font-family: var(--priFont); font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink); margin-bottom: .25rem; }
+    .bootcamp_card img {position: absolute; bottom: 0; }
 
     .workshops_head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
     .workshops_head h3 { font-family: var(--secFont); font-size: 1.3rem; font-weight: 500; color: var(--secColor); }
@@ -216,6 +219,8 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .footer_con { max-width: var(--wrapper); margin: 0 auto; }
     .footer_con ul li a {color: var(--thiColor);}
     .footer_cta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(254,253,223,.15); }
+    .footer_cta ul {margin: 2rem 0 0; flex-direction: column; display: flex; gap: .5rem;}
+    .footer_cta ul li a:hover {text-decoration: underline;}
     .footer_cta h2 { font-family: var(--secFont); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; max-width: 620px; line-height: 1.15; }
     .footer_cta a.footer_link { display: inline-flex; align-items: center; gap: .6rem; border: 1px solid rgba(254,253,223,.4); border-radius: 999px; padding: .9rem 1.75rem; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; transition: background .25s ease, color .25s ease; max-width: 200px; width: 100%; justify-content: center;}
     .footer_cta a.footer_link:hover { background: var(--secColor); border-color: var(--secColor); cursor: pointer;}
@@ -246,6 +251,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .foundational_guiding h2 { padding-left: 1.5rem; }
     .footer_cta .footer_btn_con { align-items: center; width: 100%;}
     .footer_cta h2 {text-align: center; margin: 0 auto;}
+    .bootcamp_card img {width: 100%;}
 }
 
 @media (max-width: 800px) {
@@ -258,6 +264,10 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .footer_cta a.footer_link { margin: 0 auto; }
     
     .footer_meta { flex-direction: column-reverse; align-items: center; text-align: center;}
+
+    .footer_meta nav {width: 100%;}
+    .footer_meta nav ul {flex-direction: column;}
+    .footer_meta nav ul li {border: 1px solid var(--defaultColor); width: 100%; padding: 10px 0; max-width: 600px; margin: 0 auto; border-radius: .2rem;}
     
 }
 
@@ -267,7 +277,8 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .menu_toggle { display: flex; }
     .header_con { padding: 1.25rem 1.25rem; }
     nav ul { gap: 1.1rem; }
-    .middle_con, #main, #services, #team, #footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .middle_con, #main, #services, #team, #footer { padding: 1.25rem;}
+    .packages_inner {padding: 1.25rem;}
     .footer_cta { align-items: flex-start; }
 }
 

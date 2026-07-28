@@ -23,6 +23,7 @@
     </div>
   </div>
  
+  <div class="booking_form_wrapper">
     <!-- STEP 1: SERVICES -->
     <div class="service_panel" v-if="formStep === 1">
         <div class="services_grid">
@@ -36,7 +37,7 @@
             >
                 <div class="service_header">
                     <h3>{{ service.name }}</h3>
-                    <span class="service_price">₱{{ service.price }}</span>
+                    <span class="service_price">₱{{ service.price.toLocaleString('en-US') }}</span>
                 </div>
 
                 <p class="service_description">
@@ -59,83 +60,84 @@
             </button>
         </div>
     </div>
- 
-  <!-- STEP 2: BOOKING TIME -->
-  <div class="booking_panel" v-else-if="formStep === 2">
+  
+    <!-- STEP 2: BOOKING TIME -->
+    <div class="booking_panel" v-else-if="formStep === 2">
+      <div class="field_group">
+        <label class="field_label">Preferred Date</label>
+        <VCalendar expanded @dayclick="handleSelectDate" :min-date="new Date()" :attributes="vCalendarEvents"/>
+      </div>
     <div class="field_group">
-      <label class="field_label">Preferred Date</label>
-      <VCalendar expanded @dayclick="handleSelectDate" :min-date="new Date()" :attributes="vCalendarEvents"/>
-    </div>
-   <div class="field_group">
-      <label class="field_label">Preferred Time</label>
-      <div class="time_buttons">
-      <button
-          v-for="slot in timeSlots"
-          :key="slot.value"
-          class="time_btn"
-          :class="{ active: selectedTime === slot.value, disabled: slot.disabled }"
-          @click="!slot.disabled && handleSelectTime(slot.value)"
-          :disabled="slot.disabled"
-      >
-          {{ slot.label }}
-      </button>
+        <label class="field_label">Preferred Time</label>
+        <div class="time_buttons">
+        <button
+            v-for="slot in timeSlots"
+            :key="slot.value"
+            class="time_btn"
+            :class="{ active: selectedTime === slot.value, disabled: slot.disabled }"
+            @click="!slot.disabled && handleSelectTime(slot.value)"
+            :disabled="slot.disabled"
+        >
+            {{ slot.label }}
+        </button>
+        </div>
+      </div>
+      <div class="form_nav">
+        <button class="btn_back" @click="goToStep(1, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button class="btn_next" @click="goToStep(3, 'next')">Next <i class="fa-solid fa-arrow-right"></i></button>
       </div>
     </div>
-    <div class="form_nav">
-      <button class="btn_back" @click="goToStep(1, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn_next" @click="goToStep(3, 'next')">Next <i class="fa-solid fa-arrow-right"></i></button>
-    </div>
-  </div>
- 
-  <!-- STEP 3: BOOKING FORM -->
-  <div class="form_panel" v-else>
-    <el-form ref="bookingFormRef" label-position="top" :model="bookingForm" :diabled="true">
+  
+    <!-- STEP 3: BOOKING FORM -->
+    <div class="form_panel" v-else>
+      <el-form ref="bookingFormRef" label-position="top" :model="bookingForm" :diabled="true">
 
-      <el-form-item 
-        label="Full Name" 
-        prop="fullName"
-        :rules="[
-            { required: true, message: 'Please input email address', trigger: 'blur', },
-          ]"
-        >
-        <el-input v-model="bookingForm.fullName" placeholder="John Doe"/>
-      </el-form-item>
-
-      <el-form-item 
-          label="Email" 
-          prop="email"
+        <el-form-item 
+          label="Full Name" 
+          prop="fullName"
           :rules="[
-            { required: true, message: 'Please input email address', trigger: 'blur', },
-            { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Please input correct email address', trigger: ['blur', 'change'], },
+              { required: true, message: 'Please input email address', trigger: 'blur', },
+            ]"
+          >
+          <el-input v-model="bookingForm.fullName" placeholder="John Doe"/>
+        </el-form-item>
+
+        <el-form-item 
+            label="Email" 
+            prop="email"
+            :rules="[
+              { required: true, message: 'Please input email address', trigger: 'blur', },
+              { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Please input correct email address', trigger: ['blur', 'change'], },
+            ]">
+          <el-input v-model="bookingForm.email" placeholder="johndoe@example.com" />
+        </el-form-item>
+
+        <el-form-item 
+          label="Phone" 
+          prop="phone"
+          :rules="[
+            { required: true, message: 'Please input phone number', trigger: 'blur', },
+            { pattern: /^(\+?\d{10,15})$/, message: 'Please input correct phone number', trigger: ['blur', 'change'], },
           ]">
-        <el-input v-model="bookingForm.email" placeholder="johndoe@example.com" />
-      </el-form-item>
+          <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
+        </el-form-item>
 
-      <el-form-item 
-        label="Phone" 
-        prop="phone"
-        :rules="[
-          { required: true, message: 'Please input phone number', trigger: 'blur', },
-          { pattern: /^(\+?\d{10,15})$/, message: 'Please input correct phone number', trigger: ['blur', 'change'], },
-        ]">
-        <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
-      </el-form-item>
-
-      <el-form-item>
-        <VueHcaptcha
-          ref="hcaptchaRef" 
-          :sitekey="sitekey" 
-          size="normal" 
-          @verify="onVerify" 
-          @expired="onExpired" 
-        />
-      </el-form-item>
-      
-    </el-form>
- 
-    <div class="form_nav">
-      <button class="btn_back" @click="goToStep(2, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-      <button class="btn_submit" @click="submitBooking" :disabled="loading">Confirm Booking <i class="fa-solid fa-check"></i></button>
+        <el-form-item>
+          <VueHcaptcha
+            ref="hcaptchaRef" 
+            :sitekey="sitekey" 
+            size="normal" 
+            @verify="onVerify" 
+            @expired="onExpired" 
+          />
+        </el-form-item>
+        
+      </el-form>
+  
+      <div class="form_nav">
+        <button class="btn_back" @click="goToStep(2, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button class="btn_submit" @click="submitBooking" :disabled="loading">Confirm Booking <i class="fa-solid fa-check"></i></button>
+      </div>
     </div>
   </div>
 </div>
@@ -314,6 +316,7 @@ export default {
               const {data, e} = await supabase
                   .from('Service')
                   .select('*')
+                  .order('dateTimeCreated', 'descending')
               if(e) return e
 
               this.services = data
@@ -368,7 +371,7 @@ export default {
 <style>
 .booking_form {position: fixed; background: var(--defaultColor); width: 100%; max-width: 900px; border-radius: 12px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,.35); bottom: 30px; left: 0; right: 0; margin: 0 auto; opacity: 0; visibility: hidden; z-index: 1;}
 .booking_form_close {position:absolute; top:16px; right:20px; font-size:1.4rem; color:var(--bodyColor); cursor:pointer; background:none; border:none;}
-
+.booking_form_wrapper { max-height: 50vh; overflow: scroll; }
 .steps_con {display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:40px;}
 .step_item {display:flex; flex-direction:column; align-items:center; text-align:center; width:220px;}
 .step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(--bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}
@@ -380,7 +383,7 @@ export default {
 .step_line {flex:1; height:2px; background:var(--bodyColor); margin-top:-24px; max-width:120px;}
 .step_line.completed {background:var(--priColor);}
 
-.services_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+.services_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
 
 .service_card { background: #fff; border: 2px solid #e8eef7; border-radius: 16px; padding: 24px; cursor: pointer; transition: all 0.3s ease; position: relative; }
 .service_card:hover { transform: translateY(-5px); border-color: #2e85e5; box-shadow: 0 10px 30px rgba(46, 133, 229, 0.15); }
@@ -418,7 +421,7 @@ export default {
 
 @media(max-width:1000px) {
 
-.booking_form {max-width:90%;}
+.booking_form {max-width:95%;}
 
 }
 
@@ -431,10 +434,14 @@ export default {
 
 .step_desc {display:none;}
 
+.time_btn {width: 48%;}
+
 }
 
 
 @media(max-width:600px) {
+
+.form_panel form {grid-template-columns: 1fr}
 
 .booking_form {padding:24px;}
 

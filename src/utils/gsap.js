@@ -110,12 +110,12 @@ export function gsapController() {
         stagger: 0.15,
         scrollTrigger: { trigger: '.pathway', start: 'top 75%' },
     })
-    gsap.from('.pathway_track path', {
+/*     gsap.from('.pathway_track path', {
         drawSVG: '0%',
         duration: 1.2,
         ease: 'power2.inOut',
         scrollTrigger: { trigger: '.pathway', start: 'top 70%' },
-    })
+    }) */
     gsap.from('.workshops_list li', {
         y: 15,
         opacity: 0,
@@ -266,10 +266,10 @@ export function gsapSidebarController() {
         gsap.set(".nav_bg", {
             opacity: 0
         });
-        gsap.set(".nav-login", {
+    /*     gsap.set(".nav-login", {
             opacity: 0,
             y: 8
-        });
+        }); */
 
         tl = gsap
             .timeline({

@@ -108,42 +108,46 @@
         </div>
     </main>
 
-    <!-- SERVICES -->
+    <!-- PACKAGES -->
     <div id="services">
         <div class="services_con">
             <div class="services_head">
-                <h2>The Bootcamp Experience<span>Transformative, immersive, and results-oriented.</span></h2>
+                <h2>Our<span>Packages</span></h2>
                 <p>Two ways to move your team along the readiness pathway — a one-day spark, or a three-day deep dive.</p>
             </div>
 
             <div class="pathway">
                 <div class="bootcamp_card">
-                    <p class="tier">Step 01 · Foundation</p>
-                    <h3>1-Day Foundation</h3>
-                    <dl>
-                        <dt>Focus</dt><dd>Skill Injection &amp; Motivation</dd>
-                        <dt>Duration</dt><dd>9 AM – 4 PM (1 Full Day)</dd>
-                        <dt>Facilitators</dt><dd>1 Lead, 1 Assistant</dd>
-                        <dt>Documentation</dt><dd>Photo</dd>
-                        <dt>Inclusions</dt><dd>Venue, Meals, Materials, Pathway Orientation</dd>
-                    </dl>
-                    <p class="investment"><span>Investment</span>Starts at ₱1,500/pax</p>
+                    <div>
+                        <p class="tier">01</p>
+                        <h3>ROOKIE</h3>
+                        <p>The ultimate championship-level experience.</p>
+                        <p class="investment"><span>Price: </span>₱50,000</p>
+                    </div>
+                    <img src="../assets/image/rookie.png" alt="people hugging">
+                    
                 </div>
                 <div class="bootcamp_card">
-                    <p class="tier">Step 02 · Intensive</p>
-                    <h3>3-Day Intensive</h3>
-                    <dl>
-                        <dt>Focus</dt><dd>Deep Dive &amp; Strategic Growth</dd>
-                        <dt>Duration</dt><dd>3 Days (Varied hours)</dd>
-                        <dt>Facilitators</dt><dd>2 Leads</dd>
-                        <dt>Documentation</dt><dd>Photo &amp; Video</dd>
-                        <dt>Inclusions</dt><dd>Venue, Meals, Materials, Pathway Orientation</dd>
-                    </dl>
-                    <p class="investment"><span>Investment</span>Starts at ₱4,000/pax</p>
+                    <div>
+                        <p class="tier">02</p>
+                        <h3>ALL-STAR</h3>
+                        <p>Elevated competition and enhanced experience.</p>
+                        <p class="investment"><span>Price:</span>₱70,000</p>
+                    </div>
+                    <img src="../assets/image/all-star.png" alt="people hugging">
+                </div>
+                <div class="bootcamp_card">
+                    <div>
+                        <p class="tier">03</p>
+                        <h3>MVP</h3>
+                        <p>Fundamental bonding and core teamwork.</p>
+                        <p class="investment"><span>Price:</span>₱120,000</p>
+                    </div>
+                    <img src="../assets/image/mvp.png" alt="people hugging">
                 </div>
             </div>
 
-            <div class="workshops">
+          <!--   <div class="workshops">
                 <div class="workshops_head">
                     <h3>Specialized Workshops</h3>
                     <p class="investment_tag">Starts at ₱3,000/topic · 2–4 hour interactive sessions</p>
@@ -157,34 +161,31 @@
                     <li>Public Speaking 101</li>
                     <li>Creative Writing &amp; Spoken Poetry</li>
                 </ul>
-            </div>
+            </div> -->
         </div>
     </div>
 
     <!-- PACKAGES -->
     <div id="packages">
-        <div class="packages_con package1">
+        <div class="packages_con package3">
             <div class="packages_inner">
                 <div class="package_header">
-                    <h2>MVP</h2>
-                    <p>The ultimate championship-level experience.</p>
+                    <h2>ROOKIE</h2>
+                    <p>Fundamental bonding and core teamwork.</p>
                 </div>
                 
                 <div class="package_details">
                     <div class="feature_col">
                         <ul class="feature_list">
-                            <li class="premium-highlight">Food (AM & PM Snacks; 1 Lunch)</li>
-                            <li class="premium-highlight">Venue at Bayfront Hotel Cebu</li>
                             <li>2 Team-Building Facilitators</li>
                             <li>Event Banners</li>
                             <li>4 Team Flags (Fire, Water, Air, Earth)</li>
                             <li>50 Headbands (12-13 headbands for each team)</li>
                         </ul>
                     </div>
-
                     <div class="feature_col">
                         <ul class="feature_list">
-                            <li class="hardware-highlight">7ft x 10 ft LED Wall Display</li>
+                            <li>7ft by 10ft Tarpaulin Backdrop</li>
                             <li>2 UHF Wireless Microphones</li>
                             <li>2 Active Speakers with Stands</li>
                             <li>1 Mixer</li>
@@ -196,8 +197,8 @@
 
                 <div class="perks_box">
                     <div class="perk_item"><span>FREE</span> 15 Medals</div>
-                    <div class="perk_item"><span>FREE</span> 50 Certificates</div>
-                    <div class="perk_item"><span>FREE</span> 2-3 client coordination meetings</div>
+                    <div class="perk_item"><span>FREE</span> 50 Certificates of Participation</div>
+                    <div class="perk_item"><span>FREE</span> 2-3 meetings with client for coordination</div>
                     <div class="perk_item"><span>FREE</span> FREE Customization of the Activities</div>
                 </div>
             </div>
@@ -239,26 +240,29 @@
                 </div>
             </div>
         </div>
-
-        <div class="packages_con package3">
+        
+        <div class="packages_con package1">
             <div class="packages_inner">
                 <div class="package_header">
-                    <h2>ROOKIE</h2>
-                    <p>Fundamental bonding and core teamwork.</p>
+                    <h2>MVP</h2>
+                    <p>The ultimate championship-level experience.</p>
                 </div>
                 
                 <div class="package_details">
                     <div class="feature_col">
                         <ul class="feature_list">
+                            <li class="premium-highlight">Food (AM & PM Snacks; 1 Lunch)</li>
+                            <li class="premium-highlight">Venue at Bayfront Hotel Cebu</li>
                             <li>2 Team-Building Facilitators</li>
                             <li>Event Banners</li>
                             <li>4 Team Flags (Fire, Water, Air, Earth)</li>
                             <li>50 Headbands (12-13 headbands for each team)</li>
                         </ul>
                     </div>
+
                     <div class="feature_col">
                         <ul class="feature_list">
-                            <li>7ft by 10ft Tarpaulin Backdrop</li>
+                            <li class="hardware-highlight">7ft x 10 ft LED Wall Display</li>
                             <li>2 UHF Wireless Microphones</li>
                             <li>2 Active Speakers with Stands</li>
                             <li>1 Mixer</li>
@@ -270,12 +274,14 @@
 
                 <div class="perks_box">
                     <div class="perk_item"><span>FREE</span> 15 Medals</div>
-                    <div class="perk_item"><span>FREE</span> 50 Certificates of Participation</div>
-                    <div class="perk_item"><span>FREE</span> 2-3 meetings with client for coordination</div>
+                    <div class="perk_item"><span>FREE</span> 50 Certificates</div>
+                    <div class="perk_item"><span>FREE</span> 2-3 client coordination meetings</div>
                     <div class="perk_item"><span>FREE</span> FREE Customization of the Activities</div>
                 </div>
             </div>
         </div>
+
+ 
     </div>
 
     <!-- GALLERY -->
@@ -299,7 +305,7 @@
     <div id="team">
         <div class="team_con">
             <div class="team_head">
-                <h2>Meet the Team <span>The co-founders behind the curriculum.</span></h2>
+                <h2>Meet the Team <span>The founders behind the curriculum.</span></h2>
             </div>
             <div class="team_grid">
                 <article class="team_card">
@@ -309,12 +315,12 @@
                     <h3>Reb Camacho</h3>
                     <p class="role">Founder</p>
                     <p class="bio">Reb Camacho is a Certified Lean Six Sigma Yellow Belt professional, youth leader, and digital storyteller committed to developing people and building meaningful communities. He has served as a facilitator since 2016, was appointed Camp Director in 2022, and has been mentoring emerging facilitators since then. Beyond youth leadership, Reb is a content creator and a founding member of the Archdiocese of Cebu's social media ministry, where he leverages creative media to inspire, educate, and strengthen faith-based engagement.</p>
-                    <div class="credentials">
+                    <!-- <div class="credentials">
                         <span>BA in Marketing Communication (2026)</span>
                         <span>BPO Trainer, Concentrix (2025–2026)</span>
                         <span>Certified Lean Six Sigma Yellow Belt</span>
                         <span>Content Creator, CADCOMM (2021–2025)</span>
-                    </div>
+                    </div> -->
                 </article>
                 <article class="team_card">
                     <div class="team_avatar">
@@ -323,12 +329,12 @@
                     <h3>Myrene Camingawan</h3>
                     <p class="role">Founder</p>
                     <p class="bio">Yen Camingawan is a Licensed Professional Teacher and Cum Laude graduate with a Bachelor of Secondary Education major in Filipino. A dedicated youth leader and educator, she has served as a summer camp facilitator since 2016 and was appointed Summer Camp Director in 2023. Since then, she has also been mentoring and developing the next generation of facilitators, empowering young leaders through guidance, service, and values-based leadership.</p>
-                    <div class="credentials">
+                    <!-- <div class="credentials">
                         <span>Bachelor in Secondary Education, Major in Filipino</span>
                         <span>Licensed Professional Teacher · TEFL Certified</span>
                         <span>High School Teacher, Bright Academy Cebu</span>
                         <span>Facilitator &amp; Summer Camp Director, Enfants du Mekong (2016–2023)</span>
-                    </div>
+                    </div> -->
                 </article>
          
             </div>
@@ -339,13 +345,19 @@
     <footer id="footer">
         <div class="footer_con">
             <div class="footer_cta">
-                <h2>Ready to build your team's bootcamp?</h2>
+                <div>
+                    <h2>Ready to build your team's bootcamp?</h2>
+                    <ul>
+                        <li>Email: <a href="mailto:hello.upskills@gmail.com">hello.upskills@gmail.com</a></li>
+                        <li>Phone: <a href="tel:09610115585">0961-011-5585</a></li>
+                    </ul>
+                </div>
                 <div class="footer_btn_con">
                     <a class="footer_link" @click="openForm('Book Now')">Book Now</a>
                 </div>
             </div>
             <div class="footer_meta">
-                <p>&copy; 2026 <mark>Upskill Facilitation Partners</mark> · Cebu, Philippines</p>
+                <p>&copy; 2026 <mark>Upskills Facilitation Partners</mark> · Cebu, Philippines</p>
                 <nav>
                     <ul>
                         <li><a href="#banner">Home</a></li>
@@ -360,20 +372,21 @@
     </footer>
 
     <BookingForm :isOpenForm="dialog.bookingForm"/>
+    <ChatBot/>
 
-    <div class="fixed bottom-5 right-5 z-50">
+    <!-- <div class="fixed bottom-5 right-5 z-50">
         <button @click="gotoAdmin()" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>
-    </div>
+    </div> -->
 </template>
 
 <script>
-import { Setting } from '@element-plus/icons-vue'
 import { gsapController, gsapSidebarController, gsapSlidesPinning } from '../utils/gsap'
 import gsap from 'gsap/all'
 import BookingForm from '@/components/BookingForm.vue';
-import {ElLoading} from 'element-plus'
+import ChatBot from '@/components/ChatBot.vue';
+import { ElLoading } from 'element-plus'
 export default {
-    components: {BookingForm},
+    components: {BookingForm, ChatBot},
     data(){
         return{
             dialog: {
