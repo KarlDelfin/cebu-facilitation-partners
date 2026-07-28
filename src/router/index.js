@@ -8,11 +8,7 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomeView.vue'),
     },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/TestView.vue'),
-    },
+   
     {
       path: '/admin',
       name: 'admin',
@@ -27,6 +23,11 @@ const router = createRouter({
           path: 'services',
           name: 'services',
           component: () => import('../views/ServiceView.vue'),
+        },
+        {
+          path: 'calendar',
+          name: 'calendar',
+          component: () => import('../views/CalendarView.vue'),
         },
       ]
     },

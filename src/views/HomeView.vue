@@ -373,6 +373,7 @@
 
     <BookingForm :isOpenForm="dialog.bookingForm"/>
     <ChatBot/>
+    <el-backtop :right="32" :bottom="100" />
 
     <!-- <div class="fixed bottom-5 right-5 z-50">
         <button @click="gotoAdmin()" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>

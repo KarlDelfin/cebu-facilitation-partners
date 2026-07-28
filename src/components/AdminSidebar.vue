@@ -18,6 +18,11 @@
         <el-icon><Calendar /></el-icon>
         <span>Bookings</span>
       </el-menu-item>
+
+      <el-menu-item index="/admin/calendar">
+        <el-icon><Calendar /></el-icon>
+        <span>Calendar</span>
+      </el-menu-item>
       
       <el-menu-item index="/admin/services">
         <el-icon><Notebook /></el-icon>
