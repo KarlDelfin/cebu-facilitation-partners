@@ -148,7 +148,7 @@
 
     <!-- PACKAGES -->
     <div id="packages">
-        <div class="packages_con package3">
+        <div class="packages_con package1">
             <div class="packages_inner">
                 <div class="package_header">
                     <h2>ROOKIE</h2>
@@ -222,7 +222,7 @@
             </div>
         </div>
         
-        <div class="packages_con package1">
+        <div class="packages_con package3">
             <div class="packages_inner">
                 <div class="package_header">
                     <h2>MVP</h2>

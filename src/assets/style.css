@@ -119,9 +119,10 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
 
     .packages {padding: 20vh 0;}
     
-    .packages_con { width: 100%; min-height: calc(100vh - 64px); display: flex; justify-content: center; font-weight: 500; font-size: 1rem; position: relative; overflow: hidden; background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/mvp.png') no-repeat center/cover; }
-    .package1 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/all-star.png') no-repeat center/cover;}
-    .package2 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/rookie.png') no-repeat center/cover;}
+    .packages_con { width: 100%; min-height: calc(100vh - 64px); display: flex; justify-content: center; font-weight: 500; font-size: 1rem; position: relative; overflow: hidden; }
+    .package1 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/rookie.png') no-repeat center/cover;}
+    .package2 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/all-star.png') no-repeat center/cover;}
+    .package3 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/mvp.png') no-repeat center/cover;}
     
     .packages_inner { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6vh 0; color: var(--defaultColor); }
 

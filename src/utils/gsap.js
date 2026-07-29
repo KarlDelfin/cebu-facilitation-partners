@@ -214,7 +214,6 @@ export function gsapSlidesPinning() {
                 pinSpacing: false,
                 pin: true,
                 scrub: true,
-                markers: true
             }
         });
         
@@ -272,85 +271,71 @@ export function gsapSidebarController() {
                 0
             )
 
-            .fromTo(
-                ".nav_panel", {
-                    x: "110%",
-                    y: 0,
-                    rotation: 0
-                }, {
-                    x: "0%",
-                    y: 0,
-                    duration: 0.6,
-                    ease: "back.out",
-                    easeReverse: er("power3.in"),
-                    stagger: 0.1,
-                },
-                0
-            )
+            .fromTo(".nav_panel", {
+                x: "110%",
+                y: 0,
+                rotation: 0
+            }, {
+                x: "0%",
+                y: 0,
+                duration: 0.6,
+                ease: "back.out",
+                easeReverse: er("power3.in"),
+                stagger: 0.1,
+            }, 0)
 
-            .fromTo(
-                ".nav_item", {
-                    opacity: 0,
-                    x: -20
-                }, {
-                    opacity: 1,
-                    x: 0,
-                    duration: 1.2,
-                    ease: "expo.out",
-                    easeReverse: er("power3.in"),
-                    stagger: 0.03
-                },
-                0.1
-            )
+            .fromTo( ".nav_item", {
+                opacity: 0,
+                x: -20
+            }, {
+                opacity: 1,
+                x: 0,
+                duration: 1.2,
+                ease: "expo.out",
+                easeReverse: er("power3.in"),
+                stagger: 0.03
+            },0.1)
 
-            .fromTo(
-                ".bar-top", {
-                    stroke: "var(--defaultColor)",
-                    attr: {
-                        x1: 3,
-                        y1: 7,
-                        x2: 17,
-                        y2: 7
-                    }
-                }, {
-                    stroke: "var(--defaultColor)",
-                    attr: {
-                        x1: 5,
-                        y1: 5,
-                        x2: 15,
-                        y2: 15
-                    },
-                    duration: 0.35,
-                    ease: "back.out(1.4)",
-                    easeReverse: er("power3.out")
+            .fromTo(".bar-top", {
+                stroke: "var(--defaultColor)",
+                attr: {
+                    x1: 3,
+                    y1: 7,
+                    x2: 17,
+                    y2: 7
+                }
+            }, {
+                stroke: "var(--defaultColor)",
+                attr: {
+                    x1: 5,
+                    y1: 5,
+                    x2: 15,
+                    y2: 15
                 },
-                0.06
-            )
-            .fromTo(
-                ".bar-bot", {
-                    stroke: "var(--defaultColor)",
-                    attr: {
-                        x1: 3,
-                        y1: 13,
-                        x2: 17,
-                        y2: 13
-                    }
-                }, {
-                    stroke: "var(--defaultColor)",
-                    attr: {
-                        x1: 15,
-                        y1: 5,
-                        x2: 5,
-                        y2: 15
-                    },
-                    duration: 0.35,
-                    ease: "back.out(1.4)",
-                    easeReverse: er("power3.out")
+                duration: 0.35,
+                ease: "back.out(1.4)",
+                easeReverse: er("power3.out")
+            }, 0.06 )
+            .fromTo(".bar-bot", {
+                stroke: "var(--defaultColor)",
+                attr: {
+                    x1: 3,
+                    y1: 13,
+                    x2: 17,
+                    y2: 13
+                }
+            }, {
+                stroke: "var(--defaultColor)",
+                attr: {
+                    x1: 15,
+                    y1: 5,
+                    x2: 5,
+                    y2: 15
                 },
-                0.06
-            )
-
-            .addPause();
+                duration: 0.35,
+                ease: "back.out(1.4)",
+                easeReverse: er("power3.out")
+            }, 0.06).addPause();
 
         enterEndTime = tl.duration();
 
@@ -358,63 +343,56 @@ export function gsapSidebarController() {
         tl.to(".bar", {
             stroke: "var(--defaultColor)",
             duration: 0.2
-        }) .to(
-            ".bar-top", {
+        }).to(".bar-top", {
+            attr: {
+                x1: 3,
+                y1: 7,
+                x2: 17,
+                y2: 7
+            },
+            duration: 0.2,
+            ease: "power3.in"
+        },"<")
+        
+        .to(".bar-bot", {
                 attr: {
                     x1: 3,
-                    y1: 7,
+                    y1: 13,
                     x2: 17,
-                    y2: 7
+                    y2: 13
                 },
                 duration: 0.2,
                 ease: "power3.in"
-            }, "<" )
-            .to(
-                ".bar-bot", {
-                    attr: {
-                        x1: 3,
-                        y1: 13,
-                        x2: 17,
-                        y2: 13
-                    },
-                    duration: 0.2,
-                    ease: "power3.in"
-                },
-                "<"
-            )
+            },
+            "<"
+        )
 
-            // panels fall
-            .to(
-                ".nav_panel", {
-                    y: "110vh",
-                    rotation: "random(-25, 25)",
-                    duration: 1,
-                    ease: "power3.in",
-                    stagger: {
-                        from: "end",
-                        each: 0.02
-                    }
-                },
-                "<"
-            )
+        // panels fall
+        .to(".nav_panel", {
+                y: "110vh",
+                rotation: "random(-25, 25)",
+                duration: 1,
+                ease: "power3.in",
+                stagger: {
+                    from: "end",
+                    each: 0.02
+                }
+            },"<")
 
-            // bg fades
-            .to(
-                ".nav_bg", {
-                    opacity: 0,
-                    duration: 0.3,
-                    ease: "power2.in"
-                },
-                "<0.1"
-            )
+        // bg fades
+        .to(".nav_bg", {
+                opacity: 0,
+                duration: 0.3,
+                ease: "power2.in"
+            }, "<0.1")
 
-            .set("#nav_mobile", {
-                visibility: "hidden",
-                pointerEvents: "none"
-            })
-            .set('.bar-mid', {
-                visibility: 'visible'
-            })
+        .set("#nav_mobile", {
+            visibility: "hidden",
+            pointerEvents: "none"
+        })
+        .set('.bar-mid', {
+            visibility: 'visible'
+        })
             
             
     }
