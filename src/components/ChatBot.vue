@@ -3,7 +3,7 @@
     <button 
       v-if="!isOpen" 
       @click="toggleChat"
-      class="!fixed !bottom-6 !right-6 !w-14 !h-14 !bg-[#136cb3] !text-white !rounded-full !shadow-2xl !flex !items-center !justify-center !z-[99999] hover:!bg-[#0f5690] !transition-all !duration-200 !cursor-pointer group"
+      class="!fixed !bottom-6 !right-6 !w-14 !h-14 !bg-[var(--secColor)] !text-white !rounded-full !shadow-2xl !flex !items-center !justify-center !z-[99999] hover:!bg-[#0f5690] !transition-all !duration-200 !cursor-pointer group"
       title="Open Chat Assistant"
     >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="!w-6 !h-6 group-hover:!scale-110 !transition-transform">

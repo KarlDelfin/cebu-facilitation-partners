@@ -11,31 +11,34 @@ export function gsapController() {
     const lenis = new Lenis()
     lenis.on('scroll', ScrollTrigger.update)
     gsap.ticker.add((time) => {
-        // gsap's ticker passes elapsed time in seconds; Lenis expects a ms timestamp
         lenis.raf(time * 1000)
     })
     gsap.ticker.lagSmoothing(0)
 
     /* HEADER */
-    ScrollTrigger.create({
-        start: "top top",
-        end: "max",
-        onUpdate: (self) => {
-            if (self.direction === 1) {
-            gsap.to(".header_con", { 
-                yPercent: -200, 
-                duration: 0.5, 
-                ease: "power2.out" 
-            });
-            } else {
-            gsap.to(".header_con", { 
-                yPercent: 0, 
-                duration: 0.5, 
-                ease: "power2.out" 
-            });
+    let mm = gsap.matchMedia();
+
+    mm.add("(min-width: 801px)", () => {
+        ScrollTrigger.create({
+            start: "top top",
+            end: "max",
+            onUpdate: (self) => {
+                if (self.direction === 1) {
+                    gsap.to(".header_con", {
+                        yPercent: -200,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                } else {
+                    gsap.to(".header_con", {
+                        yPercent: 0,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                }
             }
-        }
         });
+    });
    
     gsap.from('.company_logo', {
         y: -200,
@@ -76,6 +79,7 @@ export function gsapController() {
     const middleTextsST = new SplitText(['.middle_con h2', '.middle_con p'], {
         type: 'lines',
     })
+
     gsap.timeline({
         scrollTrigger: { trigger: '.middle_con', start: 'top 75%' },
     }).from(middleTextsST.lines, {
@@ -109,19 +113,6 @@ export function gsapController() {
         ease: 'back.out',
         stagger: 0.15,
         scrollTrigger: { trigger: '.pathway', start: 'top 75%' },
-    })
-/*     gsap.from('.pathway_track path', {
-        drawSVG: '0%',
-        duration: 1.2,
-        ease: 'power2.inOut',
-        scrollTrigger: { trigger: '.pathway', start: 'top 70%' },
-    }) */
-    gsap.from('.workshops_list li', {
-        y: 15,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.06,
-        scrollTrigger: { trigger: '.workshops_list', start: 'top 85%' },
     })
 
     /* MAIN */
@@ -217,16 +208,16 @@ export function gsapSlidesPinning() {
         
         let tl = gsap.timeline({
             scrollTrigger:{
-            trigger: panel,
-            start: "bottom bottom",
-            end: () => fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : "bottom top",
-            pinSpacing: false,
-            pin: true,
-            scrub: true
+                trigger: panel,
+                start: "bottom bottom",
+                end: () => fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : "bottom top",
+                pinSpacing: false,
+                pin: true,
+                scrub: true,
+                markers: true
             }
         });
         
-        // fake scroll. We use 1 because that's what the rest of the timeline consists of (0.9 scale + 0.1 fade)
         if (fakeScrollRatio) {
             tl.to(innerpanel, {yPercent:-100, y: window.innerHeight, duration: 1 / (1 - fakeScrollRatio) - 1, ease: "none"});
         }
@@ -234,17 +225,6 @@ export function gsapSlidesPinning() {
         .to(panel, {opacity:0, duration: 0.1});
     });
 }
-
-
-
-
-
-
-
-
-
-
-
 
 export function gsapSidebarController() {
     let isOpen = false;
@@ -266,10 +246,6 @@ export function gsapSidebarController() {
         gsap.set(".nav_bg", {
             opacity: 0
         });
-    /*     gsap.set(".nav-login", {
-            opacity: 0,
-            y: 8
-        }); */
 
         tl = gsap
             .timeline({
@@ -373,43 +349,26 @@ export function gsapSidebarController() {
                 },
                 0.06
             )
-            .to(
-                ".nav-login", {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.3,
-                    ease: "power3.out",
-                    easeReverse: er("power4.out")
-                },
-                0.4
-            )
 
-            // ═══ PAUSE ═══
             .addPause();
 
         enterEndTime = tl.duration();
 
-        // ═══ EXIT — panels fall down with stagger, bottom first ═══
 
-        tl
-            // X → hamburger
-            .to(".bar", {
-                stroke: "var(--defaultColor)",
-                duration: 0.2
-            })
-            .to(
-                ".bar-top", {
-                    attr: {
-                        x1: 3,
-                        y1: 7,
-                        x2: 17,
-                        y2: 7
-                    },
-                    duration: 0.2,
-                    ease: "power3.in"
+        tl.to(".bar", {
+            stroke: "var(--defaultColor)",
+            duration: 0.2
+        }) .to(
+            ".bar-top", {
+                attr: {
+                    x1: 3,
+                    y1: 7,
+                    x2: 17,
+                    y2: 7
                 },
-                "<"
-            )
+                duration: 0.2,
+                ease: "power3.in"
+            }, "<" )
             .to(
                 ".bar-bot", {
                     attr: {

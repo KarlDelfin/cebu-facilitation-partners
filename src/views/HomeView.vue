@@ -27,7 +27,6 @@
             </svg>
         </button>
             
-    
         <div class="nav" id="nav_mobile">
             <div class="nav_bg"></div>
             <div class="nav_top nav_border nav_panel" id="navTop">
@@ -108,12 +107,12 @@
         </div>
     </main>
 
-    <!-- PACKAGES -->
+    <!-- SERVICES -->
     <div id="services">
         <div class="services_con">
             <div class="services_head">
-                <h2>Our<span>Packages</span></h2>
-                <p>Two ways to move your team along the readiness pathway — a one-day spark, or a three-day deep dive.</p>
+                <h2>Our<span>Services</span></h2>
+                <p>From a one-day operational spark to a three-day strategic deep dive choose the pathway that fits your team's readiness goals.</p>
             </div>
 
             <div class="pathway">
@@ -122,7 +121,6 @@
                         <p class="tier">01</p>
                         <h3>ROOKIE</h3>
                         <p>The ultimate championship-level experience.</p>
-                        <p class="investment"><span>Price: </span>₱50,000</p>
                     </div>
                     <img src="../assets/image/rookie.png" alt="people hugging">
                     
@@ -132,7 +130,6 @@
                         <p class="tier">02</p>
                         <h3>ALL-STAR</h3>
                         <p>Elevated competition and enhanced experience.</p>
-                        <p class="investment"><span>Price:</span>₱70,000</p>
                     </div>
                     <img src="../assets/image/all-star.png" alt="people hugging">
                 </div>
@@ -141,27 +138,11 @@
                         <p class="tier">03</p>
                         <h3>MVP</h3>
                         <p>Fundamental bonding and core teamwork.</p>
-                        <p class="investment"><span>Price:</span>₱120,000</p>
+                        <!-- <p class="investment"><span>Price:</span>₱120,000</p> -->
                     </div>
                     <img src="../assets/image/mvp.png" alt="people hugging">
                 </div>
             </div>
-
-          <!--   <div class="workshops">
-                <div class="workshops_head">
-                    <h3>Specialized Workshops</h3>
-                    <p class="investment_tag">Starts at ₱3,000/topic · 2–4 hour interactive sessions</p>
-                </div>
-                <ul class="workshops_list">
-                    <li>Basics of Photography</li>
-                    <li>Basics of Graphic Design</li>
-                    <li>Basics of Content Creation</li>
-                    <li>Crafting the Curriculum using MELC</li>
-                    <li>Lesson Planning: OBE &amp; UBD</li>
-                    <li>Public Speaking 101</li>
-                    <li>Creative Writing &amp; Spoken Poetry</li>
-                </ul>
-            </div> -->
         </div>
     </div>
 

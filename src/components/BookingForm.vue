@@ -37,7 +37,6 @@
             >
                 <div class="service_header">
                     <h3>{{ service.name }}</h3>
-                    <span class="service_price">₱{{ service.price.toLocaleString('en-US') }}</span>
                 </div>
 
                 <p class="service_description">
@@ -371,7 +370,7 @@ export default {
 <style>
 .booking_form {position: fixed; background: var(--defaultColor); width: 100%; max-width: 900px; border-radius: 12px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,.35); bottom: 30px; left: 0; right: 0; margin: 0 auto; opacity: 0; visibility: hidden; z-index: 1;}
 .booking_form_close {position:absolute; top:16px; right:20px; font-size:1.4rem; color:var(--bodyColor); cursor:pointer; background:none; border:none;}
-.booking_form_wrapper { max-height: 50vh; overflow: scroll; }
+.booking_form_wrapper { max-height: 60vh; overflow-y: auto; overflow-x: hidden; width: 100%;}
 .steps_con {display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:40px;}
 .step_item {display:flex; flex-direction:column; align-items:center; text-align:center; width:220px;}
 .step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(--bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}
@@ -385,7 +384,8 @@ export default {
 
 .services_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
 
-.service_card { background: #fff; border: 2px solid #e8eef7; border-radius: 16px; padding: 24px; cursor: pointer; transition: all 0.3s ease; position: relative; }
+.service_panel { padding: 0 10px; }
+.service_card { background: #fff; border: 2px solid #e8eef7; border-radius: 16px; padding: 15px; cursor: pointer; transition: all 0.3s ease; position: relative; }
 .service_card:hover { transform: translateY(-5px); border-color: #2e85e5; box-shadow: 0 10px 30px rgba(46, 133, 229, 0.15); }
 .service_card.active { border-color: #2e85e5; background: linear-gradient( 180deg, rgba(46, 133, 229, 0.05), #fff ); box-shadow: 0 10px 30px rgba(46, 133, 229, 0.2); }
 .service_card.active::after { content: "✓"; position: absolute; top: -12px; right: -10px; width: 28px; height: 28px; background: #2e85e5; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }

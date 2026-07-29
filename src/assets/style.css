@@ -115,18 +115,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .bootcamp_card dl { display: grid; grid-template-columns: auto 1fr; gap: .5rem 1rem; font-size: .92rem; margin-bottom: 1.5rem; }
     .bootcamp_card dt { color: var(--ink); }
     .bootcamp_card dd { color: var(--thiColor); }
-    .bootcamp_card .investment { font-family: var(--secFont); font-size: 1.3rem; padding-top: 1.25rem; border-top: 1px dashed rgba(254,253,223,.25); color: var(--thiColor); margin-top: 1rem;}
-    .bootcamp_card .investment span { display: block; font-family: var(--priFont); font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink); margin-bottom: .25rem; }
     .bootcamp_card img {position: absolute; bottom: 0; }
-
-    .workshops_head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-    .workshops_head h3 { font-family: var(--secFont); font-size: 1.3rem; font-weight: 500; color: var(--secColor); }
-    .workshops_head .investment_tag { font-size: .85rem; color: var(--ink); }
-
-    .workshops_list { display: flex; flex-wrap: wrap; gap: .75rem; }
-    .workshops_list li { border: 1px solid rgba(254,253,223,.25); border-radius: 999px; padding: .6rem 1.15rem; font-size: .88rem; transition: border-color .25s ease, background .25s ease; color: var(--thiColor); }
-    .workshops_list li:hover { border-color: var(--thiColor); background: rgba(231,162,60,.08); }
-
 
     .packages {padding: 20vh 0;}
     
@@ -256,9 +245,16 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
 
 @media (max-width: 800px) {
     nav ul { gap: 1rem; }
+    #nav {display: none;}
+    #nav_mobile {display: flex;}
+    .menu_toggle { display: flex; }
 
     .package_details, .perks_box { grid-template-columns: 1fr; gap: 1.5rem; }
     .packages_inner h2 { font-size: 3rem; }
+
+    .team_avatar { margin: 0 auto; }
+    .team_card h3 { text-align: center; }
+    .team_card .role { text-align: center; }
 
     .footer_cta {text-align: center;}
     .footer_cta a.footer_link { margin: 0 auto; }
@@ -272,9 +268,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
 }
 
 @media (max-width: 600px) {
-    #nav {display: none;}
-    #nav_mobile {display: flex;}
-    .menu_toggle { display: flex; }
+  
     .header_con { padding: 1.25rem 1.25rem; }
     nav ul { gap: 1.1rem; }
     .middle_con, #main, #services, #team, #footer { padding: 1.25rem;}
