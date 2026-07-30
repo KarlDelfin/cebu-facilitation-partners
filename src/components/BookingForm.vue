@@ -352,10 +352,9 @@ export default {
           }, 500)
           gsap.to('#bookingForm', {
               opacity: 0,
-              y: 300,
+              y: window.innerHeight,
               duration: .5,
-              ease: 'back.in'
-              
+              ease: 'back.in',
           })
       },
     },

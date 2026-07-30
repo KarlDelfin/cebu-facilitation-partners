@@ -120,7 +120,7 @@
                     <div>
                         <p class="tier">01</p>
                         <h3>ROOKIE</h3>
-                        <p>The ultimate championship-level experience.</p>
+                        <p>Fundamental bonding and core teamwork.</p>
                     </div>
                     <img src="../assets/image/rookie.png" alt="people hugging">
                     
@@ -137,7 +137,7 @@
                     <div>
                         <p class="tier">03</p>
                         <h3>MVP</h3>
-                        <p>Fundamental bonding and core teamwork.</p>
+                        <p>The ultimate championship-level experience.</p>
                         <!-- <p class="investment"><span>Price:</span>₱120,000</p> -->
                     </div>
                     <img src="../assets/image/mvp.png" alt="people hugging">

@@ -16,18 +16,26 @@
       data-lenis-prevent
       class="!fixed !bottom-6 !right-6 !w-[340px] !h-[480px] !bg-white !rounded-2xl !shadow-2xl !flex !flex-col !overflow-hidden !z-[99999] !font-sans !transition-all !duration-200"
     >
-      <div class="!bg-[#136cb3] !p-4 !text-white !flex !justify-between !items-center !border-b-2 !border-[#feb841]">
-        <div>
-          <div class="!font-bold !text-sm !tracking-wide">Upskills Facilitation Partners</div>
-          <div class="!text-[11px] !text-slate-200 !mt-0.5">AI Assistant • Online</div>
-        </div>
+      <div class="!bg-[#136cb3] !p-3 !text-white !flex !justify-between !items-center !border-b-2 !border-[#feb841]">
         <div class="!flex !items-center !gap-2.5">
-          <button @click="clearHistory" class="!text-[10px] !text-slate-300 hover:!text-white !mr-1 !transition-colors !cursor-pointer" title="Clear Chat History">Clear</button>
-          <span class="!w-2 !h-2 !rounded-full !bg-emerald-400 !animate-pulse"></span>
+          <div class="!w-10 !h-10 !bg-white !rounded-full !flex !items-center !justify-center !p-1.5 !shrink-0 !shadow-sm">
+            <img class="!w-full !h-full !object-contain" src="../assets/image/logo.webp" alt="company logo">
+          </div>
+          <div class="!flex !flex-col">
+            <span class="!font-bold !text-[13px] !tracking-wide !leading-tight">Upskills Facilitation</span>
+            <span class="!text-[11px] !text-slate-200 !mt-0.5 !flex !items-center !gap-1.5">
+              <span class="!w-1.5 !h-1.5 !rounded-full !bg-emerald-400 !inline-block"></span>
+              AI Assistant • Online
+            </span>
+          </div>
+        </div>
+        
+        <div class="!flex !items-center !gap-2">
+          <button @click="clearHistory" class="!text-[10px] !text-slate-300 hover:!text-white !transition-colors !cursor-pointer" title="Clear Chat History">Clear</button>
           
           <button 
             @click="toggleChat" 
-            class="!text-white hover:!text-slate-200 !text-lg !font-bold !ml-1 !leading-none !transition-colors !cursor-pointer !p-1" 
+            class="!text-white hover:!text-slate-200 !text-xl !font-bold !leading-none !transition-colors !cursor-pointer !p-1" 
             title="Minimize Chat"
           >
             &minus;
@@ -35,7 +43,7 @@
         </div>
       </div>
 
-      <div class="!flex-1 !p-4 !flex !flex-col !gap-3 !h-[320px] !overflow-y-auto !overflow-x-hidden !scroll-smooth !bg-slate-50 !pointer-events-auto" ref="chatViewport">
+      <div v-loading="loading" class="!flex-1 !p-4 !flex !flex-col !gap-3 !h-[320px] !overflow-y-auto !overflow-x-hidden !scroll-smooth !bg-slate-50 !pointer-events-auto" ref="chatViewport">
         <div v-for="(msg, index) in messages" :key="index" 
              :class="[
                '!p-3 !rounded-xl !max-w-[80%] !text-[12.5px] !line-height-[1.5] !word-break-break-word', 
@@ -59,6 +67,7 @@
           size="default"
           class="!flex-1"
           @keyup.enter="askBot"
+          :disabled="loading"
         />
         <el-button 
           type="primary" 
@@ -132,8 +141,12 @@ export default {
       }
     },
     clearHistory() {
-      localStorage.removeItem('upskills_chat_history');
-      this.loadDefaultWelcome();
+      this.loading = true
+      setTimeout(() => {
+        localStorage.removeItem('upskills_chat_history');
+        this.loadDefaultWelcome();
+        this.loading = false
+      },1000)
     },
     scrollToBottom() {
       this.$nextTick(() => {
