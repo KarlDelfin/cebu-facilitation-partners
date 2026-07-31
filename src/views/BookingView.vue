@@ -2,30 +2,30 @@
   <div class="flex w-full gap-x-4">
     <div class="space-y-6 w-[85%]">
       <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :span="12">
           <el-card shadow="hover" class="!rounded-lg">
             <template #header>
               <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Bookings</span>
             </template>
-            <div class="text-3xl font-bold text-slate-800">{{ metrics.totalBookings }}</div>
+            <div class="text-3xl font-bold text-slate-800">{{ metrics.totalBookings.toLocaleString() }}</div>
           </el-card>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-card shadow="hover" class="!rounded-lg">
             <template #header>
               <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Pending Bookings</span>
             </template>
-            <div class="text-3xl font-bold text-amber-500">{{ metrics.pendingBookings }}</div>
+            <div class="text-3xl font-bold text-amber-500">{{ metrics.pendingBookings.toLocaleString() }}</div>
           </el-card>
         </el-col>
-        <el-col :span="8">
+    <!-- <el-col :span="8">
           <el-card shadow="hover" class="!rounded-lg">
             <template #header>
               <span class="text-slate-500 font-semibold text-sm uppercase tracking-wider">Total Value</span>
             </template>
             <div class="text-3xl font-bold text-[#136cb3]">₱245,000</div>
           </el-card>
-        </el-col>
+        </el-col> -->
       </el-row>
 
       <el-card shadow="never" class="!rounded-lg !border-slate-200 !mt-5">
@@ -77,7 +77,7 @@
               </el-tooltip>
               
               <div class="text-xs text-slate-500 mt-1">
-                Rate: ₱{{ scope.row.Service.price.toLocaleString() }} | Total: ₱{{ (scope.row.Service.price * scope.row.noOfParticipants).toLocaleString() }}
+                Rate: ₱{{ scope.row.Service.price.toLocaleString() }}
               </div>
             </template>
           </el-table-column>
@@ -257,7 +257,7 @@
           prop="phone"
           :rules="[
             { required: true, message: 'Please input phone number', trigger: 'blur', },
-            { pattern: /^(\+?\d{10,15})$/, message: 'Please input correct phone number', trigger: ['blur', 'change'], },
+            { pattern: /^09\d{9}$/, message: 'Must be a valid PH mobile number starting with 09', trigger: ['blur', 'change'] }
           ]">
           <el-input v-model="bookingForm.phone" maxlength="11" placeholder="Enter Client Phone Number"/>
         </el-form-item>
@@ -324,7 +324,7 @@ export default {
         fullName: '',
         email: '',
         phone: '',
-        status: 'confirmed',
+        status: 'pending',
         noOfParticipants: 1
       },
 
@@ -439,7 +439,7 @@ export default {
           const payload = {
             serviceId: this.bookingForm.serviceId,
             bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'confirmed',
+            status: 'pending',
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
@@ -461,7 +461,7 @@ export default {
           const payload = {
             serviceId: this.bookingForm.serviceId,
             bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'confirmed',
+            status: this.bookingForm.status,
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
@@ -737,7 +737,7 @@ export default {
       this.bookingForm.serviceId = ''
       this.bookingForm.clientId = ''
       this.bookingForm.bookingDateTime = ''
-      this.bookingForm.status = 'confirmed'
+      this.bookingForm.status = 'pending'
       this.bookingForm.fullName = ''
       this.bookingForm.email = ''
       this.bookingForm.phone = ''

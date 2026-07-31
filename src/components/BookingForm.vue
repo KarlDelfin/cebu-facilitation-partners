@@ -116,7 +116,7 @@
           prop="phone"
           :rules="[
             { required: true, message: 'Please input phone number', trigger: 'blur', },
-            { pattern: /^(\+?\d{10,15})$/, message: 'Please input correct phone number', trigger: ['blur', 'change'], },
+            { pattern: /^09\d{9}$/, message: 'Must be a valid PH mobile number starting with 09', trigger: ['blur', 'change'] }
           ]">
           <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
         </el-form-item>
@@ -146,7 +146,7 @@
 <script>
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
 import { supabase } from '@/utils/supabaseClient';
-import { ElLoading, ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import gsap from 'gsap/all'
 import moment from 'moment'
 
@@ -174,7 +174,7 @@ export default {
             serviceId: '',
             clientId: '',
             bookingDateTime: '',
-            status: 'confirmed',
+            status: 'pending',
             fullName: '',
             email: '',
             phone: '',
@@ -207,7 +207,7 @@ export default {
           const payload = {
             serviceId: this.bookingForm.serviceId,
             bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'confirmed',
+            status: 'pending',
             fullName: this.bookingForm.fullName,
             email: this.bookingForm.email,
             phone: this.bookingForm.phone,
@@ -218,6 +218,19 @@ export default {
             .insert(payload)
 
           if (error) throw error
+
+          try {
+            await supabase.functions.invoke('send-booking-email', {
+              body: { 
+                clientName: payload.fullName,
+                clientEmail: payload.email,
+                clientPhone: payload.phone,
+                bookingDate: payload.bookingDateTime
+              }
+            });
+          } catch (emailErr) {
+            console.error("Database saved, but email trigger failed:", emailErr);
+          }
 
           ElMessage.success('Booking submitted successfully.')
           this.clear()
@@ -333,7 +346,7 @@ export default {
           this.bookingForm.serviceId = ''
           this.bookingForm.clientId = ''
           this.bookingForm.bookingDateTime = ''
-          this.bookingForm.status = 'confirmed'
+          this.bookingForm.status = 'pending'
           this.bookingForm.fullName = ''
           this.bookingForm.email = ''
           this.bookingForm.phone = ''
