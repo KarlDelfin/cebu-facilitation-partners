@@ -46,7 +46,7 @@
         <div class="banner_con">
             <img src="../assets/image/banner.webp" alt="Facilitators leading a corporate bootcamp session in Cebu">
             <div class="banner_info">
-                <p>Upskills<span>Facilitation <mark>Partners</mark></span></p>
+                <p>Upskills Team<span>Building <mark>Services</mark></span></p>
             </div>
             <div class="banner_scroll">Scroll</div>
         </div>
@@ -56,7 +56,7 @@
     <div id="middle">
         <div class="middle_con">
             <div class="middle_info">
-                <h2>Welcome to<span>Upskills Facilitation Partners</span></h2>
+                <h2>Welcome to<span>Upskills Team Building Services</span></h2>
                 <p>Based in <b>Cebu</b>, we create training programs that fit your team's unique needs. Instead of using a one-size-fits-all approach, we work with you to design team-building experiences that help your people grow and achieve your business goals.</p>
                 <p>Driven by our values of <b>Transformation, Excellence, and Altruism</b>, we believe in developing people with both skill and purpose. We don't just provide training—we help build confident, capable, and future-ready professionals who can succeed in a changing world.</p>
             </div>
@@ -138,7 +138,6 @@
                         <p class="tier">03</p>
                         <h3>MVP</h3>
                         <p>The ultimate championship-level experience.</p>
-                        <!-- <p class="investment"><span>Price:</span>₱120,000</p> -->
                     </div>
                     <img src="../assets/image/mvp.png" alt="people hugging">
                 </div>
@@ -268,16 +267,21 @@
     <!-- GALLERY -->
     <div id="gallery">
         <div class="gallery_con">
-            <img src="../assets/image/our-works/1.webp" alt="Business Meeting">
-            <img src="../assets/image/our-works/2.webp" alt="Corporate Training">
-            <img src="../assets/image/our-works/3.webp" alt="Team Collaboration">
-            <img src="../assets/image/our-works/4.webp" alt="Office Team">
-            <img src="../assets/image/our-works/5.webp" alt="Business Workshop">
-            <img src="../assets/image/our-works/6.webp" alt="Presentation">
-            <img src="../assets/image/our-works/7.webp" alt="Leadership">
-            <img src="../assets/image/our-works/8.webp" alt="Startup Team">
-            <img src="../assets/image/our-works/9.webp" alt="Business Discussion">
-            <img src="../assets/image/our-works/10.webp" alt="Modern Office">
+            <img src="../assets/image/our-works/1.webp" alt="event">
+            <img src="../assets/image/our-works/2.webp" alt="event">
+            <img src="../assets/image/our-works/3.webp" alt="event">
+            <img src="../assets/image/our-works/4.webp" alt="event">
+            <img src="../assets/image/our-works/5.webp" alt="event">
+            <img src="../assets/image/our-works/6.webp" alt="event">
+            <img src="../assets/image/our-works/7.webp" alt="event">
+            <img src="../assets/image/our-works/8.webp" alt="event">
+            <img src="../assets/image/our-works/9.webp" alt="event">
+            <img src="../assets/image/our-works/10.webp" alt="event">
+            <img src="../assets/image/our-works/11.webp" alt="event">
+            <img src="../assets/image/our-works/12.webp" alt="event">
+            <img src="../assets/image/our-works/13.webp" alt="event">
+            <img src="../assets/image/our-works/14.webp" alt="event">
+            <img src="../assets/image/our-works/15.webp" alt="event">
             <p>Our Works</p>
         </div>
     </div>
@@ -286,7 +290,7 @@
     <div id="team">
         <div class="team_con">
             <div class="team_head">
-                <h2>Meet the Team <span>The founders behind the curriculum.</span></h2>
+                <h2>Meet the Team <span>The founders behind the transformation.</span></h2>
             </div>
             <div class="team_grid">
                 <article class="team_card">
@@ -296,12 +300,6 @@
                     <h3>Reb Camacho</h3>
                     <p class="role">Founder</p>
                     <p class="bio">Reb Camacho is a Certified Lean Six Sigma Yellow Belt professional, youth leader, and digital storyteller committed to developing people and building meaningful communities. He has served as a facilitator since 2016, was appointed Camp Director in 2022, and has been mentoring emerging facilitators since then. Beyond youth leadership, Reb is a content creator and a founding member of the Archdiocese of Cebu's social media ministry, where he leverages creative media to inspire, educate, and strengthen faith-based engagement.</p>
-                    <!-- <div class="credentials">
-                        <span>BA in Marketing Communication (2026)</span>
-                        <span>BPO Trainer, Concentrix (2025–2026)</span>
-                        <span>Certified Lean Six Sigma Yellow Belt</span>
-                        <span>Content Creator, CADCOMM (2021–2025)</span>
-                    </div> -->
                 </article>
                 <article class="team_card">
                     <div class="team_avatar">
@@ -310,12 +308,6 @@
                     <h3>Myrene Camingawan</h3>
                     <p class="role">Founder</p>
                     <p class="bio">Yen Camingawan is a Licensed Professional Teacher and Cum Laude graduate with a Bachelor of Secondary Education major in Filipino. A dedicated youth leader and educator, she has served as a summer camp facilitator since 2016 and was appointed Summer Camp Director in 2023. Since then, she has also been mentoring and developing the next generation of facilitators, empowering young leaders through guidance, service, and values-based leadership.</p>
-                    <!-- <div class="credentials">
-                        <span>Bachelor in Secondary Education, Major in Filipino</span>
-                        <span>Licensed Professional Teacher · TEFL Certified</span>
-                        <span>High School Teacher, Bright Academy Cebu</span>
-                        <span>Facilitator &amp; Summer Camp Director, Enfants du Mekong (2016–2023)</span>
-                    </div> -->
                 </article>
          
             </div>
@@ -327,18 +319,18 @@
         <div class="footer_con">
             <div class="footer_cta">
                 <div>
-                    <h2>Ready to build your team's bootcamp?</h2>
+                    <h2>Ready to design your next team experience?</h2>
                     <ul>
                         <li>Email: <a href="mailto:hello.upskills@gmail.com">hello.upskills@gmail.com</a></li>
                         <li>Phone: <a href="tel:09610115585">0961-011-5585</a></li>
                     </ul>
                 </div>
                 <div class="footer_btn_con">
-                    <a class="footer_link" @click="openForm('Book Now')">Book Now</a>
+                    <a class="footer_link" @click="openBookingForm('Book Now')">Book Now</a>
                 </div>
             </div>
             <div class="footer_meta">
-                <p>&copy; 2026 <mark>Upskills Facilitation Partners</mark> · Cebu, Philippines</p>
+                <p>&copy; 2026 <mark>Upskills Team Building Services</mark> · Cebu, Philippines</p>
                 <nav>
                     <ul>
                         <li><a href="#banner">Home</a></li>
@@ -352,13 +344,15 @@
         </div>
     </footer>
 
-    <BookingForm :isOpenForm="dialog.bookingForm"/>
-    <ChatBot/>
+    <!-- BOOKING FORM -->
+    <BookingForm/>
+
+    <!-- BACK TO TOP -->
     <el-backtop :right="32" :bottom="100" />
 
-    <!-- <div class="fixed bottom-5 right-5 z-50">
-        <button @click="gotoAdmin()" class="group flex aspect-square w-12 items-center justify-center rounded-full bg-[var(--secColor)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl text-xs font-[family-name:var(--secFont)]" > Admin </button>
-    </div> -->
+    <!-- CHATBOT -->
+    <ChatBot/>
+    
 </template>
 
 <script>
@@ -366,7 +360,6 @@ import { gsapController, gsapSidebarController, gsapSlidesPinning } from '../uti
 import gsap from 'gsap/all'
 import BookingForm from '@/components/BookingForm.vue';
 import ChatBot from '@/components/ChatBot.vue';
-import { ElLoading } from 'element-plus'
 export default {
     components: {BookingForm, ChatBot},
     data(){
@@ -377,38 +370,18 @@ export default {
         }
     },
     methods: {
-        async gotoAdmin() {
-            const loading = ElLoading.service({
-                lock: true,
-                text: 'Loading',
-                background: 'rgba(0, 0, 0, 0.7)',
-            })
-            
-            try {
-                await this.$router.push('/admin')
-            } catch (error) {
-                console.error('Navigation error:', error)
-            } finally {
-                loading.close()
-            }
-        },
-        
-        openForm(title){
-            if(title == 'Book Now') {
-                this.dialog.bookingForm = true
-            }
+        openBookingForm(){
             gsap.fromTo('#bookingForm', {
                 opacity: 0,
                 y: 300,
-                
             }, {
                 visibility: 'visible',
                 opacity: 1,
                 y: 0,
                 ease: 'back.out'
             })
-
         },
+
         clear() {
             this.dialog.bookingForm = false
         }

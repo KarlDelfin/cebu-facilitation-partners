@@ -138,16 +138,22 @@ export function gsapController() {
     let galleryImages = gsap.utils.toArray('.gallery_con img');
 
     let galleryTL = gsap.timeline({
-        scrollTrigger: { trigger: ".gallery_con", start: "top top", end: "+=1000", scrub: true, pin: true }
-    })
-    
+        scrollTrigger: { 
+            trigger: ".gallery_con", 
+            start: "top top", 
+            end: "+=3000",
+            scrub: true, 
+            pin: true 
+        }
+    });
+
     galleryImages.forEach((image, i) => {
         const angle = (i / galleryImages.length) * Math.PI * 2;
 
         galleryTL.to(image, {
-            x: Math.cos(angle) * 600,
+            x: Math.cos(angle) * 650,
             y: Math.sin(angle) * 250,
-            rotation: 'random(-20, 20)',
+            rotation: 'random(-10, 10)',
             scale: 1,
             duration: 1.5,
             ease: "expo.out",
@@ -156,7 +162,29 @@ export function gsapController() {
 
     galleryTL.from('.gallery_con p', {
         opacity: 0,
-    }, 0)
+        scale: 0,
+        duration: 1.5,
+        ease: "power2.out"
+    }, 0);
+
+    const rotationTracker = { angle: 0 };
+
+    galleryTL.to(rotationTracker, {
+        angle: Math.PI * 2,
+        duration: 3,
+        ease: "sine.inOut",
+        onUpdate: () => {
+            galleryImages.forEach((image, i) => {
+                const baseAngle = (i / galleryImages.length) * Math.PI * 2;
+                const totalAngle = baseAngle + rotationTracker.angle;
+
+                gsap.set(image, {
+                    x: Math.cos(totalAngle) * 650,
+                    y: Math.sin(totalAngle) * 250
+                });
+            });
+        }
+    }, 1.5);
 
     /* TEAM */
     gsap.from('.team_head h2', {
