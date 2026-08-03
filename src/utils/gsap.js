@@ -16,7 +16,7 @@ export function gsapController() {
     gsap.ticker.lagSmoothing(0)
 
     /* HEADER */
-    let mm = gsap.matchMedia();
+/*     let mm = gsap.matchMedia();
 
     mm.add("(min-width: 801px)", () => {
         ScrollTrigger.create({
@@ -38,7 +38,7 @@ export function gsapController() {
                 }
             }
         });
-    });
+    }); */
    
     gsap.from('.company_logo', {
         y: -200,
@@ -214,7 +214,7 @@ export function gsapController() {
         opacity: 0,
         duration: 0.8,
         stagger: 0.1,
-        scrollTrigger: { trigger: '#footer', start: 'top 80%' },
+        scrollTrigger: { trigger: '#footer', start: 'top 80%', markers: true },
     })
 }
 
