@@ -3,20 +3,17 @@ import Lenis from 'lenis'
 
 gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, DrawSVGPlugin, MotionPathPlugin)
 
-export function gsapController() {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduceMotion) return
+/* LENIS SCROLL */
+const lenis = new Lenis()
+lenis.on('scroll', ScrollTrigger.update)
+gsap.ticker.add((time) => {
+    lenis.raf(time * 1000)
+})
+gsap.ticker.lagSmoothing(0)
 
-    /* LENIS SCROLL */
-    const lenis = new Lenis()
-    lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add((time) => {
-        lenis.raf(time * 1000)
-    })
-    gsap.ticker.lagSmoothing(0)
-
+export function initHeaderAnimations() {
     /* HEADER */
-/*     let mm = gsap.matchMedia();
+    /* let mm = gsap.matchMedia();
 
     mm.add("(min-width: 801px)", () => {
         ScrollTrigger.create({
@@ -39,12 +36,26 @@ export function gsapController() {
             }
         });
     }); */
-   
-    gsap.from('.company_logo', {
+
+    const headerTextsST = new SplitText(['header p', 'nav ul li a'], {
+        type: 'lines',
+    })
+
+    gsap.timeline().from(headerTextsST.lines, {
+        y: 50,
+        opacity: 0,
+        ease: 'back.out',
+        stagger: { each: 0.1 },
+    })
+
+    gsap.from('.comp_logo', {
         y: -200,
         delay: .5,
     })
+    
+}
 
+export function initHomeAnimations() {
     /* BANNER */
     gsap.from('.banner_con img', {
         scale: 1.3,
@@ -52,7 +63,7 @@ export function gsapController() {
         ease: 'power4.out',
     })
 
-    const bannerTextsST = new SplitText(['header p', 'nav ul li a', '.banner_info p'], {
+    const bannerTextsST = new SplitText(['.banner_info p'], {
         type: 'lines',
     })
     gsap.timeline().from(bannerTextsST.lines, {
@@ -141,7 +152,7 @@ export function gsapController() {
         scrollTrigger: { 
             trigger: ".gallery_con", 
             start: "top top", 
-            end: "+=3000",
+            end: "+=5000",
             scrub: true, 
             pin: true 
         }
@@ -204,21 +215,28 @@ export function gsapController() {
         scrollTrigger: { trigger: '.team_card', start: 'top 75%' },
     })
 
+    
+    setTimeout(() => {
+        ScrollTrigger.refresh();
+    }, 100);
+}
+
+export function initFooterAnimations() {
     /* FOOTER */
-    gsap.to('#footer', {
+    gsap.to('#contact', {
         width: '97%',
-        scrollTrigger: { trigger: '#footer', start: 'top 90%', end: 'bottom 100%', scrub: true },
+        scrollTrigger: { trigger: '#contact', start: 'top 90%', end: 'bottom bottom', scrub: true },
     })
     gsap.from('.footer_cta h2, .footer_link', {
         y: 30,
         opacity: 0,
         duration: 0.8,
         stagger: 0.1,
-        scrollTrigger: { trigger: '#footer', start: 'top 80%', markers: true },
+        scrollTrigger: { trigger: '#contact', start: 'top 80%',  },
     })
 }
 
-export function gsapSlidesPinning() {
+export function initSlidesPinning() {
     
     var panels = gsap.utils.toArray(".packages_con");
     panels.pop();
@@ -253,7 +271,7 @@ export function gsapSlidesPinning() {
     });
 }
 
-export function gsapSidebarController() {
+export function initMobileMenu() {
     let isOpen = false;
     let exitSpeed = 1.5;
     let tl;

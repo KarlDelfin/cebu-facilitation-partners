@@ -24,8 +24,8 @@
         </div>
     </div>
 
-    <!-- MAIN -->
-    <main id="main">
+    <!-- ABOUT -->
+    <main id="about">
         <div class="main_con">
             <div class="founded_info">
                 <section>
@@ -218,7 +218,6 @@
                 </div>
             </div>
         </div>
-
  
     </div>
 
@@ -275,21 +274,13 @@
     <!-- BOOKING FORM -->
     <BookingForm/>
 
-    <!-- BACK TO TOP -->
-    <el-backtop :right="32" :bottom="100" />
-
-    <!-- CHATBOT -->
-    <ChatBot/>
-    
 </template>
 
 <script>
-import { gsapController, gsapSidebarController, gsapSlidesPinning } from '../utils/gsap'
-import gsap from 'gsap/all'
+import { initHomeAnimations, initSlidesPinning } from '../utils/gsap'
 import BookingForm from '@/components/BookingForm.vue';
-import ChatBot from '@/components/ChatBot.vue';
 export default {
-    components: {BookingForm, ChatBot},
+    components: {BookingForm},
     data(){
         return{
             dialog: {
@@ -297,27 +288,10 @@ export default {
             },
         }
     },
-    methods: {
-        openBookingForm(){
-            gsap.fromTo('#bookingForm', {
-                opacity: 0,
-                y: 300,
-            }, {
-                visibility: 'visible',
-                opacity: 1,
-                y: 0,
-                ease: 'back.out'
-            })
-        },
-
-        clear() {
-            this.dialog.bookingForm = false
-        }
-    },
+    methods: { },
     mounted() {
-        gsapController()
-        gsapSidebarController()
-        gsapSlidesPinning()
+        initHomeAnimations()
+        initSlidesPinning()
     },
 }
 </script>

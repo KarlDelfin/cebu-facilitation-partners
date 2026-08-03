@@ -128,7 +128,7 @@
 .privacy_policy_con p {margin: 0 0 1rem;}
 .privacy_policy_con figure {position: relative;}
 .privacy_policy_con figure img {}
-.privacy_policy_con figure figcaption {position: absolute; bottom: 0; text-align: center; z-index: 1; background: var(--priColor); width: 100%; min-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 3rem; font-weight: 700; color: var(--defaultColor);}
+.privacy_policy_con figure figcaption {position: relative; bottom: 0; text-align: center; z-index: 1; background: var(--priColor); width: 100%; min-height: 80px; display: flex; justify-content: center; align-items: center; font-size: 3rem; font-weight: 700; color: var(--defaultColor);}
 .privacy_policy_con .effective_date{color: red;}
 .privacy_policy_con ul { margin: 0 0 1rem;}
 .privacy_policy_con ol { padding-left: 20px; list-style-type: decimal;}
