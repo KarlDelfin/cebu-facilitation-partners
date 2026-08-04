@@ -1,9 +1,5 @@
 <template>
     <div class="privacy_policy_con">
-        <figure>
-            <img src="@/assets/image/bnr-privacy-policy.webp" alt="hands holding a lock">
-            <figcaption><h1>Privacy Policy</h1></figcaption>
-        </figure>
         <div class="wrapper">
             <p>Effective Date: <span class="effective_date">July 2025</span></p>
             

@@ -270,17 +270,12 @@
             </div>
         </div>
     </div>
-
-    <!-- BOOKING FORM -->
-    <BookingForm/>
-
 </template>
 
 <script>
 import { initHomeAnimations, initSlidesPinning } from '../utils/gsap'
-import BookingForm from '@/components/BookingForm.vue';
 export default {
-    components: {BookingForm},
+    components: {},
     data(){
         return{
             dialog: {

@@ -285,6 +285,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import moment from 'moment';
 import debounce from 'lodash/debounce'
 import { markRaw } from 'vue'
+import { throttle } from 'lodash';
 
 export default {
   data() {
@@ -767,20 +768,29 @@ export default {
         return 'danger-row'
       }
     },
+    async fetchDashboardData() {
+      this.loading = true;
+      try {
+        await Promise.all([
+          this.getBookings(),
+          this.getBookingMetrics(),
+          this.getUpcomingBookings()
+        ]);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      } finally {
+        this.loading = false;
+      }
+    }
+  },
+  created() {
+    this.throttledFetchDashboard = throttle(this.fetchDashboardData, 3000, {
+      leading: true,
+      trailing: false,
+    });
   },
   async mounted() {
-    this.loading = true;
-    try {
-      await Promise.all([
-        this.getBookings(),
-        this.getBookingMetrics(),
-        this.getUpcomingBookings()
-      ]);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
-    } finally {
-      this.loading = false;
-    }
+    await this.throttledFetchDashboard();
   }
 }
 </script>

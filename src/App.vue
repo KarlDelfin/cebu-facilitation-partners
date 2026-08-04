@@ -1,5 +1,5 @@
 <template>
-    <div class="header_con" v-if="!$route.path.includes('/admin')" :style="$route.path.includes('/') ? 'position:relative' : 'position:fixed'">
+    <div class="header_con" v-if="!$route.path.includes('/admin')" :style="$route.path.includes('/') ? 'position:fixed' : 'position:relative'">
         <!-- HEADER -->
         <header id="header">
             <div class="comp_logo">
@@ -51,7 +51,16 @@
             </nav>
         </div>
     </div>
+    
+    <!-- NON-HOME BANNER -->
+    <div class="banner" v-if="!$route.path.includes('/admin') && $route.path !== '/'">
+        <figure>
+            <img src="@/assets/image/bnr-privacy-policy.webp" alt="hands holding a lock">
+            <figcaption><h1>{{ $route.name }}</h1></figcaption>
+        </figure>
+    </div>
 
+    <!-- MAIN -->
     <RouterView />
   
     <!-- FOOTER -->
@@ -96,20 +105,27 @@
         </div>
     </footer>
 
-    <!-- BACK TO TOP -->
-    <el-backtop :right="32" :bottom="100" v-if="!$route.path.includes('/admin')"/>
+    <div v-if="!$route.path.includes('/admin')">
+        <!-- BACK TO TOP -->
+        <el-backtop :right="32" :bottom="100"/>
 
-    <!-- CHATBOT -->
-    <ChatBot v-if="!$route.path.includes('/admin')"/>
+        <!-- CHATBOT -->
+        <ChatBot/>
+
+        <!-- BOOKING FORM -->
+        <BookingForm/>
+    </div>
+
 </template>
 
 <script>
 import { initHeaderAnimations, initFooterAnimations, initMobileMenu } from '@/utils/gsap'
 import { gsap } from 'gsap/all'
 import ChatBot from './components/ChatBot.vue'
+import BookingForm from '@/components/BookingForm.vue';
 
 export default {
-    components: { ChatBot },
+    components: { ChatBot, BookingForm },
     data() {
         return {
             dialog: {

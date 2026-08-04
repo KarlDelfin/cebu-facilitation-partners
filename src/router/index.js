@@ -5,32 +5,32 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/privacy-policy',
-      name: 'privacyPolicy',
+      name: 'Privacy Policy',
       component: () => import('../views/PrivacyPolicyView.vue'),
     },
     {
       path: '/admin',
-      name: 'admin',
+      name: 'Admin',
       component: () => import('../views/AdminView.vue'),
       children: [
         {
           path: 'bookings',
-          name: 'bookings',
+          name: 'Bookings',
           component: () => import('../views/BookingView.vue'),
         },
         {
           path: 'services',
-          name: 'services',
+          name: 'Services',
           component: () => import('../views/ServiceView.vue'),
         },
         {
           path: 'calendar',
-          name: 'calendar',
+          name: 'Calendar',
           component: () => import('../views/CalendarView.vue'),
         },
       ]

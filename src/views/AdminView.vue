@@ -5,8 +5,8 @@
     <el-container class="flex flex-col">
       <el-header class="!flex bg-white border-b border-slate-200 flex justify-end !items-center px-6 h-16">
         
-        <div class="flex items-center gap-3 justify-end items-center">
-          
+        <div class="flex items-center gap-3 justify-between items-center w-full">
+          <h1 class="!text-lg !font-bold">{{ $route.name }}</h1>
           <el-button 
             type="danger" 
             size="small" 

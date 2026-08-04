@@ -166,10 +166,8 @@ export default {
     /* SUBMIT FORM */
     async submitForm(){
       try{
-        const isValid = this.$refs.serviceFormRef.validate()
+        await this.$refs.serviceFormRef.validate()
         
-        if(!isValid) return
-
         if(this.title == 'Create Service') {
           const payload = {
             name: this.serviceForm.name,
@@ -210,7 +208,6 @@ export default {
       catch(error) {
         console.error(error)
       }
-
     },
 
     /* GET SERVICES */
