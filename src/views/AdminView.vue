@@ -107,7 +107,7 @@ export default {
         this.$store.dispatch('setUser', session);
         
         if (this.$route.path === '/admin' || this.$route.path === '/admin/') {
-          this.$router.push('/admin/bookings');
+          this.$router.push('/admin/booking');
         }
       } catch (err) {
         ElMessage.error(`Authorization engine error: ${err.message}`);
