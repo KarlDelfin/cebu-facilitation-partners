@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div v-loading="loading" class="!flex-1 !p-4 !flex !flex-col !gap-3 !h-[320px] !overflow-y-auto !overflow-x-hidden !scroll-smooth !bg-slate-50 !pointer-events-auto" ref="chatViewport">
+      <div class="!flex-1 !p-4 !flex !flex-col !gap-3 !h-[320px] !overflow-y-auto !overflow-x-hidden !scroll-smooth !bg-slate-50 !pointer-events-auto" ref="chatViewport">
         <div v-for="(msg, index) in messages" :key="index" 
              :class="[
                '!p-3 !rounded-xl !max-w-[80%] !text-[12.5px] !line-height-[1.5] !word-break-break-word', 
@@ -175,16 +175,7 @@ export default {
 </script>
 
 <style scoped>
-:deep(ul) {
-  list-style-type: disc !important;
-  margin-left: 16px !important;
-  margin-top: 4px !important;
-  margin-bottom: 4px !important;
-}
-:deep(li) {
-  margin-bottom: 4px !important;
-}
-:deep(strong) {
-  font-weight: 700 !important;
-}
+:deep(ul) { list-style-type: disc !important; margin-left: 16px !important; margin-top: 4px !important; margin-bottom: 4px !important; }
+:deep(li) { margin-bottom: 4px !important; }
+:deep(strong) { font-weight: 700 !important; }
 </style>

@@ -19,9 +19,19 @@ const router = createRouter({
       component: () => import('../views/AdminView.vue'),
       children: [
         {
-          path: 'bookings',
+          path: 'booking',
           name: 'Bookings',
           component: () => import('../views/BookingView.vue'),
+        },
+        {
+          path: 'status',
+          name: 'Booking Status',
+          component: () => import('../views/BookingStatusView.vue'),
+        },
+        {
+          path: 'timeslot',
+          name: 'Booking Time Slot',
+          component: () => import('../views/BookingTimeSlotView.vue'),
         },
         {
           path: 'services',
@@ -34,7 +44,7 @@ const router = createRouter({
           component: () => import('../views/CalendarView.vue'),
         },
       ]
-    },
+    }
   ],
 })
 

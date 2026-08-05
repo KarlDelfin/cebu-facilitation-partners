@@ -55,11 +55,6 @@
       </div>
     </el-card>
   </div>
-
-  <!-- <button @click="toggleDark()">
-    TOGGLE
-    <span class="ml-2">{{ isDark ? 'Dark' : 'Light' }}</span>
-  </button> -->
 </template>
 
 <script>
@@ -144,7 +139,7 @@ export default {
     }
   },
     
-    async handleSignOut() {
+  async handleSignOut() {
       await supabase.auth.signOut();
       this.$store.dispatch('setUser', null); 
       ElMessage.info('Logged out securely.');

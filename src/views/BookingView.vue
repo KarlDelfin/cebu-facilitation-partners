@@ -26,9 +26,8 @@
             v-model="search.bookingName"
             placeholder="Search by booking..."
             class="w-96"
-            :prefix-icon="SearchIcon"
+            :prefix-icon="Search"
             clearable
-            @input="onSearchBookingInput"
           />
           <el-button type="primary" color="#136cb3" class="font-semibold" @click="formController('Create Booking')">
             Create Booking
@@ -75,25 +74,30 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Scheduled Date" align="center">
+          <el-table-column label="Scheduled Date & Time" align="center">
             <template #default="scope">
-              <div class="text-slate-800 font-medium text-sm">
-                <el-tag>{{ scope.row.bookingDateTime }}</el-tag>
+              <div class="text-slate-800 font-medium text-sm flex flex-col items-center gap-1">
+                <el-tag>{{ scope.row.formattedBookingDate }}</el-tag>
+                <span v-if="scope.row.TimeSlot" class="text-xs text-slate-500 font-semibold">
+                  {{ scope.row.formattedSlotTime }}
+                </span>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column label="Status" width="130">
+          <el-table-column label="Status" width="140">
             <template #default="scope">
               <el-select 
-                v-model="scope.row.status" 
+                v-model="scope.row.statusId" 
                 size="small" 
                 @change="handleStatusChange(scope.row)"
               >
-                <el-option label="Pending" value="pending" />
-                <el-option label="Confirmed" value="confirmed" />
-                <el-option label="Cancelled" value="cancelled" />
-                <el-option label="Completed" value="completed" />
+                <el-option 
+                  v-for="status in statuses" 
+                  :key="status.id" 
+                  :label="status.name" 
+                  :value="status.id" 
+                />
               </el-select>
             </template>
           </el-table-column>
@@ -151,10 +155,13 @@
           :key="index"
           class="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0 group hover:bg-slate-50/50 transition-colors duration-150 rounded-lg px-1"
         >
-          <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5 flex-wrap">
             <el-tag size="small" type="primary" effect="light" class="!font-semibold !text-[11px] !px-2">
-              {{ upcomingBooking.bookingDateTime }}
+              {{ upcomingBooking.formattedBookingDate }}
             </el-tag>
+            <span v-if="upcomingBooking.TimeSlot" class="text-[11px] text-slate-500 font-bold">
+              {{ upcomingBooking.formattedSlotTime }}
+            </span>
           </div>
 
           <div class="flex flex-col pl-0.5">
@@ -177,25 +184,42 @@
     </div>
   </div>
 
-  <!-- BOOKING FORM -->
+  <!-- BOOKING FORM DIALOG -->
   <el-dialog v-model="dialog.bookingForm" :title="title" center :before-close="clear">
     <el-form ref="bookingFormRef" @submit.prevent="submitForm" label-position="top" :model="bookingForm" v-loading="loading">
-      <el-form-item 
-        label="Service"
-        prop="serviceId"
-        :rules="[
-          { required: true, message: 'Please select service', trigger: 'change', },
-        ]">
-        <el-select 
-          @focus="getServices('')" 
-          filterable 
-          :loading="loading" 
-          placeholder="Select Service"
-          v-model="bookingForm.serviceId"
-        >
-          <el-option v-for="service in services" :key="service.id" :label="service.name" :value="service.id"/>
-        </el-select>
-      </el-form-item>
+      
+      <div class="grid grid-cols-2 gap-x-5">
+        <el-form-item 
+          label="Service"
+          prop="serviceId"
+          :rules="[
+            { required: true, message: 'Please select service', trigger: 'change' },
+          ]">
+          <el-select 
+            @focus="getServices('')" 
+            filterable 
+            :loading="loading" 
+            placeholder="Select Service"
+            v-model="bookingForm.serviceId"
+          >
+            <el-option v-for="service in services" :key="service.id" :label="service.name" :value="service.id"/>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item 
+          label="Status"
+          prop="statusId"
+          :rules="[
+            { required: true, message: 'Please select status', trigger: 'change' },
+          ]">
+          <el-select 
+            placeholder="Select Status"
+            v-model="bookingForm.statusId"
+          >
+            <el-option v-for="status in statuses" :key="status.id" :label="status.name" :value="status.id"/>
+          </el-select>
+        </el-form-item>
+      </div>
       
       <div class="flex gap-10">
         <el-form-item class="!w-[50%]" label="Preferred Date">
@@ -206,13 +230,13 @@
             <button
               type="button"
               v-for="slot in timeSlots"
-              :key="slot.value"
-              class="!w-[32%] border border-[#ccc] rounded-[5px] py-2 px-4"
-              :class="{ active: selectedTime === slot.value, disabled: slot.disabled }"
-              @click="!slot.disabled && handleSelectTime(slot.value)"
+              :key="slot.id"
+              class="!w-[100%] border border-[#ccc] rounded-[5px] py-2 px-4"
+              :class="{ active: bookingForm.timeSlotId === slot.id, disabled: slot.disabled }"
+              @click="!slot.disabled && handleSelectTime(slot.id)"
               :disabled="slot.disabled"
             >
-              {{ slot.label }}
+              {{ slot.formattedTime }}
             </button>
           </div>
         </el-form-item>
@@ -223,7 +247,7 @@
           label="Full Name"
           prop="fullName"
           :rules="[
-            { required: true, message: 'Please input full name', trigger: 'blur', },
+            { required: true, message: 'Please input full name', trigger: 'blur' },
           ]">
           <el-input v-model="bookingForm.fullName" placeholder="Enter Client Full Name"/>
         </el-form-item>
@@ -232,8 +256,8 @@
           label="Email" 
           prop="email"
           :rules="[
-            { required: true, message: 'Please input email address', trigger: 'blur', },
-            { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Please input correct email address', trigger: ['blur', 'change'], },
+            { required: true, message: 'Please input email address', trigger: 'blur' },
+            { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Please input correct email address', trigger: ['blur', 'change'] },
           ]">
           <el-input v-model="bookingForm.email" placeholder="Enter Client Email"/>
         </el-form-item>
@@ -242,7 +266,7 @@
           label="Phone" 
           prop="phone"
           :rules="[
-            { required: true, message: 'Please input phone number', trigger: 'blur', },
+            { required: true, message: 'Please input phone number', trigger: 'blur' },
             { pattern: /^09\d{9}$/, message: 'Must be a valid PH mobile number starting with 09', trigger: ['blur', 'change'] }
           ]">
           <el-input v-model="bookingForm.phone" maxlength="11" placeholder="Enter Client Phone Number"/>
@@ -252,7 +276,7 @@
           label="No of Participants" 
           prop="noOfParticipants"
           :rules="[
-            { required: true, message: 'Please input a digit', trigger: 'blur', },
+            { required: true, message: 'Please input a digit', trigger: 'blur' },
           ]">
           <el-input-number v-model="bookingForm.noOfParticipants" :min="1" placeholder="Enter No of Participants"/>
         </el-form-item>
@@ -267,30 +291,453 @@
 
 <script>
 import { Search } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { supabase } from '@/utils/supabaseClient';
+import moment from 'moment';
+import debounce from 'lodash/debounce';
 import { markRaw } from 'vue';
-import { bookingLogic } from '../services/bookingLogic';
 
 export default {
-  mixins: [bookingLogic],
-
+  name: 'BookingView',
+  components: {
+    Search: markRaw(Search)
+  },
   data() {
     return {
-      SearchIcon: markRaw(Search)
+      Search,
+      title: '',
+      loading: false,
+      bookings: [],
+      services: [],
+      statuses: [],
+      timeSlots: [],
+      vCalendarEvents: [],
+      upcomingBookings: [],
+      selectedDateStr: '',
+      metrics: {
+        totalBookings: 0,
+        pendingBookings: 0
+      },
+      bookingForm: {
+        id: '',
+        serviceId: '',
+        bookingDate: '',
+        timeSlotId: '',
+        statusId: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        noOfParticipants: 1
+      },
+      dialog: {
+        bookingForm: false
+      },
+      search: {
+        bookingName: '',
+        serviceName: ''
+      },
+      bookingPagination: {
+        elementsPerPage: 5,
+        currentPage: 1,
+        totalElements: 0
+      }
     };
   },
 
+  methods: {
+    async fetchDashboardData() {
+      this.loading = true;
+      try {
+        await Promise.all([
+          this.getBookings(),
+          this.getBookingMetrics(),
+          this.getUpcomingBookings()
+        ]);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /* GET STATUSES */
+    async getStatuses() {
+      try {
+        const { data, error } = await supabase.from('Status').select('*');
+        if (error) throw error;
+        this.statuses = data || [];
+      } catch (error) {
+        console.error('Error fetching statuses:', error);
+      }
+    },
+
+    /* GET TIME SLOTS */
+    async getTimeSlots() {
+      try {
+        const { data, error } = await supabase
+          .from('TimeSlot')
+          .select('*')
+          .eq('isActive', true)
+          .order('slotTime', { ascending: true });
+
+        if (error) throw error;
+
+        this.timeSlots = (data || []).map(slot => ({
+          ...slot,
+          formattedTime: moment(slot.slotTime, 'HH:mm:ss').format('h:mm A'),
+          disabled: false
+        }));
+      } catch (error) {
+        console.error('Error fetching time slots:', error);
+      }
+    },
+
+    /* HANDLE SELECT DATE */
+    async handleSelectDate(day) {
+      try {
+        const selected = moment(day.date).startOf('day');
+        const today = moment().startOf('day');
+        
+        if (selected.isBefore(today) && this.title === 'Create Booking') {
+          ElMessage.warning('Cannot select past date');
+          return;
+        }
+        
+        this.selectedDateStr = selected.format('YYYY-MM-DD');
+        this.bookingForm.bookingDate = selected.toISOString();
+        this.vCalendarEvents = [{
+          highlight: { backgroundColor: '#ff8080' },
+          dates: day.date instanceof Date ? day.date : new Date(day.date)
+        }];
+        
+        const startOfDay = selected.format('YYYY-MM-DD 00:00:00');
+        const endOfDay = selected.clone().endOf('day').format('YYYY-MM-DD 23:59:59');
+        
+        const { data, error } = await supabase
+          .from('Booking')
+          .select('timeSlotId')
+          .gte('bookingDate', startOfDay)
+          .lte('bookingDate', endOfDay);
+
+        if (error) throw error;
+
+        const bookedTimeSlotIds = new Set(data.map(item => item.timeSlotId));
+
+        this.timeSlots = this.timeSlots.map(slot => ({
+          ...slot,
+          disabled: bookedTimeSlotIds.has(slot.id) && slot.id !== this.bookingForm.timeSlotId
+        }));
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    /* HANDLE SELECT TIME */
+    handleSelectTime(timeSlotId) {
+      this.bookingForm.timeSlotId = timeSlotId;
+    },
+
+    /* HANDLE STATUS CHANGE IN TABLE */
+    async handleStatusChange(row) {
+      try {
+        this.loading = true;
+        const { error } = await supabase
+          .from('Booking')
+          .update({ statusId: row.statusId })
+          .eq('id', row.id);
+
+        if (error) throw error;
+
+        ElMessage.success('Booking status updated successfully.');
+        await this.fetchDashboardData();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /* SUBMIT FORM */
+    async submitForm() {
+      try {
+        if (!this.$refs.bookingFormRef) return;
+        const isValid = await this.$refs.bookingFormRef.validate();
+        if (!isValid) return;
+
+        if (!this.bookingForm.bookingDate || !this.bookingForm.timeSlotId) {
+          ElMessage.warning('Please select both a preferred date and time slot.');
+          return;
+        }
+
+        this.loading = true;
+
+        const payload = {
+          serviceId: this.bookingForm.serviceId,
+          statusId: this.bookingForm.statusId,
+          bookingDate: this.bookingForm.bookingDate,
+          timeSlotId: this.bookingForm.timeSlotId,
+          fullName: this.bookingForm.fullName,
+          email: this.bookingForm.email,
+          phone: this.bookingForm.phone,
+          noOfParticipants: this.bookingForm.noOfParticipants
+        };
+
+        if (this.title === 'Create Booking') {
+          const { error } = await supabase.from('Booking').insert(payload);
+          if (error) throw error;
+          ElMessage.success('Booking submitted successfully.');
+        } else if (this.title === 'Edit Booking') {
+          const { error } = await supabase
+            .from('Booking') 
+            .update(payload)
+            .eq('id', this.bookingForm.id);
+
+          if (error) throw error;
+          ElMessage.success('Booking updated successfully.');
+        }
+
+        this.clear();
+        await this.fetchDashboardData();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /* FORM CONTROLLER */
+    async formController(dialogTitle, data) {
+      try {
+        this.title = dialogTitle;
+        this.dialog.bookingForm = true;
+        this.loading = true;
+
+        await Promise.all([this.getServices(''), this.getTimeSlots()]);
+
+        if (dialogTitle === 'Create Booking') {
+          const pendingStatus = this.statuses.find(s => s.name?.toLowerCase() === 'pending');
+          if (pendingStatus) this.bookingForm.statusId = pendingStatus.id;
+        } else if (dialogTitle === 'Edit Booking' && data) {
+          this.bookingForm.id = data.id;
+          this.bookingForm.serviceId = data.Service?.id || data.serviceId;
+          this.bookingForm.statusId = data.Status?.id || data.statusId;
+          this.bookingForm.timeSlotId = data.timeSlotId;
+          this.bookingForm.fullName = data.fullName;
+          this.bookingForm.email = data.email;
+          this.bookingForm.phone = data.phone;
+          this.bookingForm.noOfParticipants = data.noOfParticipants;
+
+          const datePart = moment(data.bookingDate).format('YYYY-MM-DD');
+          await this.handleSelectDate({ date: datePart });
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /* GET BOOKINGS */
+    async getBookings() {
+      try {
+        this.loading = true;
+        const limit = this.bookingPagination.elementsPerPage;
+        const from = (this.bookingPagination.currentPage - 1) * limit;
+        const to = from + limit - 1;
+
+        let query = supabase
+          .from('Booking')
+          .select(`
+            *,
+            Service ( id, name, description, price ),
+            Status ( id, name, color ),
+            TimeSlot ( id, slotTime )
+          `, { count: 'exact' });
+
+        if (this.search.bookingName && this.search.bookingName.trim() !== '') {
+          const searchPattern = `%${this.search.bookingName.trim()}%`;
+          query = query.or(`fullName.ilike.${searchPattern},email.ilike.${searchPattern},phone.ilike.${searchPattern}`);
+        }
+
+        query = query.order('dateTimeCreated', { ascending: false }).range(from, to);
+
+        const { data, error, count } = await query;
+        if (error) throw error;
+
+        this.bookings = (data || []).map((item) => ({
+          ...item,
+          formattedBookingDate: moment(item.bookingDate).format('LL'),
+          formattedSlotTime: item.TimeSlot?.slotTime ? moment(item.TimeSlot.slotTime, 'HH:mm:ss').format('h:mm A') : '',
+          dateTimeCreated: moment(item.dateTimeCreated).format('LLL')
+        }));
+
+        this.bookingPagination.totalElements = count || 0;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /* GET UPCOMING BOOKINGS */
+    async getUpcomingBookings() {
+      try {
+        // Get ISO string for the start of today (00:00:00)
+        const startOfToday = moment().startOf('day').toISOString();
+
+        const { data, error } = await supabase
+          .from('Booking')
+          .select(`
+            *,
+            TimeSlot ( id, slotTime )
+          `)
+          .gte('bookingDate', startOfToday)
+          .order('bookingDate', { ascending: true });
+
+        if (error) throw error;
+
+        this.upcomingBookings = (data || []).map((item) => ({
+          ...item,
+          formattedBookingDate: moment(item.bookingDate).format('MMMM DD, YYYY'),
+          formattedSlotTime: item.TimeSlot?.slotTime 
+            ? moment(item.TimeSlot.slotTime, 'HH:mm:ss').format('h:mm A') 
+            : ''
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    /* GET SERVICES */
+    async getServices(searchValue = '') {
+      try {
+        let query = supabase.from('Service').select('*');
+
+        if (searchValue !== '') {
+          const searchPattern = `%${searchValue}%`;
+          query = query.or(`name.ilike.${searchPattern},description.ilike.${searchPattern}`);
+        }
+
+        query = query.order('dateTimeCreated', { ascending: false });
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        this.services = data || [];
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    /* DELETE BOOKING */
+    async deleteBooking(bookingId) {
+      try {
+        await ElMessageBox.confirm('Do you want to delete this booking?', 'Warning', { 
+          confirmButtonText: 'OK', 
+          cancelButtonText: 'Cancel', 
+          type: 'warning' 
+        });
+
+        const { error } = await supabase
+          .from('Booking')
+          .delete()
+          .eq('id', bookingId);
+
+        if (error) throw error;
+
+        ElMessage.success('Booking deleted successfully.');
+        await this.fetchDashboardData();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    /* GET BOOKING METRICS */
+    async getBookingMetrics() {
+      try {
+        const pendingStatus = this.statuses.find(s => s.name?.toLowerCase() === 'pending');
+        
+        const [totalBookings, totalPending] = await Promise.all([
+          supabase.from('Booking').select('*', { count: 'exact', head: true }),
+          pendingStatus 
+            ? supabase.from('Booking').select('*', { count: 'exact', head: true }).eq('statusId', pendingStatus.id)
+            : { count: 0, error: null },
+        ]);
+
+        if (totalBookings.error) throw totalBookings.error;
+
+        this.metrics.totalBookings = totalBookings.count || 0;
+        this.metrics.pendingBookings = totalPending.count || 0;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    /* CLEAR FORM */
+    clear(done) {
+      Object.assign(this.bookingForm, {
+        id: '',
+        serviceId: '',
+        bookingDate: '',
+        timeSlotId: '',
+        statusId: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        noOfParticipants: 1
+      });
+      
+      this.vCalendarEvents = [];
+      this.selectedDateStr = '';
+
+      this.timeSlots = this.timeSlots.map(slot => ({
+        ...slot,
+        disabled: false
+      }));
+
+      this.dialog.bookingForm = false;
+      if (typeof done === 'function') done();
+    },
+
+    /* SET TABLE ROW CLASS NAME BASED ON STATUS NAME */
+    tableRowClassName({ row }) {
+      const statusName = row.Status?.name;
+      if (statusName === 'Confirmed') return 'primary-row';
+      if (statusName === 'Completed') return 'success-row';
+      if (statusName === 'Pending') return 'warning-row';
+      if (statusName === 'Cancelled') return 'danger-row';
+      return '';
+    }
+  },
+  created() {
+    this.debouncedSearch = debounce(() => {
+      this.getBookings();
+    }, 500);
+  },
   async mounted() {
-    await this.fetchDashboardData();
-  }
-}
+    await this.getStatuses();
+    await this.getTimeSlots();
+    this.fetchDashboardData();
+  },
+/*   unmounted() {
+    if (this.debouncedSearch) {
+      this.debouncedSearch.cancel();
+    }
+  }, */
+  watch: {
+    'search.bookingName'() {
+      this.debouncedSearch();
+    }
+  },
+};
 </script>
 
-<style>
-.el-form-item__content button.active { background: #409eff !important; color: #fff !important; }
-.el-form-item__content button.disabled { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
-
-.el-table .primary-row { --el-table-tr-bg-color: var(--el-color-primary-light-9); }
-.el-table .success-row { --el-table-tr-bg-color: var(--el-color-success-light-9); }
-.el-table .warning-row { --el-table-tr-bg-color: var(--el-color-warning-light-9); }
-.el-table .danger-row { --el-table-tr-bg-color: var(--el-color-danger-light-9); }
+<style scoped>
+:deep(.el-form-item__content button.active) { background: #409eff !important; color: #fff !important; }
+:deep(.el-form-item__content button.disabled) { color: #7f8c8d; opacity: 0.6; cursor: not-allowed; background-color: #ccc; }
+:deep(.el-table .primary-row) { --el-table-tr-bg-color: var(--el-color-primary-light-9); }
+:deep(.el-table .success-row) { --el-table-tr-bg-color: var(--el-color-success-light-9); }
+:deep(.el-table .warning-row) { --el-table-tr-bg-color: var(--el-color-warning-light-9); }
+:deep(.el-table .danger-row) { --el-table-tr-bg-color: var(--el-color-danger-light-9); }
 </style>

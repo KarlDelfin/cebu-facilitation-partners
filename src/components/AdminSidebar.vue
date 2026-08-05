@@ -14,16 +14,33 @@
       active-text-color="#feb841"
       class="border-none flex-1"
     >
-      <el-menu-item index="/admin/bookings">
-        <el-icon><Calendar /></el-icon>
-        <span>Bookings</span>
-      </el-menu-item>
+      <el-sub-menu index="booking-menu">
+        <template #title>
+          <el-icon><Calendar /></el-icon>
+          <span>Bookings</span>
+        </template>
+
+        <el-menu-item index="/admin/booking">
+          <el-icon><Notebook /></el-icon>
+          <span>All Bookings</span>
+        </el-menu-item>
+
+        <el-menu-item index="/admin/status">
+          <el-icon><CollectionTag /></el-icon>
+          <span>Booking Status</span>
+        </el-menu-item>
+
+        <el-menu-item index="/admin/timeslot">
+          <el-icon><Clock /></el-icon>
+          <span>Time Slots</span>
+        </el-menu-item>
+      </el-sub-menu>
 
       <el-menu-item index="/admin/calendar">
         <el-icon><Calendar /></el-icon>
         <span>Calendar</span>
       </el-menu-item>
-      
+    
       <el-menu-item index="/admin/services">
         <el-icon><Notebook /></el-icon>
         <span>Services</span>
@@ -33,13 +50,15 @@
 </template>
 
 <script>
-import { Calendar, Notebook } from '@element-plus/icons-vue'
+import { Calendar, Notebook, Clock, CollectionTag } from '@element-plus/icons-vue'
 
 export default {
   name: 'AdminSidebar',
   components: {
     Calendar,
-    Notebook
+    Notebook,
+    Clock,
+    CollectionTag
   }
 }
 </script>

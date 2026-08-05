@@ -1,388 +1,463 @@
 <template>
-<div class="booking_form" id="bookingForm" v-loading="loading">
-  <button class="booking_form_close" @click="clear">&times;</button>
- 
-  <!-- Step indicator -->
-  <div class="steps_con">
-    <div :class="`step_item ${formStep === 1 ? 'active' : ''}`">
-      <div class="step_circle">1</div>
-      <div class="step_title">Training Program</div>
-      <div class="step_desc">Select the workshop or training service</div>
-    </div>
-    <div class="step_line"></div>
-    <div :class="`step_item ${formStep === 2 ? 'active' : ''}`">
-      <div class="step_circle">2</div>
-      <div class="step_title">Schedule</div>
-      <div class="step_desc">Choose your preferred date and time</div>
-    </div>
-    <div class="step_line"></div>
-    <div :class="`step_item ${formStep === 3 ? 'active' : ''}`">
-      <div class="step_circle">3</div>
-      <div class="step_title">Organization Details</div>
-      <div class="step_desc">Provide your contact and company information</div>
-    </div>
-  </div>
- 
-  <div class="booking_form_wrapper">
-    <!-- STEP 1: SERVICES -->
-    <div class="service_panel" v-if="formStep === 1">
-        <div class="services_grid">
+  <div data-lenis-prevent id="bookingForm" v-loading="loading" class="booking_form">
+    <!-- Close Button -->
+    <button class="booking_form_close" aria-label="Close form" @click="clear">
+      &times;
+    </button>
 
-            <div
-                v-for="(service, index) in services"
-                :key="index"
-                class="service_card"
-                :class="{ active: bookingForm.serviceId === service.id }"
-                @click="handleSelectService(service.id)"
-            >
-                <div class="service_header">
-                    <h3>{{ service.name }}</h3>
-                </div>
-
-                <p class="service_description">
-                    {{ service.description }}
-                </p>
-
-                <div class="service_footer">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>Select Service</span>
-                </div>
+    <div class="booking_form_wrapper">
+      <!-- Dynamic Step Indicator -->
+      <div class="steps_con">
+        <template v-for="(step, index) in steps" :key="step.number">
+          <div 
+            class="step_item" 
+            :class="{ 
+              active: formStep === step.number, 
+              completed: formStep > step.number 
+            }"
+          >
+            <div class="step_circle">
+              {{ step.number }}
             </div>
+            <div class="step_title">
+              {{ step.title }}
+            </div>
+            <div class="step_desc">
+              {{ step.desc }}
+            </div>
+          </div>
 
-        </div>
+          <!-- Connector Line -->
+          <div 
+            v-if="index < steps.length - 1" 
+            class="step_line"
+            :class="{ completed: formStep > step.number }"
+          ></div>
+        </template>
+      </div>
 
-        <div class="form_nav">
+      <!-- Main Content Panel Wrapper -->
+      <div>
+        <!-- STEP 1: SERVICES -->
+        <div v-if="formStep === 1" class="service_panel">
+          <div class="services_grid">
+            <div
+              v-for="service in services"
+              :key="service.id"
+              class="service_card"
+              :class="{ active: bookingForm.serviceId === service.id }"
+              @click="handleSelectService(service.id)"
+            >
+              <div class="service_header">
+                <h3>{{ service.name }}</h3>
+              </div>
+              <p class="service_description">{{ service.description }}</p>
+              <div class="service_footer">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>{{ bookingForm.serviceId === service.id ? 'Selected' : 'Select Service' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form_nav">
             <span></span>
             <button class="btn_next" @click="goToStep(2, 'next')">
-                Next
-                <i class="fa-solid fa-arrow-right"></i>
+              Next <i class="fa-solid fa-arrow-right"></i>
             </button>
+          </div>
         </div>
-    </div>
-  
-    <!-- STEP 2: BOOKING TIME -->
-    <div class="booking_panel" v-else-if="formStep === 2">
-      <div class="field_group">
-        <label class="field_label">Preferred Date</label>
-        <VCalendar expanded @dayclick="handleSelectDate" :min-date="new Date()" :attributes="vCalendarEvents"/>
-      </div>
-    <div class="field_group">
-        <label class="field_label">Preferred Time</label>
-        <div class="time_buttons">
-        <button
-            v-for="slot in timeSlots"
-            :key="slot.value"
-            class="time_btn"
-            :class="{ active: selectedTime === slot.value, disabled: slot.disabled }"
-            @click="!slot.disabled && handleSelectTime(slot.value)"
-            :disabled="slot.disabled"
-        >
-            {{ slot.label }}
-        </button>
+
+        <!-- STEP 2: BOOKING TIME -->
+        <div v-else-if="formStep === 2" class="service_panel">
+          <div>
+            <label class="field_label">Preferred Date</label>
+            <VCalendar
+              expanded
+              :min-date="new Date()"
+              :attributes="vCalendarEvents"
+              @dayclick="handleSelectDate"
+            />
+          </div>
+
+          <div style="margin-top: 20px;">
+            <label class="field_label">Preferred Time</label>
+            <div class="time_buttons">
+              <button
+                v-for="slot in timeSlots"
+                :key="slot.id"
+                type="button"
+                class="time_btn"
+                :class="{
+                  active: bookingForm.timeSlotId === slot.id,
+                  disabled: slot.disabled
+                }"
+                :disabled="slot.disabled"
+                @click="!slot.disabled && handleSelectTime(slot.id)"
+              >
+                {{ slot.formattedTime }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form_nav">
+            <button class="btn_back" @click="goToStep(1, 'back')">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn_next" @click="goToStep(3, 'next')">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="form_nav">
-        <button class="btn_back" @click="goToStep(1, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button class="btn_next" @click="goToStep(3, 'next')">Next <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-  
-    <!-- STEP 3: BOOKING FORM -->
-    <div class="form_panel" v-else>
-      <el-form ref="bookingFormRef" label-position="top" :model="bookingForm" :diabled="true">
 
-        <el-form-item 
-          label="Full Name" 
-          prop="fullName"
-          :rules="[
-              { required: true, message: 'Please input email address', trigger: 'blur', },
-            ]"
-          >
-          <el-input v-model="bookingForm.fullName" placeholder="John Doe"/>
-        </el-form-item>
+        <!-- STEP 3: BOOKING FORM -->
+        <div v-else class="form_panel">
+          <el-form ref="bookingFormRef" label-position="top" :model="bookingForm" :rules="formRules">
+            <el-form-item label="Full Name" prop="fullName">
+              <el-input v-model="bookingForm.fullName" placeholder="John Doe" size="large" />
+            </el-form-item>
 
-        <el-form-item 
-            label="Email" 
-            prop="email"
-            :rules="[
-              { required: true, message: 'Please input email address', trigger: 'blur', },
-              { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Please input correct email address', trigger: ['blur', 'change'], },
-            ]">
-          <el-input v-model="bookingForm.email" placeholder="johndoe@example.com" />
-        </el-form-item>
+            <el-form-item label="Email" prop="email">
+              <el-input v-model="bookingForm.email" placeholder="johndoe@example.com" size="large" />
+            </el-form-item>
 
-        <el-form-item 
-          label="Phone" 
-          prop="phone"
-          :rules="[
-            { required: true, message: 'Please input phone number', trigger: 'blur', },
-            { pattern: /^09\d{9}$/, message: 'Must be a valid PH mobile number starting with 09', trigger: ['blur', 'change'] }
-          ]">
-          <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" />
-        </el-form-item>
+            <el-form-item label="Phone" prop="phone">
+              <el-input v-model="bookingForm.phone" maxlength="11" placeholder="09XXXXXXXXXX" size="large" />
+            </el-form-item>
 
-        <el-form-item>
-          <VueHcaptcha
-            ref="hcaptchaRef" 
-            :sitekey="sitekey" 
-            size="normal" 
-            @verify="onVerify" 
-            @expired="onExpired" 
-          />
-        </el-form-item>
-        
-      </el-form>
-  
-      <div class="form_nav">
-        <button class="btn_back" @click="goToStep(2, 'back')"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button class="btn_submit" @click="submitBooking" :disabled="loading">Confirm Booking <i class="fa-solid fa-check"></i></button>
+            <!-- <el-form-item label="Number of Participants" prop="noOfParticipants">
+              <el-input-number v-model="bookingForm.noOfParticipants" :min="1" style="width: 100%" size="large" placeholder="Enter number" />
+            </el-form-item> -->
+
+            <el-form-item >
+              <VueHcaptcha
+                ref="hcaptchaRef"
+                :sitekey="sitekey"
+                size="normal"
+                @verify="onVerify"
+                @expired="onExpired"
+              />
+            </el-form-item>
+          </el-form>
+
+          <!-- Navigation -->
+          <div class="form_nav">
+            <button class="btn_back" @click="goToStep(2, 'back')">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn_submit" :disabled="loading" @click="submitBooking">
+              Confirm Booking <i class="fa-solid fa-check"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 </template>
 
 <script>
 import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
 import { supabase } from '@/utils/supabaseClient';
 import { ElMessage } from 'element-plus';
-import gsap from 'gsap/all'
-import moment from 'moment'
+import gsap from 'gsap';
+import moment from 'moment';
 
 export default {
-    components: {VueHcaptcha},
-    data(){
-      return{
-        sitekey: import.meta.env.VITE_HCAPTCHA_SITE_KEY,
-        selectedTime: '',
-        timeSlots: [
-          { label: '9:00 AM', value: '09:00:00', disabled: true },
-          { label: '10:00 AM', value: '10:00:00', disabled: true },
-          { label: '11:00 AM', value: '11:00:00', disabled: true },
-          { label: '12:00 PM', value: '12:00:00', disabled: true },
-          { label: '1:00 PM', value: '13:00:00', disabled: true },
-          { label: '2:00 PM', value: '14:00:00', disabled: true },
-          { label: '3:00 PM', value: '15:00:00', disabled: true },
-          { label: '4:00 PM', value: '16:00:00', disabled: true },
-          { label: '5:00 PM', value: '17:00:00', disabled: true },
-          { label: '6:00 PM', value: '18:00:00', disabled: true },
+  name: 'BookingFormComponent',
+  components: {
+    VueHcaptcha
+  },
+  data() {
+    return {
+      sitekey: import.meta.env.VITE_HCAPTCHA_SITE_KEY,
+      loading: false,
+      formStep: 1,
+      captchaToken: null,
+      services: [],
+      statuses: [],
+      timeSlots: [],
+      vCalendarEvents: [],
+      steps: [
+        { number: 1, title: 'Training Program', desc: 'Select the workshop or training service' },
+        { number: 2, title: 'Schedule', desc: 'Choose your preferred date and time' },
+        { number: 3, title: 'Organization Details', desc: 'Provide your contact and company information' }
+      ],
+      bookingForm: {
+        serviceId: '',
+        bookingDate: '',
+        timeSlotId: '',
+        statusId: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        noOfParticipants: 1
+      },
+      formRules: {
+        fullName: [{ required: true, message: 'Please input full name', trigger: 'blur' }],
+        email: [
+          { required: true, message: 'Please input email address', trigger: 'blur' },
+          {
+            pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+            message: 'Please input a valid email address',
+            trigger: ['blur', 'change']
+          }
         ],
-        services: [],
-        formStep: 1,
-        bookingForm: {
-            serviceId: '',
-            clientId: '',
-            bookingDateTime: '',
-            status: 'pending',
-            fullName: '',
-            email: '',
-            phone: '',
-        },
-        vCalendarEvents: [],
-        captchaToken: null,
-        loading: false,
+        phone: [
+          { required: true, message: 'Please input phone number', trigger: 'blur' },
+          {
+            pattern: /^09\d{9}$/,
+            message: 'Must be a valid PH mobile number starting with 09',
+            trigger: ['blur', 'change']
+          }
+        ],
+        noOfParticipants: [{ required: true, message: 'Please input number of participants', trigger: 'blur' }]
+      }
+    };
+  },
+  async mounted() {
+    await Promise.all([
+      this.getServices(),
+      this.getStatuses(),
+      this.getTimeSlots()
+    ]);
+  },
+  methods: {
+    onVerify(token) {
+      this.captchaToken = token;
+    },
+    onExpired() {
+      this.captchaToken = null;
+    },
+
+    // Get Statuses
+    async getStatuses() {
+      try {
+        const { data, error } = await supabase.from('Status').select('*');
+        if (error) throw error;
+        this.statuses = data || [];
+        
+        const pendingStatus = this.statuses.find(s => s.name?.toLowerCase() === 'pending');
+        if (pendingStatus) {
+          this.bookingForm.statusId = pendingStatus.id;
+        }
+      } catch (err) {
+        console.error('Error fetching statuses:', err);
       }
     },
-    methods: {
-      onVerify(token) {
-        this.captchaToken = token;
-      },
-      
-      onExpired() {
-        this.captchaToken = null;
-      },
 
-      /* SUBMIT BOOKING */
-      async submitBooking() {
-        try {
-          this.loading = true
-          await this.$refs.bookingFormRef.validate()
+    // Get Time Slots
+    async getTimeSlots() {
+      try {
+        const { data, error } = await supabase
+          .from('TimeSlot')
+          .select('*')
+          .eq('isActive', true)
+          .order('slotTime', { ascending: true });
 
-          if (!this.captchaToken) {
-            ElMessage.warning('Please check the security box before submitting.');
-            return;
-          }
+        if (error) throw error;
 
-          const payload = {
-            serviceId: this.bookingForm.serviceId,
-            bookingDateTime: this.bookingForm.bookingDateTime,
-            status: 'pending',
-            fullName: this.bookingForm.fullName,
-            email: this.bookingForm.email,
-            phone: this.bookingForm.phone,
-          }
-
-          const { data, error } = await supabase
-            .from('Booking') 
-            .insert(payload)
-
-          if (error) throw error
-
-          try {
-            await supabase.functions.invoke('send-booking-email', {
-              body: { 
-                clientName: payload.fullName,
-                clientEmail: payload.email,
-                clientPhone: payload.phone,
-                bookingDate: payload.bookingDateTime
-              }
-            });
-          } catch (emailErr) {
-            console.error("Database saved, but email trigger failed:", emailErr);
-          }
-
-          ElMessage.success('Booking submitted successfully.')
-          this.clear()
-          
-        } catch (error) {
-          console.error(error)
-        } finally {
-          this.loading = false
-        }
-      },
-     
-      /* PREV/NEXT CONTROLLER */
-      goToStep(step, action) {
-        if (action === 'back') {
-          this.formStep = step
-          return
-        }
-
-        if (!this.bookingForm.serviceId && this.formStep === 1) {
-          ElMessage.warning('Please select a service.')
-          return
-        }
-
-        if (!this.bookingForm.bookingDateTime && this.formStep === 2) {
-          ElMessage.warning('Please select preferred date.')
-          return
-        }
-
-        if(this.selectedTime === '' && this.formStep === 2){
-          ElMessage.warning('Please select preferred time.')
-          return
-        }
-
-        this.formStep = step
-      },
-
-      /* HANDLE SELECT SERVICE */
-      handleSelectService(serviceId){
-          this.bookingForm.serviceId = serviceId
-      },
-
-      /* HANDLE SELECT DATE */
-      async handleSelectDate(day) {
-          this.bookingForm.bookingDateTime = ''
-          this.selectedTime = ''
-          if (moment(new Date()).startOf('day') > moment(day.date).startOf('day')) {
-              ElMessage.warning('Cannot select past date');
-              return;
-          }
-          
-          this.bookingForm.bookingDateTime = moment(day.date).format('YYYY-MM-DD');
-          this.vCalendarEvents = [];
-          this.vCalendarEvents.push({
-              highlight: {
-                  backgroundColor: '#ff8080',
-              },
-              dates: new Date(day.date),
-          });
-
-          const selectedDate = moment(day.date).format('YYYY-MM-DD');
-          
-          const { data, error } = await supabase
-              .from('Booking')
-              .select('bookingDateTime')
-              .gte('bookingDateTime', `${selectedDate} 00:00:00`)
-              .lt('bookingDateTime', `${selectedDate} 23:59:59`);
-
-          if (error) {
-              console.error(error);
-              return;
-          }
-
-          const bookedTimes = data.map(item => moment(item.bookingDateTime).format('HH:mm:ss'));
-
-          this.timeSlots = this.timeSlots.map(slot => ({
-              ...slot,
-              disabled: bookedTimes.includes(slot.value)
-          }));
-      },
-
-      /* HANDLE SELECT TIME */
-      handleSelectTime(time) {
-          this.selectedTime = time
-          const current = moment(this.bookingForm.bookingDateTime || new Date());
-          const [hours, minutes] = time.split(':').map(Number);
-          current.hours(hours).minutes(minutes).seconds(0);
-          current.add(8, 'hours');
-          this.bookingForm.bookingDateTime = current.toISOString();
-      },
-      
-      /* GET SERVICES */
-      async getServices(){
-          try{
-              this.loading = true
-              const {data, e} = await supabase
-                  .from('Service')
-                  .select('*')
-                  .order('dateTimeCreated', 'descending')
-              if(e) return e
-
-              this.services = data
-          }
-          catch(e) {
-              console.error(e)
-          }
-          finally {
-            this.loading = false
-          }
-      },
-
-      /* CLEAR DATA */
-      clear(){
-          this.bookingForm.serviceId = ''
-          this.bookingForm.clientId = ''
-          this.bookingForm.bookingDateTime = ''
-          this.bookingForm.status = 'pending'
-          this.bookingForm.fullName = ''
-          this.bookingForm.email = ''
-          this.bookingForm.phone = ''
-          this.bookingForm.noOfParticipants = 1
-          this.vCalendarEvents = []
-          this.selectedTime = ''
-
-          this.timeSlots = this.timeSlots.map(slot => ({
-              ...slot,
-              disabled: true
-          }));
-          
-          
-          setTimeout(() => {
-            this.formStep = 1
-          }, 500)
-          gsap.to('#bookingForm', {
-              opacity: 0,
-              y: window.innerHeight,
-              duration: .5,
-              ease: 'back.in',
-          })
-      },
+        this.timeSlots = (data || []).map(slot => ({
+          ...slot,
+          formattedTime: moment(slot.slotTime, 'HH:mm:ss').format('h:mm A'),
+          disabled: false
+        }));
+      } catch (err) {
+        console.error('Error fetching time slots:', err);
+      }
     },
 
-    async mounted() {
-        await this.getServices()
+    // Service Data Fetch
+    async getServices() {
+      try {
+        this.loading = true;
+        const { data, error } = await supabase
+          .from('Service')
+          .select('*')
+          .order('dateTimeCreated', { ascending: false });
+
+        if (error) throw error;
+        this.services = data || [];
+      } catch (err) {
+        console.error('Error fetching services:', err);
+        ElMessage.error('Failed to load training services.');
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Navigation Steps
+    goToStep(step, action) {
+      if (action === 'back') {
+        this.formStep = step;
+        return;
+      }
+
+      if (this.formStep === 1 && !this.bookingForm.serviceId) {
+        ElMessage.warning('Please select a service.');
+        return;
+      }
+
+      if (this.formStep === 2) {
+        if (!this.bookingForm.bookingDate) {
+          ElMessage.warning('Please select a preferred date.');
+          return;
+        }
+        if (!this.bookingForm.timeSlotId) {
+          ElMessage.warning('Please select a preferred time slot.');
+          return;
+        }
+      }
+
+      this.formStep = step;
+    },
+
+    // Event Handlers
+    handleSelectService(serviceId) {
+      this.bookingForm.serviceId = serviceId;
+    },
+
+    async handleSelectDate(day) {
+      this.bookingForm.bookingDate = '';
+      this.bookingForm.timeSlotId = '';
+
+      const today = moment().startOf('day');
+      const targetDate = moment(day.date).startOf('day');
+
+      if (targetDate < today) {
+        ElMessage.warning('Cannot select a past date.');
+        return;
+      }
+
+      this.bookingForm.bookingDate = targetDate.toISOString();
+
+      this.vCalendarEvents = [
+        {
+          highlight: { backgroundColor: 'var(--priColor, #3b82f6)' },
+          dates: new Date(day.date)
+        }
+      ];
+
+      try {
+        const startOfDay = targetDate.format('YYYY-MM-DD 00:00:00');
+        const endOfDay = targetDate.format('YYYY-MM-DD 23:59:59');
+
+        const { data, error } = await supabase
+          .from('Booking')
+          .select('timeSlotId')
+          .gte('bookingDate', startOfDay)
+          .lte('bookingDate', endOfDay);
+
+        if (error) throw error;
+
+        const bookedTimeSlotIds = new Set((data || []).map(item => item.timeSlotId));
+
+        this.timeSlots = this.timeSlots.map(slot => ({
+          ...slot,
+          disabled: bookedTimeSlotIds.has(slot.id)
+        }));
+      } catch (err) {
+        console.error('Error fetching booked slots:', err);
+      }
+    },
+
+    handleSelectTime(timeSlotId) {
+      this.bookingForm.timeSlotId = timeSlotId;
+    },
+
+    // Form Submission
+    async submitBooking() {
+      try {
+        if (!this.$refs.bookingFormRef) return;
+        await this.$refs.bookingFormRef.validate();
+
+        if (!this.captchaToken) {
+          ElMessage.warning('Please check the security box before submitting.');
+          return;
+        }
+
+        if (!this.bookingForm.statusId) {
+          const pendingStatus = this.statuses.find(s => s.name?.toLowerCase() === 'pending');
+          if (pendingStatus) this.bookingForm.statusId = pendingStatus.id;
+        }
+
+        this.loading = true;
+
+        const payload = {
+          serviceId: this.bookingForm.serviceId,
+          statusId: this.bookingForm.statusId,
+          bookingDate: this.bookingForm.bookingDate,
+          timeSlotId: this.bookingForm.timeSlotId,
+          fullName: this.bookingForm.fullName,
+          email: this.bookingForm.email,
+          phone: this.bookingForm.phone,
+          noOfParticipants: this.bookingForm.noOfParticipants
+        };
+
+        const { error } = await supabase.from('Booking').insert(payload);
+        if (error) throw error;
+
+        try {
+          await supabase.functions.invoke('send-booking-email', {
+            body: {
+              clientName: payload.fullName,
+              clientEmail: payload.email,
+              clientPhone: payload.phone,
+              bookingDate: payload.bookingDate,
+              timeSlotId: payload.timeSlotId,
+              noOfParticipants: payload.noOfParticipants
+            }
+          });
+        } catch (emailErr) {
+          console.error('Database saved, but email trigger failed:', emailErr);
+        }
+
+        ElMessage.success('Booking submitted successfully.');
+        this.clear();
+      } catch (err) {
+        console.error('Booking submission error:', err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Form Reset
+    clear() {
+      const pendingStatus = this.statuses.find(s => s.name?.toLowerCase() === 'pending');
+
+      Object.assign(this.bookingForm, {
+        serviceId: '',
+        bookingDate: '',
+        timeSlotId: '',
+        statusId: pendingStatus ? pendingStatus.id : '',
+        fullName: '',
+        email: '',
+        phone: '',
+        noOfParticipants: 1
+      });
+
+      this.vCalendarEvents = [];
+      this.timeSlots = this.timeSlots.map(s => ({ ...s, disabled: false }));
+
+      setTimeout(() => {
+        this.formStep = 1;
+      }, 500);
+
+      gsap.to('#bookingForm', {
+        opacity: 0,
+        y: window.innerHeight,
+        duration: 0.5,
+        ease: 'back.in'
+      });
     }
-}
+  }
+};
 </script>
 
-
-<style>
+<style scoped>
 .booking_form {position: fixed; background: var(--defaultColor); width: 100%; max-width: 900px; border-radius: 12px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,.35); bottom: 30px; left: 0; right: 0; margin: 0 auto; opacity: 0; visibility: hidden; z-index: 1;}
 .booking_form_close {position:absolute; top:16px; right:20px; font-size:1.4rem; color:var(--bodyColor); cursor:pointer; background:none; border:none;}
-.booking_form_wrapper { max-height: 60vh; overflow-y: auto; overflow-x: hidden; width: 100%;}
+.booking_form_wrapper { max-height: 50vh; overflow-y: auto; overflow-x: hidden; width: 100%;}
 .steps_con {display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:40px;}
 .step_item {display:flex; flex-direction:column; align-items:center; text-align:center; width:220px;}
 .step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(--bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}
@@ -430,43 +505,24 @@ export default {
 .btn_next i, .btn_submit i {margin-left:8px;}
 .btn_back i {margin-right:8px;}
 
-
 @media(max-width:1000px) {
-
-.booking_form {max-width:95%;}
-
+  .booking_form {max-width:95%;}
 }
-
 
 @media(max-width:800px) {
-
-.service_card {flex:1 1 calc(50% - 10px);}
-
-.step_title {font-size:.8rem;}
-
-.step_desc {display:none;}
-
-.time_btn {width: 48%;}
-
+  .service_card {flex:1 1 calc(50% - 10px);}
+  .step_title {font-size:.8rem;}
+  .step_desc {display:none;}
+  .time_btn {width: 48%;}
 }
 
-
 @media(max-width:600px) {
-
-.form_panel form {grid-template-columns: 1fr}
-
-.booking_form {padding:24px;}
-
-.service_card {flex:1 1 100%;}
-
-.steps_con {gap:0;}
-
-.step_line {max-width:30px;}
-
-
-.form_nav {flex-direction:column; gap:12px;}
-
-.btn_back, .btn_next, .btn_submit {width:100%; text-align:center;}
-
+  .form_panel form {grid-template-columns: 1fr}
+  .booking_form {padding:24px;}
+  .service_card {flex:1 1 100%;}
+  .steps_con {gap:0;}
+  .step_line {max-width:30px;}
+  .form_nav {flex-direction:column; gap:12px;}
+  .btn_back, .btn_next, .btn_submit {width:100%; text-align:center;}
 }
 </style>
