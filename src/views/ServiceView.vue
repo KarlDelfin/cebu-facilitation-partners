@@ -10,7 +10,7 @@
           :prefix-icon="SearchIcon"
           clearable
           @input="searchService"
-          @clear="clear"
+          @clear="clearSearch"
         />
         <el-button type="primary" color="#136cb3" class="font-semibold" @click="formController('Create Service', {})">
           Create Service
@@ -36,7 +36,7 @@
         <el-table-column label="Price" width="160" align="right">
           <template #default="scope">
             <span class="font-bold text-[#136cb3] text-sm">
-              ₱{{ scope.row.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+              ₱{{ Number(scope.row.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
             </span>
           </template>
         </el-table-column>
@@ -57,7 +57,7 @@
               type="primary" 
               link 
               class="!text-rose-500 !font-bold"
-              @click="deleteService(scope.row.id)"
+              @click="handleDelete(scope.row.id)"
             >
               Delete
             </el-button>
@@ -79,33 +79,41 @@
   </div>
 
   <!-- SERVICE FORM -->
-  <el-dialog v-model="dialog.serviceForm" :title="title" center :before-close="clear">
+  <el-dialog v-model="dialog.serviceForm" :title="title" center :before-close="clearForm">
     <el-form ref="serviceFormRef" label-position="top" @submit.prevent="submitForm" :model="serviceForm">
       <el-form-item 
         label="Name"
         prop="name"
-        :rules="[
-          { required: true, message: 'Please input name', trigger: 'blur', },
-        ]">
+        :rules="[{ required: true, message: 'Please input name', trigger: 'blur' }]">
         <el-input v-model="serviceForm.name" placeholder="Enter name"/>
       </el-form-item>
+
       <el-form-item 
         label="Description" 
         prop="description"
-        :rules="[
-          { required: true, message: 'Please input description', trigger: 'blur', },
-        ]">
+        :rules="[{ required: true, message: 'Please input description', trigger: 'blur' }]">
         <el-input v-model="serviceForm.description" type="textarea" placeholder="Enter description"/>
       </el-form-item>
+
       <el-form-item 
         label="Price" 
         prop="price"
         :rules="[
-          { required: true, message: 'Please input price', trigger: 'blur', },
-          { type: 'number', message: 'Price must be a digit' },
+          { required: true, message: 'Please input price', trigger: 'blur' },
+          { 
+            validator: (rule, value, callback) => {
+              if (isNaN(value) || value === '') {
+                callback(new Error('Price must be a valid number'));
+              } else {
+                callback();
+              }
+            }, 
+            trigger: 'blur' 
+          }
         ]">
-        <el-input v-model="serviceForm.price" placeholder="Enter price"/>
+        <el-input v-model.number="serviceForm.price" placeholder="Enter price"/>
       </el-form-item>
+
       <div class="flex justify-end !mt-5">
         <el-button type="primary" @click="submitForm" :loading="loading">Confirm</el-button>
       </div>
@@ -116,11 +124,16 @@
 <script>
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { supabase } from '@/utils/supabaseClient';
-import moment from 'moment';
 import debounce from 'lodash/debounce'
+import { 
+  fetchServices, 
+  createService, 
+  updateService, 
+  deleteServiceById 
+} from '../services/serviceLogic'
 
 export default {
+  name: 'ServiceView',
   data() {
     return {
       SearchIcon: Search,
@@ -146,103 +159,26 @@ export default {
         elementsPerPage: 10,
         currentPage: 1,
         totalElements: 0
-      }, 
-     
-      services: []
+      },
+
+      services: [],
+      debouncedSearch: null
     }
   },
   methods: {
-    /* SEARCH SERVICE */
-    searchService() {
-      if (!this.debouncedSearch) {
-        this.debouncedSearch = debounce(() => {
-          this.getServices()
-        }, 500)
-      }
-
-      this.debouncedSearch(this.search.serviceName)
-    },
-
-    /* SUBMIT FORM */
-    async submitForm(){
-      try{
-        await this.$refs.serviceFormRef.validate()
-        
-        if(this.title == 'Create Service') {
-          const payload = {
-            name: this.serviceForm.name,
-            description: this.serviceForm.description,
-            price: this.serviceForm.price,
-          }
-
-          const { data, error} = await supabase
-            .from('Service')
-            .insert(payload)
-
-            if(error) throw error
-
-            ElMessage.success('Service created successfully.')
-            this.getServices()
-            this.clear()
-        }
-
-        if(this.title == 'Edit Service') {
-          const payload = {
-            name: this.serviceForm.name,
-            description: this.serviceForm.description,
-            price: this.serviceForm.price,
-          }
-
-          const { data, error} = await supabase
-            .from('Service')
-            .update(payload)
-            .eq('id', this.serviceForm.id)
-
-          if(error) throw error
-
-          ElMessage.success('Service updated successfully.')
-          this.getServices()
-          this.clear()
-        }
-      }
-      catch(error) {
-        console.error(error)
-      }
-    },
-
     /* GET SERVICES */
     async getServices() {
+      this.loading = true;
       try {
-        this.loading = true;
-        const limit = this.servicePagination.elementsPerPage;
-        const from = (this.servicePagination.currentPage - 1) * limit;
-        const to = from + limit - 1;
+        const { services, totalElements } = await fetchServices({
+          currentPage: this.servicePagination.currentPage,
+          elementsPerPage: this.servicePagination.elementsPerPage,
+          searchQuery: this.search.serviceName
+        });
 
-        let query = supabase
-            .from('Service')
-            .select('*', { count: 'exact' })
-
-        if (this.search.serviceName && this.search.serviceName.trim() !== '') {
-            query = query.ilike('name', `%${this.search.serviceName}%`);
-        }
-
-        query = query.order('dateTimeCreated', { ascending: false }).range(from, to);
-
-        const { data, error, count } = await query;
-
-        if (error) throw error;
-
-        this.services = data.map((item) => ({
-            id: item.id,
-            name: item.name,
-            description: item.description,
-            price: item.price,
-            dateTimeCreated: moment(item.dateTimeCreated).format('MMMM DD, YYYY HH:mm:ss')
-        }));
-
-        this.servicePagination.totalElements = count || 0;
-      }
-      catch (error) {
+        this.services = services;
+        this.servicePagination.totalElements = totalElements;
+      } catch (error) {
         console.error(error);
         ElMessage.error(`Error loading services: ${error.message}`);
       } finally {
@@ -250,47 +186,91 @@ export default {
       }
     },
 
-    formController(title, data) {
-      this.title = title
-      this.dialog.serviceForm = true
-      
-      if(title == 'Create Service') {
-        
+    /* SEARCH SERVICE */
+    searchService() {
+      if (!this.debouncedSearch) {
+        this.debouncedSearch = debounce(() => {
+          this.servicePagination.currentPage = 1;
+          this.getServices();
+        }, 500);
       }
+      this.debouncedSearch();
+    },
 
-      if(title == 'Edit Service') {
-        this.serviceForm.id = data.id
-        this.serviceForm.name = data.name
-        this.serviceForm.description = data.description
-        this.serviceForm.price = data.price
+    clearSearch() {
+      this.search.serviceName = '';
+      this.servicePagination.currentPage = 1;
+      this.getServices();
+    },
+
+    /* SUBMIT FORM */
+    async submitForm() {
+      try {
+        await this.$refs.serviceFormRef.validate();
+        this.loading = true;
+
+        if (this.title === 'Create Service') {
+          await createService(this.serviceForm);
+          ElMessage.success('Service created successfully.');
+        } else if (this.title === 'Edit Service') {
+          await updateService(this.serviceForm.id, this.serviceForm);
+          ElMessage.success('Service updated successfully.');
+        }
+
+        this.getServices();
+        this.clearForm();
+      } catch (error) {
+        if (error !== false) {
+          console.error(error);
+          ElMessage.error(error.message || 'Failed to save service.');
+        }
+      } finally {
+        this.loading = false;
       }
     },
 
     /* DELETE SERVICE */
-    async deleteService(serviceId) {
-      try{
-        await ElMessageBox.confirm( 'Do you want to delete this service?', 'Warning', { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning', } )
-        const { data, error } = await supabase
-          .from('Service')
-          .delete()
-          .eq('id', serviceId)
+    async handleDelete(serviceId) {
+      try {
+        await ElMessageBox.confirm(
+          'Do you want to delete this service?',
+          'Warning',
+          { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' }
+        );
 
-          if(error) throw error
-
-          this.clear()
-          this.getServices()
-          ElMessage.success('Service deleted successfully.')
-      }
-      catch(error) {
+        this.loading = true;
+        await deleteServiceById(serviceId);
+        
+        ElMessage.success('Service deleted successfully.');
+        this.getServices();
+      } catch (error) {
+        if (error !== 'cancel') {
+          console.error(error);
+          ElMessage.error('Failed to delete service.');
+        }
+      } finally {
+        this.loading = false;
       }
     },
 
-    clear() {
-      this.serviceForm.name = ''
-      this.serviceForm.description = ''
-      this.serviceForm.price = ''
+    formController(title, data = {}) {
+      this.title = title;
+      this.dialog.serviceForm = true;
 
-      this.dialog.serviceForm = false
+      if (title === 'Edit Service') {
+        this.serviceForm.id = data.id;
+        this.serviceForm.name = data.name;
+        this.serviceForm.description = data.description;
+        this.serviceForm.price = data.price;
+      }
+    },
+
+    clearForm() {
+      this.serviceForm = { id: '', name: '', description: '', price: '' };
+      if (this.$refs.serviceFormRef) {
+        this.$refs.serviceFormRef.resetFields();
+      }
+      this.dialog.serviceForm = false;
     }
   },
   mounted() {

@@ -12,62 +12,54 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import list from '@fullcalendar/list'
-import { supabase } from '@/utils/supabaseClient'
 import moment from 'moment'
+import { fetchCalendarEvents } from '@/services/calendarLogic'
 
 export default {
+  name: 'CalendarView',
   components: { FullCalendar },
   data() {
     return {
       loading: false,
-
       calendarApi: null,
-
       weekClicked: false,
       dayClicked: false,
+      pickerKey: 0,
+      today: new Date(),
 
       calendarOptions: {
-        
         height: 700,
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, list, rrulePlugin],
         timeZone: 'UTC',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,dayGridWeek'
-        },
         views: {
           dayGridMonth: {
             dayMaxEventRows: 2,
             titleFormat: { year: 'numeric', month: 'long', day: 'numeric' },
           },
-
           timeGridWeek: {
             slotLabelFormat: {
               hour: '2-digit',
               minute: '2-digit',
-              hour12: false, // 24-hour format
+              hour12: false,
             },
             eventTimeFormat: {
               hour: '2-digit',
               minute: '2-digit',
-              hour12: false, // 24-hour format
+              hour12: false,
             },
           },
-
           timeGridDay: {
             slotLabelFormat: {
               hour: '2-digit',
               minute: '2-digit',
-              hour12: false, // 24-hour format
+              hour12: false,
             },
           },
-
           listMonth: {
             eventTimeFormat: {
               hour: '2-digit',
               minute: '2-digit',
-              hour12: false, // 24-hour format
+              hour12: false,
             },
           },
         },
@@ -85,28 +77,24 @@ export default {
               this.calendarApi.today()
             },
           },
-
           prevCustom: {
             text: 'prev',
             click: () => {
               this.pickerKey++
               this.calendarApi.prev()
-              const currentDate = moment(this.calendarApi.getDate()).format();
+              const currentDate = moment(this.calendarApi.getDate()).format()
               this.calendarApi.gotoDate(currentDate)
             },
           },
-
           nextCustom: {
             text: 'next',
             click: () => {
               this.pickerKey++
               this.calendarApi.next()
-
-              const currentDate = moment(this.calendarApi.getDate()).format();
+              const currentDate = moment(this.calendarApi.getDate()).format()
               this.calendarApi.gotoDate(currentDate)
             },
           },
-
           monthCustom: {
             text: 'month',
             click: () => {
@@ -115,7 +103,6 @@ export default {
               this.calendarApi.changeView('dayGridMonth')
             },
           },
-
           weekCustom: {
             text: 'week',
             click: () => {
@@ -124,76 +111,43 @@ export default {
               this.calendarApi.changeView('timeGridWeek')
             },
           },
-
           dayCustom: {
             text: 'day',
             click: () => {
               this.weekClicked = false
               this.dayClicked = true
               this.calendarApi.changeView('timeGridDay')
-              this.getCalendarEventsByCalendarId(this.selectedCalendarId)
             },
           },
-
           listCustom: {
             text: 'list',
             click: () => {
               this.calendarApi.changeView('listMonth')
-              this.getCalendarEventsByCalendarId(this.selectedCalendarId)
             },
           },
         },
-        events: [], // 👈 This will hold our mapped schema events
+        events: [],
         firstDay: 0,
         initialView: 'dayGridMonth',
         eventClick: this.handleEventClick,
-        allDaySlot: false, // Show/hide non-recurring events false
-        eventLongPressDelay: 200, // Mobile drog n drop events
+        allDaySlot: false,
+        eventLongPressDelay: 200,
         eventOverlap: true,
         forceEventDuration: true,
-        displayEventTime: true, // Display time for recurring event
-        showNonCurrentDates: false, // Disable last week of previous month and first week of next month
+        displayEventTime: true,
+        showNonCurrentDates: false,
       }
     }
   },
- 
+
   methods: {
-    async fetchBookings() {
+    async loadBookings() {
       try {
         this.loading = true
-
-        const { data, error } = await supabase
-          .from('Booking')
-          .select(`
-            id,
-            bookingDateTime,
-            status,
-            fullName,
-            Service ( name )
-          `)
-
-        if (error) throw error
-
-        this.calendarOptions.events = data.map(item => {
-          const isConfirmed = item.status === 'confirmed'
-          
-          return {
-            id: item.id,
-            title: `${item.Service?.name || 'Event'} - ${item.fullName}`,
-            start: item.bookingDateTime, // Maps timestamp directly
-            backgroundColor: isConfirmed ? '#136cb3' : '#feb841', // Blue if Confirmed, Gold if Pending
-            borderColor: isConfirmed ? '#0f5690' : '#d9962b',
-            textColor: '#ffffff',
-            extendedProps: {
-              status: item.status,
-              client: item.fullName
-            }
-          }
-        })
+        this.calendarOptions.events = await fetchCalendarEvents()
       } catch (error) {
-        console.error(error)
-      }
-      finally {
+        console.error('Failed to load bookings:', error)
+      } finally {
         this.loading = false
       }
     },
@@ -202,10 +156,10 @@ export default {
       alert(`Booking: ${info.event.title}\nStatus: ${info.event.extendedProps.status}`)
     }
   },
+
   mounted() {
     this.calendarApi = this.$refs.refCalendar.getApi()
-
-    this.fetchBookings()
-  },
+    this.loadBookings()
+  }
 }
 </script>

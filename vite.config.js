@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite' // 1. Import Tailwind
 // https://vite.dev/config/
 export default defineConfig({
   assetsInclude: ['**/*.woff2'], 
-  base: '/cebu-facilitation-partners/',
+  // base: '/cebu-facilitation-partners/',
   build: {
     outDir: 'docs',
   },
