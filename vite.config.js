@@ -10,9 +10,9 @@ import tailwindcss from '@tailwindcss/vite' // 1. Import Tailwind
 export default defineConfig({
   assetsInclude: ['**/*.woff2'], 
   // base: '/cebu-facilitation-partners/',
-  build: {
-    outDir: 'docs',
-  },
+  // build: {
+  //   outDir: 'docs',
+  // },
   plugins: [
     vue(),
     tailwindcss(),
