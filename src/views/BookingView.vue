@@ -77,10 +77,7 @@
           <el-table-column label="Scheduled Date & Time" align="center">
             <template #default="scope">
               <div class="text-slate-800 font-medium text-sm flex flex-col items-center gap-1">
-                <el-tag>{{ scope.row.formattedBookingDate }}</el-tag>
-                <span v-if="scope.row.TimeSlot" class="text-xs text-slate-500 font-semibold">
-                  {{ scope.row.formattedSlotTime }}
-                </span>
+                <el-tag>{{ scope.row.formattedBookingDate }} {{ scope.row.formattedSlotTime }}</el-tag>
               </div>
             </template>
           </el-table-column>
@@ -157,11 +154,8 @@
         >
           <div class="flex items-center gap-1.5 flex-wrap">
             <el-tag size="small" type="primary" effect="light" class="!font-semibold !text-[11px] !px-2">
-              {{ upcomingBooking.formattedBookingDate }}
+              {{ upcomingBooking.formattedBookingDate }}  {{ upcomingBooking.formattedSlotTime }}
             </el-tag>
-            <span v-if="upcomingBooking.TimeSlot" class="text-[11px] text-slate-500 font-bold">
-              {{ upcomingBooking.formattedSlotTime }}
-            </span>
           </div>
 
           <div class="flex flex-col pl-0.5">
@@ -221,17 +215,17 @@
         </el-form-item>
       </div>
       
-      <div class="flex gap-10">
-        <el-form-item class="!w-[50%]" label="Preferred Date">
+      <div class="grid grid-cols-2 gap-5">
+        <el-form-item class="!w-full" label="Preferred Date">
           <VCalendar expanded @dayclick="handleSelectDate" :min-date="new Date()" :attributes="vCalendarEvents"/>
         </el-form-item>
-        <el-form-item class="!w-[50%]" label="Preferred Time">
-          <div class="flex justify-between gap-2 flex-wrap">
+        <el-form-item class="!w-full" label="Preferred Time">
+          <div class="grid grid-cols-3 gap-2 !w-full">
             <button
               type="button"
               v-for="slot in timeSlots"
               :key="slot.id"
-              class="!w-[100%] border border-[#ccc] rounded-[5px] py-2 px-4"
+              class="!w-full border border-[#ccc] rounded-[5px] py-2 px-4"
               :class="{ active: bookingForm.timeSlotId === slot.id, disabled: slot.disabled }"
               @click="!slot.disabled && handleSelectTime(slot.id)"
               :disabled="slot.disabled"
