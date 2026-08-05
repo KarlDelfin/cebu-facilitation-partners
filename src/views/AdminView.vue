@@ -124,28 +124,25 @@ export default {
       }
     },
 
-    async handleGoogleLogin() {
-      try {
-        this.loading = true;
-        
-        const baseHref = document.querySelector('base')?.getAttribute('href') || '/cebu-facilitation-partners/';
-        const cleanBase = baseHref.endsWith('/') ? baseHref : baseHref + '/';
-        
-        const absoluteRedirectUrl = `${window.location.origin}${cleanBase}admin/bookings`;
+  async handleGoogleLogin() {
+    try {
+      this.loading = true;
+      
+      const absoluteRedirectUrl = `${window.location.origin}/admin/bookings`;
 
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { 
-            redirectTo: absoluteRedirectUrl 
-          }
-        });
-        
-        if (error) throw error;
-      } catch (err) {
-        ElMessage.error(`OAuth Initialization failure: ${err.message}`);
-        this.loading = false;
-      }
-    },
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { 
+          redirectTo: absoluteRedirectUrl 
+        }
+      });
+      
+      if (error) throw error;
+    } catch (err) {
+      ElMessage.error(`OAuth Initialization failure: ${err.message}`);
+      this.loading = false;
+    }
+  },
     
     async handleSignOut() {
       await supabase.auth.signOut();
