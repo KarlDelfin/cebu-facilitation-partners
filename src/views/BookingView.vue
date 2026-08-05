@@ -69,7 +69,7 @@
             <template #default="scope">
               <div class="inline-flex items-center gap-2 bg-slate-100 !px-2 py-1 rounded-md text-slate-700 font-semibold text-sm">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>{{ scope.row.noOfParticipants }}</span>
+                <span>{{ scope.row.noOfParticipants }} pax</span>
               </div>
             </template>
           </el-table-column>
@@ -577,7 +577,6 @@ export default {
     /* GET UPCOMING BOOKINGS */
     async getUpcomingBookings() {
       try {
-        // Get ISO string for the start of today (00:00:00)
         const startOfToday = moment().startOf('day').toISOString();
 
         const { data, error } = await supabase
@@ -714,11 +713,11 @@ export default {
     await this.getTimeSlots();
     this.fetchDashboardData();
   },
-/*   unmounted() {
+  unmounted() {
     if (this.debouncedSearch) {
       this.debouncedSearch.cancel();
     }
-  }, */
+  },
   watch: {
     'search.bookingName'() {
       this.debouncedSearch();

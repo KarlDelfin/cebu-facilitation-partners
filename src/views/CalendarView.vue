@@ -15,7 +15,7 @@
         <div class="flex items-center justify-between border-b pb-3">
           <span class="font-semibold text-slate-500">Status</span>
           <span 
-            class="px-3 py-1 text-xs font-bold rounded-full text-white shadow-sm"
+            class="!px-3 !py-1 text-xs font-bold rounded-full text-white shadow-sm"
             :style="{ backgroundColor: selectedBooking.backgroundColor || '#3b82f6' }"
           >
             {{ selectedBooking.extendedProps.status }}

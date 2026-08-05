@@ -1,7 +1,7 @@
 <template>
   <div class="p-6">
     <el-card shadow="never" class="rounded-lg bg-white border border-slate-200">
-      <div class="flex justify-between items-center mb-5 gap-4">
+      <div class="flex justify-between items-center !mb-5 gap-4">
         <div>
           <h1 class="text-xl font-bold text-slate-800 m-0">Booking Status</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage statuses for bookings.</p>

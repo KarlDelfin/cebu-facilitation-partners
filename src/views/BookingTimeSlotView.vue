@@ -2,7 +2,7 @@
   <div class="p-6">
     <el-card shadow="never" class="rounded-lg bg-white border border-slate-200">
       <!-- HEADER & ACTIONS -->
-      <div class="flex justify-between items-center mb-5 gap-4">
+      <div class="flex justify-between items-center !mb-5 gap-4">
         <div>
           <h1 class="text-xl font-bold text-slate-800 m-0">Booking Time Slots</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage operating hours and slot availability for bookings.</p>
@@ -86,7 +86,7 @@
             value-format="HH:mm:ss"
             format="hh:mm A"
             placeholder="Select time"
-            class="w-full"
+            class="!w-full"
           />
         </el-form-item>
 
