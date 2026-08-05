@@ -123,7 +123,7 @@ export default {
     try {
       this.loading = true;
       
-      const absoluteRedirectUrl = `${window.location.origin}/admin/bookings`;
+      const absoluteRedirectUrl = `${window.location.origin}/admin/booking`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
