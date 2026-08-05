@@ -88,13 +88,12 @@
           <div>
             <p>&copy; {{ currentYear }} <mark>Upskills Team Building Services</mark> · Cebu, Philippines</p>
             <p>
-              <RouterLink 
+              <a 
                 class="privacy_policy" 
-                to="/privacy-policy" 
-                :style="isPrivacyPolicyPage ? { color: 'var(--secColor)', textDecoration: 'underline' } : {}"
+                :href="isHomePage ? '#privacy-policy' : '/#privacy-policy'"
               >
                 Privacy Policy
-              </RouterLink>
+            </a>
             </p>
           </div>
           <nav>
