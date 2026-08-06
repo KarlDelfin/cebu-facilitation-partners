@@ -457,7 +457,7 @@ export default {
 <style scoped>
 .booking_form {position: fixed; background: var(--defaultColor); width: 100%; max-width: 900px; border-radius: 12px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,.35); bottom: 30px; left: 0; right: 0; margin: 0 auto; opacity: 0; visibility: hidden; z-index: 1;}
 .booking_form_close {position:absolute; top:16px; right:20px; font-size:1.4rem; color:var(--bodyColor); cursor:pointer; background:none; border:none;}
-.booking_form_wrapper { max-height: 50vh; overflow-y: auto; overflow-x: hidden; width: 100%;}
+.booking_form_wrapper { max-height: 80vh; overflow-y: auto; overflow-x: hidden; width: 100%;}
 .steps_con {display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:40px;}
 .step_item {display:flex; flex-direction:column; align-items:center; text-align:center; width:220px;}
 .step_circle {width:36px; height:36px; border-radius:50%; border:2px solid var(--bodyColor); color:var(--bodyColor); display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:10px; background:var(--defaultColor);}

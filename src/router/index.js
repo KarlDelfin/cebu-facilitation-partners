@@ -44,7 +44,15 @@ const router = createRouter({
           component: () => import('../views/CalendarView.vue'),
         },
       ]
-    }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: '404 Not Found',
+      component: () => import('../components/NotFound.vue'),
+      // meta: {
+      //   isPublic: true,
+      // },
+    },
   ],
 })
 

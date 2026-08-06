@@ -7,28 +7,48 @@
     <el-dialog 
       v-model="detailsDialogVisible" 
       title="Booking Details" 
-      width="420px" 
+      width="440px" 
       center 
       destroy-on-close
     >
-      <div v-if="selectedBooking" class="space-y-4 text-slate-700">
+      <div v-if="selectedBooking" v-loading="slotLoading" class="space-y-4 text-slate-700">
         <div class="flex items-center justify-between border-b pb-3">
           <span class="font-semibold text-slate-500">Status</span>
           <span 
             class="!px-3 !py-1 text-xs font-bold rounded-full text-white shadow-sm"
-            :style="{ backgroundColor: selectedBooking.backgroundColor || '#3b82f6' }"
+            :style="{ backgroundColor: selectedBooking.backgroundColor || '#136cb3' }"
           >
             {{ selectedBooking.extendedProps.status }}
           </span>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 text-sm pt-1">
+        <div class="grid grid-cols-3 gap-2 text-sm pt-1 items-center">
           <span class="text-slate-500 font-medium">Title / Client:</span>
           <span class="col-span-2 font-bold text-slate-800">{{ selectedBooking.title }}</span>
 
-          <span class="text-slate-500 font-medium">Scheduled:</span>
-          <span class="col-span-2 font-semibold text-slate-700">
-            {{ formatBookingTime(selectedBooking.start) }}
+          <span class="text-slate-500 font-medium">Scheduled Date:</span>
+          <span class="col-span-2 font-semibold text-slate-700 flex flex-col gap-2">
+            <div>{{ formatBookingTime(selectedBooking.start) }}</div>
+            <el-select
+              v-model="selectedSlotId"
+              placeholder="Select a time slot"
+              class="w-full"
+              size="large"
+              @change="handleSlotChange"
+            >
+              <el-option
+                v-for="slot in availableSlots"
+                :key="slot.id"
+                :label="slot.formattedLabel"
+                :value="slot.id"
+                :disabled="slot.disabled"
+              >
+                <div class="flex items-center justify-between">
+                  <span>{{ slot.formattedLabel }}</span>
+                  <span v-if="slot.disabled" class="text-xs text-red-500 font-semibold">Booked</span>
+                </div>
+              </el-option>
+            </el-select>
           </span>
 
           <span class="text-slate-500 font-medium">Email:</span>
@@ -47,6 +67,58 @@
       <template #footer>
         <div class="flex justify-end gap-2">
           <el-button @click="detailsDialogVisible = false">Close</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- Reschedule / Drag & Drop Select Time Slot Dialog -->
+    <el-dialog
+      v-model="rescheduleDialogVisible"
+      title="Select Time Slot"
+      width="440px"
+      center
+      :before-close="handleRescheduleCancel"
+    >
+      <div v-loading="slotLoading" class="space-y-4">
+        <p class="text-sm text-slate-600">
+          Target Date: <strong class="text-slate-800">{{ targetDateFormatted }}</strong>
+        </p>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-slate-700">Available Time Slots:</label>
+          <el-select
+            v-model="selectedSlotId"
+            placeholder="Select a time slot"
+            class="w-full"
+            size="large"
+          >
+            <el-option
+              v-for="slot in availableSlots"
+              :key="slot.id"
+              :label="slot.formattedLabel"
+              :value="slot.id"
+              :disabled="slot.disabled"
+            >
+              <div class="flex items-center justify-between">
+                <span>{{ slot.formattedLabel }}</span>
+                <span v-if="slot.disabled" class="text-xs text-red-500 font-semibold">Booked</span>
+              </div>
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <el-button @click="handleRescheduleCancel">Cancel</el-button>
+          <el-button 
+            type="primary" 
+            :loading="savingReschedule" 
+            :disabled="!selectedSlotId" 
+            @click="confirmReschedule"
+          >
+            Confirm Reschedule
+          </el-button>
         </div>
       </template>
     </el-dialog>
@@ -74,6 +146,16 @@ export default {
       loading: false,
       detailsDialogVisible: false,
       selectedBooking: null,
+
+      // Reschedule / Slot State Variables
+      rescheduleDialogVisible: false,
+      slotLoading: false,
+      savingReschedule: false,
+      pendingDropInfo: null,
+      targetDate: '',
+      selectedSlotId: null,
+      availableSlots: [],
+
       weekClicked: false,
       dayClicked: false,
       pickerKey: 0,
@@ -82,7 +164,7 @@ export default {
         height: 720,
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, list, rrulePlugin],
         timeZone: 'UTC',
-        editable: true, // Allows drag-and-drop rescheduling
+        editable: true,
         eventStartEditable: true,
         eventDurationEditable: false,
         views: {
@@ -157,7 +239,8 @@ export default {
         initialView: 'dayGridMonth',
         eventClick: this.handleEventClick,
         eventDrop: this.handleEventDrop,
-        datesSet: this.handleDatesSet, // Fetch events dynamically on view/date change
+        datesSet: this.handleDatesSet,
+        eventContent: this.renderEventContent,
         allDaySlot: false,
         eventLongPressDelay: 200,
         eventOverlap: true,
@@ -170,6 +253,9 @@ export default {
   computed: {
     calendarApi() {
       return this.$refs.calendarRef ? this.$refs.calendarRef.getApi() : null;
+    },
+    targetDateFormatted() {
+      return this.targetDate ? moment(this.targetDate).format('MMMM DD, YYYY') : '';
     }
   },
   methods: {
@@ -181,10 +267,9 @@ export default {
           *,
           Service ( name ),
           Status ( name, color ),
-          TimeSlot ( slotTime )
+          TimeSlot ( id, slotTime )
         `);
 
-      // Filter query dynamically if date bounds are provided
       if (startDate && endDate) {
         query = query.gte('bookingDate', startDate).lte('bookingDate', endDate);
       }
@@ -197,57 +282,189 @@ export default {
         const timeOnly = booking.TimeSlot?.slotTime || '00:00:00';
         const startDateTime = `${dateOnly}T${timeOnly}`;
 
+        const cardColor = booking.Status?.color || '#136cb3';
+
         return {
           id: booking.id,
           title: `${booking.fullName} - ${booking.Service?.name || 'Booking'}`,
           start: startDateTime,
           end: moment(startDateTime).add(1, 'hour').toISOString(),
-          backgroundColor: booking.Status?.color || '#3b82f6',
-          borderColor: booking.Status?.color || '#3b82f6',
+          backgroundColor: cardColor,
+          borderColor: cardColor,
+          textColor: '#ffffff',
           extendedProps: {
             status: booking.Status?.name || 'Pending',
             phone: booking.phone,
             email: booking.email,
-            noOfParticipants: booking.noOfParticipants
+            noOfParticipants: booking.noOfParticipants,
+            timeSlotId: booking.timeSlotId || booking.TimeSlot?.id,
+            bookingDate: dateOnly
           }
         };
       });
     },
 
     /* CUSTOM EVENT CARD UI */
+    renderEventContent(arg) {
+      const { status, noOfParticipants } = arg.event.extendedProps;
+      const title = arg.event.title;
+      const bgColor = arg.event.backgroundColor || '#136cb3';
+
+      return {
+        html: `
+          <div 
+            class="px-2 py-1 rounded text-white text-xs leading-tight w-full overflow-hidden shadow-sm"
+            style="background-color: ${bgColor} !important;"
+          >
+            <div class="font-bold truncate">${title}</div>
+            <div class="text-[10px] opacity-90 truncate mt-0.5">
+              ${status} • ${noOfParticipants || 1} pax
+            </div>
+          </div>
+        `
+      };
+    },
 
     /* AUTOMATIC DATES RANGE CHANGE HOOK */
     async handleDatesSet(dateInfo) {
       await this.loadBookings(dateInfo.startStr, dateInfo.endStr);
     },
 
-    /* OPEN DETAILS DIALOG ON EVENT CLICK */
-    handleEventClick(info) {
+    /* OPEN DETAILS DIALOG ON EVENT CLICK AND LOAD TIME SLOTS */
+    async handleEventClick(info) {
       this.selectedBooking = info.event;
+      this.selectedSlotId = info.event.extendedProps.timeSlotId;
       this.detailsDialogVisible = true;
+
+      const dateStr = info.event.extendedProps.bookingDate;
+      await this.loadTimeSlotsForTargetDate(dateStr, info.event.id);
     },
 
-    /* DRAG & DROP RESCHEDULING */
-    async handleEventDrop(info) {
+    /* AUTOMATICALLY UPDATE TIME SLOT ON SELECT CHANGE */
+    async handleSlotChange(newSlotId) {
+      if (!this.selectedBooking || !newSlotId) return;
+
       try {
-        this.loading = true;
-        const newBookingDate = moment(info.event.start).format('YYYY-MM-DDTHH:mm:ss');
+        this.slotLoading = true;
+        const bookingId = this.selectedBooking.id;
 
         const { error } = await supabase
           .from('Booking')
-          .update({ bookingDate: newBookingDate })
-          .eq('id', info.event.id);
+          .update({ timeSlotId: newSlotId })
+          .eq('id', bookingId);
+
+        if (error) throw error;
+
+        ElMessage.success('Booking time slot updated successfully.');
+
+        // Update local event prop
+        this.selectedBooking.setExtendedProp('timeSlotId', newSlotId);
+
+        // Refresh calendar view
+        if (this.calendarApi) {
+          const view = this.calendarApi.view;
+          await this.loadBookings(view.activeStart.toISOString(), view.activeEnd.toISOString());
+        }
+      } catch (error) {
+        console.error('Failed to update booking slot:', error);
+        ElMessage.error('Failed to update booking time slot.');
+      } finally {
+        this.slotLoading = false;
+      }
+    },
+
+    /* DRAG & DROP INTERCEPTION & SLOT DIALOG TRIGGER */
+    async handleEventDrop(info) {
+      this.pendingDropInfo = info;
+      this.targetDate = moment(info.event.start).format('YYYY-MM-DD');
+      this.rescheduleDialogVisible = true;
+
+      await this.loadTimeSlotsForTargetDate(this.targetDate, info.event.id);
+    },
+
+    /* FETCH TIME SLOTS & DISABLE TAKEN ONES */
+    async loadTimeSlotsForTargetDate(dateStr, currentBookingId) {
+      try {
+        this.slotLoading = true;
+
+        const { data: slots, error: slotsErr } = await supabase
+          .from('TimeSlot')
+          .select('*')
+          .order('slotTime', { ascending: true });
+
+        if (slotsErr) throw slotsErr;
+
+        const { data: existingBookings, error: bookingsErr } = await supabase
+          .from('Booking')
+          .select('id, timeSlotId')
+          .eq('bookingDate', dateStr);
+
+        if (bookingsErr) throw bookingsErr;
+
+        const takenSlotIds = (existingBookings || [])
+          .filter(b => String(b.id) !== String(currentBookingId))
+          .map(b => b.timeSlotId);
+
+        this.availableSlots = (slots || []).map(slot => {
+          const isTaken = takenSlotIds.includes(slot.id);
+          const formattedTime = moment(slot.slotTime, 'HH:mm:ss').format('h:mm A');
+
+          return {
+            ...slot,
+            formattedLabel: formattedTime,
+            disabled: isTaken
+          };
+        });
+      } catch (error) {
+        console.error('Failed to load slots:', error);
+        ElMessage.error('Could not load time slots.');
+      } finally {
+        this.slotLoading = false;
+      }
+    },
+
+    /* CONFIRM RESCHEDULE AND UPDATE SUPABASE */
+    async confirmReschedule() {
+      if (!this.selectedSlotId || !this.pendingDropInfo) return;
+
+      try {
+        this.savingReschedule = true;
+        const bookingId = this.pendingDropInfo.event.id;
+
+        const { error } = await supabase
+          .from('Booking')
+          .update({
+            bookingDate: this.targetDate,
+            timeSlotId: this.selectedSlotId
+          })
+          .eq('id', bookingId);
 
         if (error) throw error;
 
         ElMessage.success('Booking rescheduled successfully.');
+        this.rescheduleDialogVisible = false;
+        this.pendingDropInfo = null;
+
+        if (this.calendarApi) {
+          const view = this.calendarApi.view;
+          await this.loadBookings(view.activeStart.toISOString(), view.activeEnd.toISOString());
+        }
       } catch (error) {
-        console.error('Failed to reschedule booking:', error);
-        ElMessage.error('Could not reschedule booking.');
-        info.revert(); // Rollback calendar event to original position
+        console.error('Reschedule failed:', error);
+        ElMessage.error('Failed to reschedule booking.');
+        this.handleRescheduleCancel();
       } finally {
-        this.loading = false;
+        this.savingReschedule = false;
       }
+    },
+
+    /* CANCEL RESCHEDULE AND REVERT EVENT POSITION */
+    handleRescheduleCancel() {
+      if (this.pendingDropInfo) {
+        this.pendingDropInfo.revert();
+        this.pendingDropInfo = null;
+      }
+      this.rescheduleDialogVisible = false;
     },
 
     /* LOAD BOOKINGS */
@@ -276,10 +493,10 @@ export default {
     /* DATE FORMATTER HELPER */
     formatBookingTime(dateString) {
       if (!dateString) return '';
-      return moment(dateString).format('MMMM DD, YYYY - h:mm A');
+      return moment(dateString).format('MMMM DD, YYYY');
     },
 
-    /* CUSTOM NAVIGATION BUTTON HANDLERS */
+    /* NAVIGATION BUTTON HANDLERS */
     handleTodayClick() {
       this.pickerKey++;
       this.today = new Date();
@@ -324,9 +541,18 @@ export default {
 <style scoped>
 :deep(.fc-event) {
   border-radius: 6px !important;
+  border: none !important;
+  background-color: transparent !important;
   cursor: pointer;
 }
+
+:deep(.fc-event-main) {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+
 :deep(.fc-h-event) {
+  background-color: transparent !important;
   border: none !important;
 }
 </style>
