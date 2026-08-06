@@ -240,7 +240,6 @@ export default {
         eventClick: this.handleEventClick,
         eventDrop: this.handleEventDrop,
         datesSet: this.handleDatesSet,
-        eventContent: this.renderEventContent,
         allDaySlot: false,
         eventLongPressDelay: 200,
         eventOverlap: true,
@@ -304,27 +303,6 @@ export default {
       });
     },
 
-    /* CUSTOM EVENT CARD UI */
-    renderEventContent(arg) {
-      const { status, noOfParticipants } = arg.event.extendedProps;
-      const title = arg.event.title;
-      const bgColor = arg.event.backgroundColor || '#136cb3';
-
-      return {
-        html: `
-          <div 
-            class="px-2 py-1 rounded text-white text-xs leading-tight w-full overflow-hidden shadow-sm"
-            style="background-color: ${bgColor} !important;"
-          >
-            <div class="font-bold truncate">${title}</div>
-            <div class="text-[10px] opacity-90 truncate mt-0.5">
-              ${status} • ${noOfParticipants || 1} pax
-            </div>
-          </div>
-        `
-      };
-    },
-
     /* AUTOMATIC DATES RANGE CHANGE HOOK */
     async handleDatesSet(dateInfo) {
       await this.loadBookings(dateInfo.startStr, dateInfo.endStr);
@@ -375,6 +353,11 @@ export default {
 
     /* DRAG & DROP INTERCEPTION & SLOT DIALOG TRIGGER */
     async handleEventDrop(info) {
+      if (new Date(info.event.startStr) < new Date().setHours(0,0,0,0)) {
+        ElMessage.warning('Cannot move booking on past dates.')
+        info.revert();
+        return
+      }
       this.pendingDropInfo = info;
       this.targetDate = moment(info.event.start).format('YYYY-MM-DD');
       this.rescheduleDialogVisible = true;
