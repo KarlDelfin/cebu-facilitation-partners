@@ -216,6 +216,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .footer_con ul li a {color: var(--thiColor);}
     .footer_cta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(254,253,223,.15); }
     .footer_cta ul {margin: 2rem 0 0; flex-direction: column; display: flex; gap: .5rem;}
+    .footer_cta ul li {max-width: fit-content;}
     .footer_cta ul li img {background: var(--defaultColor); transition: .2s ease;}
     .footer_cta ul li img:hover { opacity: 0.8; }
     .footer_cta ul li a:hover {text-decoration: underline;}
