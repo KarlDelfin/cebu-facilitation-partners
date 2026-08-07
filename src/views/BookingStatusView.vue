@@ -3,7 +3,7 @@
     <el-card shadow="never" class="rounded-lg bg-white border border-slate-200">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center !mb-5 gap-4">
         <div>
-          <h1 class="text-xl font-bold text-slate-800 m-0">Booking Status</h1>
+          <h1 class="text-xl font-bold text-slate-800 m-0">{{ $router.name }}</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage statuses for bookings.</p>
         </div>
         
@@ -22,7 +22,7 @@
             class="font-semibold" 
             @click="openForm('Create Booking Status')"
           >
-            Add Status
+            Create Status
           </el-button>
         </div>
       </div>
@@ -103,7 +103,7 @@
           :rules="[{ required: true, message: 'Please select status color', trigger: 'change' }]"
         >
           <div class="flex items-center gap-3">
-            <el-color-picker v-model="statusForm.color" :show-alpha="false" />
+            <el-color-picker v-model="statusForm.color" :show-alpha="false" :predefine="predefineColors"/>
             <el-input v-model="statusForm.color" placeholder="#136cb3" class="w-32" />
           </div>
         </el-form-item>
@@ -138,6 +138,22 @@ export default {
   },
   data() {
     return {
+      predefineColors: [
+        '#ff4500',
+        '#ff8c00',
+        '#ffd700',
+        '#90ee90',
+        '#00ced1',
+        '#1e90ff',
+        '#c71585',
+        'rgba(255, 69, 0, 0.68)',
+        'rgb(255, 120, 0)',
+        'hsv(51, 100, 98)',
+        'hsva(120, 40, 94, 0.5)',
+        'hsl(181, 100%, 37%)',
+        'hsla(209, 100%, 56%, 0.73)',
+        '#c7158577',
+      ],
       Refresh,
       submitLoading: false,
       dialogVisible: false,

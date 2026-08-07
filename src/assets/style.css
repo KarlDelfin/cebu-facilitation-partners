@@ -126,9 +126,9 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .packages {padding: 20vh 0;}
     
     .packages_con { width: 100%; min-height: calc(100vh - 64px); display: flex; justify-content: center; font-weight: 500; font-size: 1rem; position: relative; overflow: hidden; }
-    .package1 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/rookie.png') no-repeat center/cover;}
-    .package2 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/all-star.png') no-repeat center/cover;}
-    .package3 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/mvp.png') no-repeat center/cover;}
+    .package1 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/rookie.webp') no-repeat center/cover;}
+    .package2 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/all-star.webp') no-repeat center/cover;}
+    .package3 {background: linear-gradient(to top, rgba(19, 108, 179, .93), rgba(19, 108, 179, .93)), url('../assets/image/mvp.webp') no-repeat center/cover;}
     
     .packages_inner { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6vh 0; color: var(--defaultColor); }
 
@@ -216,8 +216,10 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .footer_con ul li a {color: var(--thiColor);}
     .footer_cta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; padding-bottom: 3.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(254,253,223,.15); }
     .footer_cta ul {margin: 2rem 0 0; flex-direction: column; display: flex; gap: .5rem;}
+    .footer_cta ul li img {background: var(--defaultColor); transition: .2s ease;}
+    .footer_cta ul li img:hover { opacity: 0.8; }
     .footer_cta ul li a:hover {text-decoration: underline;}
-    .footer_cta h2 { font-family: var(--secFont); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; max-width: 620px; line-height: 1.15; }
+    .footer_cta h2 { font-family: var(--secFont); font-size: 3.2rem; font-weight: 500; max-width: 620px; line-height: 1.15; }
     .footer_cta a.footer_link { display: inline-flex; align-items: center; gap: .6rem; border: 1px solid rgba(254,253,223,.4); border-radius: 999px; padding: .9rem 1.75rem; font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; transition: background .25s ease, color .25s ease; max-width: 200px; width: 100%; justify-content: center;}
     .footer_cta a.footer_link:hover { background: var(--secColor); border-color: var(--secColor); cursor: pointer;}
     .footer_cta .footer_btn_con {display: flex; flex-direction: column; gap: 25px; align-items: end;}
@@ -246,8 +248,11 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .pathway_line { left: -1.25rem; }
     .foundational_guiding h2 { padding-left: 1.5rem; }
     .footer_cta .footer_btn_con { align-items: center; width: 100%;}
-    .footer_cta h2 {text-align: center; margin: 0 auto;}
     .bootcamp_card img {width: 100%;}
+
+    .footer_cta div {width: 100%; text-align: center;}
+    .footer_cta ul li img { margin: 0 auto; }
+    .footer_cta h2 {max-width: 100%}
 }
 
 @media (max-width: 800px) {
@@ -265,6 +270,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
 
     .footer_cta {text-align: center;}
     .footer_cta a.footer_link { margin: 0 auto; }
+
     
     .footer_meta { flex-direction: column-reverse; align-items: center; text-align: center;}
 

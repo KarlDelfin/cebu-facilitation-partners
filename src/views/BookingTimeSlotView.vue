@@ -4,7 +4,7 @@
       <!-- HEADER & ACTIONS -->
       <div class="flex justify-between items-center !mb-5 gap-4">
         <div>
-          <h1 class="text-xl font-bold text-slate-800 m-0">Booking Time Slots</h1>
+          <h1 class="text-xl font-bold text-slate-800 m-0">{{ $router.name }}</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage operating hours and slot availability for bookings.</p>
         </div>
         
@@ -23,7 +23,7 @@
             class="font-semibold" 
             @click="openForm('Create Time Slot')"
           >
-            Add Time Slot
+            Create Time Slot
           </el-button>
         </div>
       </div>

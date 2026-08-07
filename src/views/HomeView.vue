@@ -80,7 +80,7 @@
                         <h3>ROOKIE</h3>
                         <p>Fundamental bonding and core teamwork.</p>
                     </div>
-                    <img src="../assets/image/rookie.png" alt="people hugging">
+                    <img src="../assets/image/rookie.webp" alt="people hugging">
                     
                 </div>
                 <div class="bootcamp_card">
@@ -89,7 +89,7 @@
                         <h3>ALL-STAR</h3>
                         <p>Elevated competition and enhanced experience.</p>
                     </div>
-                    <img src="../assets/image/all-star.png" alt="people hugging">
+                    <img src="../assets/image/all-star.webp" alt="people hugging">
                 </div>
                 <div class="bootcamp_card">
                     <div>
@@ -97,7 +97,7 @@
                         <h3>MVP</h3>
                         <p>The ultimate championship-level experience.</p>
                     </div>
-                    <img src="../assets/image/mvp.png" alt="people hugging">
+                    <img src="../assets/image/mvp.webp" alt="people hugging">
                 </div>
             </div>
         </div>

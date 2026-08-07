@@ -64,7 +64,7 @@
 
           <el-menu-item index="/admin/timeslot">
             <el-icon><Clock /></el-icon>
-            <template #title>Time Slots</template>
+            <template #title>Booking Time Slots</template>
           </el-menu-item>
         </el-sub-menu>
 

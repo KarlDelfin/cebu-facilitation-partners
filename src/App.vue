@@ -74,10 +74,13 @@
       <div class="footer_con">
         <div class="footer_cta">
           <div>
-            <h2>Ready to design your next team experience?</h2>
+            <h2>Ready to design your next team building experience?</h2>
             <ul>
               <li>Email: <a href="mailto:hello.upskills@gmail.com">hello.upskills@gmail.com</a></li>
               <li>Phone: <a href="tel:09610115585">0961-011-5585</a></li>
+            </ul>
+            <ul>
+              <li><a href="https://www.facebook.com/hello.upskills"><img src="../src/assets/image/fb.webp" alt="Facebook"></a></li>
             </ul>
           </div>
           <div class="footer_btn_con">
@@ -90,7 +93,7 @@
             <p>
               <a 
                 class="privacy_policy" 
-                :href="isHomePage ? '#privacy-policy' : '/#privacy-policy'"
+                :href="isHomePage ? '/privacy-policy' : ''"
               >
                 Privacy Policy
             </a>

@@ -2,7 +2,7 @@
   <div class="!p-3 sm:!p-6 !bg-white !rounded-2xl !shadow-lg !font-sans !w-full !max-w-full !overflow-hidden">
     <!-- Main Calendar Component -->
     <div class="calendar-wrapper !w-full !overflow-x-auto">
-      <FullCalendar ref="calendarRef" :options="calendarOptions" v-loading="calendarStore.loading" />
+      <FullCalendar ref="calendarRef" :options="calendarOptions" v-loading="store.loading" />
     </div>
 
     <!-- Booking Details Dialog -->
@@ -13,7 +13,7 @@
       center 
       destroy-on-close
     >
-      <div v-if="selectedBooking" v-loading="calendarStore.slotLoading" class="!space-y-4 !text-slate-700">
+      <div v-if="selectedBooking" v-loading="store.slotLoading" class="!space-y-4 !text-slate-700">
         <div class="flex items-center justify-between !border-b !border-slate-100 !pb-3">
           <span class="!font-semibold !text-slate-500 !text-sm">Status</span>
           <span 
@@ -39,7 +39,7 @@
               @change="handleSlotChange"
             >
               <el-option
-                v-for="slot in calendarStore.availableSlots"
+                v-for="slot in store.availableSlots"
                 :key="slot.id"
                 :label="slot.formattedLabel"
                 :value="slot.id"
@@ -81,7 +81,7 @@
       center
       :before-close="handleRescheduleCancel"
     >
-      <div v-loading="calendarStore.slotLoading" class="!space-y-4">
+      <div v-loading="store.slotLoading" class="!space-y-4">
         <p class="!text-sm !text-slate-600">
           Target Date: <strong class="!text-slate-800">{{ targetDateFormatted }}</strong>
         </p>
@@ -95,7 +95,7 @@
             size="large"
           >
             <el-option
-              v-for="slot in calendarStore.availableSlots"
+              v-for="slot in store.availableSlots"
               :key="slot.id"
               :label="slot.formattedLabel"
               :value="slot.id"
@@ -147,8 +147,8 @@ export default {
     FullCalendar
   },
   setup() {
-    const calendarStore = useCalendarStore() 
-    return { calendarStore }
+    const store = useCalendarStore() 
+    return { store }
   },
   data() {
     return {
@@ -217,11 +217,11 @@ export default {
             click: () => this.handleTodayClick()
           },
           prevCustom: {
-            text: '<',
+            text: '«',
             click: () => this.handlePrevClick()
           },
           nextCustom: {
-            text: '>',
+            text: '»',
             click: () => this.handleNextClick()
           },
           refreshCustom: {
@@ -302,7 +302,7 @@ export default {
       this.detailsDialogVisible = true
 
       const dateStr = info.event.extendedProps.bookingDate
-      await this.calendarStore.loadTimeSlotsForTargetDate(dateStr, info.event.id)
+      await this.store.loadTimeSlotsForTargetDate(dateStr, info.event.id)
     },
 
     /* LOCAL COMPONENT MUTATION: UPDATE TIME SLOT */
@@ -320,7 +320,7 @@ export default {
 
         ElMessage.success('Booking time slot updated successfully.')
         this.selectedBooking.setExtendedProp('timeSlotId', newSlotId)
-        await this.calendarStore.refreshCurrentRange()
+        await this.store.refreshCurrentRange()
         await this.syncCalendarEvents()
       } catch (error) {
         console.error('Failed to update booking slot:', error)
@@ -339,7 +339,7 @@ export default {
       this.targetDate = moment(info.event.start).format('YYYY-MM-DD')
       this.rescheduleDialogVisible = true
 
-      await this.calendarStore.loadTimeSlotsForTargetDate(this.targetDate, info.event.id)
+      await this.store.loadTimeSlotsForTargetDate(this.targetDate, info.event.id)
     },
 
     /* LOCAL COMPONENT MUTATION: CONFIRM RESCHEDULE */
@@ -363,7 +363,7 @@ export default {
         ElMessage.success('Booking rescheduled successfully.')
         this.rescheduleDialogVisible = false
         this.pendingDropInfo = null
-        await this.calendarStore.refreshCurrentRange()
+        await this.store.refreshCurrentRange()
         await this.syncCalendarEvents()
       } catch (error) {
         console.error('Reschedule failed:', error)
@@ -386,14 +386,14 @@ export default {
 
     /* LOAD BOOKINGS FROM STORE */
     async loadBookings(startDate, endDate) {
-      const events = await this.calendarStore.fetchCalendarEvents(startDate, endDate)
+      const events = await this.store.fetchCalendarEvents(startDate, endDate)
       this.updateCalendarSource(events)
     },
 
     /* SYNC CALENDAR EVENTS FROM CURRENT STORE STATE */
     async syncCalendarEvents() {
       if (this.calendarApi) {
-        const events = this.calendarStore.bookings
+        const events = this.store.bookings
         this.updateCalendarSource(events)
       }
     },
@@ -455,7 +455,7 @@ export default {
     handleListClick() {
       this.calendarApi?.changeView('listMonth')
     }
-  }
+  },
 }
 </script>
 
