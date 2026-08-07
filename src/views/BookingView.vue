@@ -40,7 +40,13 @@
               <div class="flex flex-col">
                 <div class="font-bold text-slate-800 text-sm">{{ scope.row.fullName }}</div>
                 <div class="text-xs text-slate-500 mt-0.5">
-                  {{ scope.row.email }} | {{ scope.row.phone }}
+                  <a :href="`mailto:${scope.row.email}`" class="text-blue-500 no-underline hover:!underline">
+                    {{ scope.row.email }}
+                  </a>
+                  |
+                  <a :href="`tel:${scope.row.phone}`" class="text-blue-500 no-underline hover:!underline">
+                    {{ scope.row.phone }}
+                  </a>
                 </div>
               </div>
             </template>
