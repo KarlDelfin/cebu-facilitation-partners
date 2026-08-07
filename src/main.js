@@ -2,35 +2,46 @@ import './assets/style.css'
 import './assets/tailwind.css'
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+
 import App from './App.vue'
 import router from './router'
+
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
-import { store } from './store'
-import VCalendar from 'v-calendar';
-import 'v-calendar/style.css';
+
+import VCalendar from 'v-calendar'
+import 'v-calendar/style.css'
+
 import { supabase } from './utils/supabaseClient.js'
+
 import '@fortawesome/fontawesome-free/css/all.css'
 
-async function supabaseSession() {
-  const { data: { session } } = await supabase.auth.getSession()
+import { useAuthStore } from './store/useAuthStore'
 
+async function initApp() {
+  const app = createApp(App)
+  
+  const pinia = createPinia()
+  app.use(pinia)
+
+  const authStore = useAuthStore(pinia)
+
+  const { data: { session } } = await supabase.auth.getSession()
   if (session) {
-    store.dispatch('setUser', session.user)
+    authStore.setUser(session)
   }
 
   supabase.auth.onAuthStateChange((event, session) => {
     if (session) {
-      store.dispatch('setUser', session.user)
+      authStore.setUser(session)
     } else {
-      store.dispatch('setUser', null)
+      authStore.setUser(null)
     }
   })
 
-  const app = createApp(App)
-
-  app.use(store)
+  // 5. Mount remaining plugins and app
   app.use(router)
   app.use(ElementPlus)
   app.use(VCalendar, {})
@@ -38,4 +49,4 @@ async function supabaseSession() {
   app.mount('#app')
 }
 
-supabaseSession()
+initApp()

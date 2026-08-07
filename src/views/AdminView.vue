@@ -1,10 +1,9 @@
 <template>
-  <el-container v-if="$store.getters.getUser" class="h-screen bg-slate-50 text-slate-800">
+  <el-container v-if="user" class="h-screen bg-slate-50 text-slate-800">
     <AdminSidebar />
 
     <el-container class="flex flex-col">
       <el-header class="!flex bg-white border-b border-slate-200 flex justify-end !items-center px-6 h-16">
-        
         <div class="flex items-center gap-3 justify-between items-center w-full">
           <h1 class="!text-lg !font-bold">{{ $route.name }}</h1>
           <el-button 
@@ -58,10 +57,11 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'pinia';
+import { useAuthStore } from '@/store/useAuthStore';
 import AdminSidebar from '@/components/AdminSidebar.vue';
 import { supabase } from '@/utils/supabaseClient';
 import { ElMessage } from 'element-plus';
-
 
 export default {
   name: 'AdminView',
@@ -74,10 +74,17 @@ export default {
       isValidating: false
     };
   },
+  computed: {
+    // Replaces $store.getters.getUser
+    ...mapState(useAuthStore, ['user'])
+  },
   methods: {
+    // Replaces this.$store.dispatch('setUser', ...)
+    ...mapActions(useAuthStore, ['setUser']),
+
     async validateAndSetSession(session) {
       if (!session || !session.user) {
-        this.$store.dispatch('setUser', null);
+        this.setUser(null);
         this.loading = false;
         return;
       }
@@ -99,19 +106,19 @@ export default {
 
         if (!data) {
           ElMessage.error(`Access Denied: ${userEmail} is not authorized.`);
-          this.$store.dispatch('setUser', null);
+          this.setUser(null);
           await supabase.auth.signOut(); 
           return;
         }
 
-        this.$store.dispatch('setUser', session);
+        this.setUser(session);
         
         if (this.$route.path === '/admin' || this.$route.path === '/admin/') {
           this.$router.push('/admin/booking');
         }
       } catch (err) {
         ElMessage.error(`Authorization engine error: ${err.message}`);
-        this.$store.dispatch('setUser', null);
+        this.setUser(null);
         await supabase.auth.signOut();
       } finally {
         this.loading = false;
@@ -119,29 +126,29 @@ export default {
       }
     },
 
-  async handleGoogleLogin() {
-    try {
-      this.loading = true;
-      
-      const REDIRECTION_URL = `${window.location.origin}/admin/booking`;
+    async handleGoogleLogin() {
+      try {
+        this.loading = true;
+        
+        const REDIRECTION_URL = `${window.location.origin}/admin/booking`;
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { 
-          redirectTo: REDIRECTION_URL 
-        }
-      });
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { 
+            redirectTo: REDIRECTION_URL 
+          }
+        });
+        
+        if (error) throw error;
+      } catch (err) {
+        ElMessage.error(`OAuth Initialization failure: ${err.message}`);
+        this.loading = false;
+      }
+    },
       
-      if (error) throw error;
-    } catch (err) {
-      ElMessage.error(`OAuth Initialization failure: ${err.message}`);
-      this.loading = false;
-    }
-  },
-    
-  async handleSignOut() {
+    async handleSignOut() {
       await supabase.auth.signOut();
-      this.$store.dispatch('setUser', null); 
+      this.setUser(null); 
       ElMessage.info('Logged out securely.');
       this.$router.push('/admin');
     },
@@ -153,7 +160,7 @@ export default {
 
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
-        this.$store.dispatch('setUser', null);
+        this.setUser(null);
         this.loading = false;
         return;
       }

@@ -1,87 +1,111 @@
 <template>
-  <div>
-    <el-card shadow="never" class="rounded-lg bg-white border border-slate-200 p-0">
-      <div class="flex justify-between items-center mb-5 gap-4">
-        <el-input
-          v-model="searchQuery"
-          placeholder="Search by service..."
-          class="w-80"
-          :prefix-icon="SearchIcon"
-          clearable
-          @input="handleSearch"
-          @clear="clearSearch"
-        />
+  <div class="!w-full">
+    <el-card shadow="never" class="rounded-lg bg-white border border-slate-200 !p-2 sm:!p-4">
+      <!-- Search and Action Top Bar -->
+      <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mb-5 gap-3">
+        <div class="flex items-center !gap-2 !w-full sm:!w-auto">
+          <el-input
+            v-model="serviceStore.searchQuery"
+            placeholder="Search by service..."
+            class="!w-full sm:!w-80 md:!w-96"
+            :prefix-icon="Search"
+            clearable
+            @input="handleSearch"
+            @clear="clearSearch"
+          />
+          <!-- REFRESH BUTTON -->
+          <el-button 
+            class="!p-2.5" 
+            :icon="Refresh" 
+            :loading="serviceStore.loading" 
+            @click="handleRefresh"
+            title="Refresh Services"
+          />
+        </div>
         <el-button 
           type="primary" 
           color="#136cb3" 
-          class="font-semibold" 
+          class="font-semibold w-full sm:w-auto" 
           @click="openForm('Create Service')"
         >
           Create Service
         </el-button>
       </div>
 
-      <el-table class="mt-5!" :data="services" style="width: 100%" v-loading="loading">
-        <el-table-column label="Date/Time Created" min-width="150">
-          <template #default="scope">
-            <span class="text-slate-500 font-medium text-sm">{{ scope.row.dateTimeCreated }}</span>
-          </template>
-        </el-table-column>
+      <!-- Responsive Table Container -->
+      <div class="overflow-x-auto">
+        <el-table class="mt-5! w-full" :data="serviceStore.services" v-loading="serviceStore.loading">
+          <el-table-column label="Date/Time Created" min-width="150">
+            <template #default="scope">
+              <span class="text-slate-500 font-medium text-sm">{{ scope.row.dateTimeCreated }}</span>
+            </template>
+          </el-table-column>
 
-        <el-table-column label="Service Name" min-width="200">
-          <template #default="scope">
-            <div class="font-bold text-slate-800 text-sm">{{ scope.row.name }}</div>
-          </template>
-        </el-table-column>
+          <el-table-column label="Service Name" min-width="180">
+            <template #default="scope">
+              <div class="font-bold text-slate-800 text-sm">{{ scope.row.name }}</div>
+            </template>
+          </el-table-column>
 
-        <el-table-column prop="description" label="Service Description" min-width="280" show-overflow-tooltip />
-        
-        <el-table-column label="Price" width="160" align="right">
-          <template #default="scope">
-            <span class="font-bold text-[#136cb3] text-sm">
-              ₱{{ Number(scope.row.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-            </span>
-          </template>
-        </el-table-column>
+          <el-table-column prop="description" label="Service Description" min-width="220" show-overflow-tooltip />
+          
+          <el-table-column label="Price" min-width="120" align="right">
+            <template #default="scope">
+              <span class="font-bold text-[#136cb3] text-sm">
+                ₱{{ Number(scope.row.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+              </span>
+            </template>
+          </el-table-column>
 
-        <el-table-column label="Operation" width="120" fixed="right" align="center">
-          <template #default="scope">
-            <el-button 
-              size="small" 
-              type="primary" 
-              link 
-              class="!text-[#136cb3] !font-bold"
-              @click="openForm('Edit Service', scope.row)"
-            >
-              Edit
-            </el-button>
-            <el-button 
-              size="small" 
-              type="primary" 
-              link 
-              class="!text-rose-500 !font-bold"
-              @click="handleDelete(scope.row.id)"
-            >
-              Delete
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+          <el-table-column label="Operation" min-width="140" fixed="right" align="center">
+            <template #default="scope">
+              <div class="flex items-center justify-center gap-1">
+                <el-button 
+                  size="small" 
+                  type="primary" 
+                  link 
+                  class="!text-[#136cb3] !font-bold"
+                  @click="openForm('Edit Service', scope.row)"
+                >
+                  Edit
+                </el-button>
+                <el-button 
+                  size="small" 
+                  type="primary" 
+                  link 
+                  class="!text-rose-500 !font-bold"
+                  @click="handleDelete(scope.row.id)"
+                >
+                  Delete
+                </el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
-      <el-pagination
-        class="mt-5! flex p-5!"
-        v-model:current-page="servicePagination.currentPage"
-        v-model:page-size="servicePagination.elementsPerPage"
-        :page-sizes="[5, 10, 25, 50]"
-        :total="servicePagination.totalElements"
-        layout="total, sizes, prev, pager, next, jumper"
-        @current-change="getServices"
-        @size-change="getServices"
-      />
+      <!-- Pagination Container -->
+      <div class="!mt-5 flex justify-end overflow-x-auto pb-2">
+        <el-pagination
+          v-model:current-page="serviceStore.pagination.currentPage"
+          v-model:page-size="serviceStore.pagination.elementsPerPage"
+          :page-sizes="[5, 10, 25, 50]"
+          :total="serviceStore.pagination.totalElements"
+          :layout="paginationLayout"
+          @current-change="serviceStore.fetchServices"
+          @size-change="serviceStore.fetchServices"
+        />
+      </div>
     </el-card>
 
     <!-- SERVICE FORM DIALOG -->
-    <el-dialog v-model="dialogVisible" :title="formTitle" center :before-close="clearForm">
+    <el-dialog 
+      v-model="dialogVisible" 
+      :title="formTitle" 
+      center 
+      class="!w-[92vw] sm:!w-[480px] !max-w-[480px] !rounded-2xl"
+      :before-close="clearForm"
+    >
       <el-form 
         ref="serviceFormRef" 
         label-position="top" 
@@ -109,17 +133,23 @@
           prop="price"
           :rules="[
             { required: true, message: 'Please input price', trigger: 'blur' },
-            { 
-              validator: validatePrice, 
-              trigger: 'blur' 
-            }
+            { validator: validatePrice, trigger: 'blur' }
           ]"
         >
           <el-input v-model.number="serviceForm.price" placeholder="Enter price" />
         </el-form-item>
 
-        <div class="flex justify-end !mt-5">
-          <el-button type="primary" @click="submitForm" :loading="loading">Confirm</el-button>
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 !mt-6">
+          <el-button class="w-full sm:w-auto !m-0" @click="clearForm">Cancel</el-button>
+          <el-button 
+            type="primary" 
+            color="#136cb3" 
+            class="w-full sm:w-auto font-semibold" 
+            @click="submitForm" 
+            :loading="serviceStore.loading"
+          >
+            Confirm
+          </el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -127,31 +157,28 @@
 </template>
 
 <script>
-import { Search as SearchIcon } from '@element-plus/icons-vue'
+import { markRaw } from 'vue'
+import { mapStores } from 'pinia'
+import { Search, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import debounce from 'lodash/debounce'
-import { 
-  fetchServices, 
-  createService, 
-  updateService, 
-  deleteServiceById 
-} from '../services/serviceLogic'
+import { useServiceStore } from '@/store/useServiceStore'
+import { supabase } from '@/utils/supabaseClient' // Directly imported for mutations
 
 export default {
   name: 'ServicesList',
+  components: {
+    Search: markRaw(Search),
+    Refresh: markRaw(Refresh)
+  },
   data() {
     return {
-      // Icons
-      SearchIcon,
-
-      // UI State
-      loading: false,
+      Search,
+      Refresh,
       dialogVisible: false,
       formTitle: '',
-      searchQuery: '',
-      services: [],
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 1024,
 
-      // Form State
       serviceForm: {
         id: '',
         name: '',
@@ -159,32 +186,43 @@ export default {
         price: ''
       },
 
-      // Pagination State
-      servicePagination: {
-        elementsPerPage: 10,
-        currentPage: 1,
-        totalElements: 0
-      },
-
-      // Debounced function holder
       debouncedFetch: null
     }
   },
 
+  computed: {
+    ...mapStores(useServiceStore),
+
+    paginationLayout() {
+      return this.windowWidth < 640 
+        ? 'prev, pager, next' 
+        : 'total, sizes, prev, pager, next, jumper'
+    }
+  },
+
   created() {
-    // Setup debounced function during component creation
     this.debouncedFetch = debounce(() => {
-      this.servicePagination.currentPage = 1
-      this.getServices()
+      this.serviceStore.pagination.currentPage = 1
+      this.serviceStore.fetchServices()
     }, 500)
   },
 
   mounted() {
-    this.getServices()
+    if (this.serviceStore.services.length === 0) {
+      this.serviceStore.fetchServices()
+    }
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  unmounted() {
+    window.removeEventListener('resize', this.handleResize)
   },
 
   methods: {
-    // Custom Form Validation Rule
+    handleResize() {
+      this.windowWidth = window.innerWidth
+    },
+
     validatePrice(rule, value, callback) {
       if (value === '' || value === null || isNaN(value)) {
         callback(new Error('Price must be a valid number'))
@@ -193,24 +231,10 @@ export default {
       }
     },
 
-    // Fetch Services Data
-    async getServices() {
-      this.loading = true
-      try {
-        const { services: data, totalElements } = await fetchServices({
-          currentPage: this.servicePagination.currentPage,
-          elementsPerPage: this.servicePagination.elementsPerPage,
-          searchQuery: this.searchQuery
-        })
-
-        this.services = data
-        this.servicePagination.totalElements = totalElements
-      } catch (error) {
-        console.error(error)
-        ElMessage.error(`Error loading services: ${error.message || error}`)
-      } finally {
-        this.loading = false
-      }
+    // Refresh Action
+    async handleRefresh() {
+      await this.serviceStore.fetchServices()
+      ElMessage.success('Services updated.')
     },
 
     // Search Handlers
@@ -221,9 +245,8 @@ export default {
     },
 
     clearSearch() {
-      this.searchQuery = ''
-      this.servicePagination.currentPage = 1
-      this.getServices()
+      this.serviceStore.resetSearch()
+      this.serviceStore.fetchServices()
     },
 
     // Dialog & Form Handlers
@@ -257,23 +280,36 @@ export default {
       }
     },
 
+    // Local Component Mutations (CREATE & UPDATE)
     async submitForm() {
       const formRef = this.$refs.serviceFormRef
       if (!formRef) return
 
       try {
         await formRef.validate()
-        this.loading = true
+        this.serviceStore.loading = true
+
+        const payload = {
+          name: this.serviceForm.name,
+          description: this.serviceForm.description,
+          price: Number(this.serviceForm.price)
+        }
 
         if (this.formTitle === 'Create Service') {
-          await createService(this.serviceForm)
+          const { error } = await supabase.from('Service').insert(payload)
+          if (error) throw error
           ElMessage.success('Service created successfully.')
         } else if (this.formTitle === 'Edit Service') {
-          await updateService(this.serviceForm.id, this.serviceForm)
+          const { error } = await supabase
+            .from('Service')
+            .update(payload)
+            .eq('id', this.serviceForm.id)
+
+          if (error) throw error
           ElMessage.success('Service updated successfully.')
         }
 
-        await this.getServices()
+        await this.serviceStore.fetchServices()
         this.clearForm()
       } catch (error) {
         if (error && error !== false) {
@@ -281,11 +317,11 @@ export default {
           ElMessage.error(error.message || 'Failed to save service.')
         }
       } finally {
-        this.loading = false
+        this.serviceStore.loading = false
       }
     },
 
-    // Delete Logic
+    // Local Component Mutation (DELETE)
     async handleDelete(serviceId) {
       try {
         await ElMessageBox.confirm(
@@ -294,18 +330,24 @@ export default {
           { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' }
         )
 
-        this.loading = true
-        await deleteServiceById(serviceId)
+        this.serviceStore.loading = true
+
+        const { error } = await supabase
+          .from('Service')
+          .delete()
+          .eq('id', serviceId)
+
+        if (error) throw error
 
         ElMessage.success('Service deleted successfully.')
-        await this.getServices()
+        await this.serviceStore.fetchServices()
       } catch (error) {
         if (error !== 'cancel') {
           console.error(error)
-          ElMessage.error('Failed to delete service.')
+          ElMessage.error(error.message || 'Failed to delete service.')
         }
       } finally {
-        this.loading = false
+        this.serviceStore.loading = false
       }
     }
   }

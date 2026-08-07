@@ -7,18 +7,29 @@
           <h1 class="text-xl font-bold text-slate-800 m-0">Booking Time Slots</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage operating hours and slot availability for bookings.</p>
         </div>
-        <el-button 
-          type="primary" 
-          color="#136cb3" 
-          class="font-semibold" 
-          @click="openForm('Create Time Slot')"
-        >
-          Add Time Slot
-        </el-button>
+        
+        <div class="flex items-center gap-2">
+          <!-- REFRESH BUTTON -->
+          <el-button 
+            :icon="Refresh" 
+            circle 
+            :loading="store.loading" 
+            @click="store.getTimeSlots()" 
+            title="Refresh Time Slots"
+          />
+          <el-button 
+            type="primary" 
+            color="#136cb3" 
+            class="font-semibold" 
+            @click="openForm('Create Time Slot')"
+          >
+            Add Time Slot
+          </el-button>
+        </div>
       </div>
 
       <!-- DATA TABLE -->
-      <el-table :data="timeSlots" style="width: 100%" v-loading="loading">
+      <el-table :data="store.timeSlots" style="width: 100%" v-loading="store.loading">
         <el-table-column label="Time Slot" min-width="160">
           <template #default="scope">
             <span class="font-bold text-slate-800 text-sm">
@@ -69,6 +80,7 @@
       width="420px" 
       center 
       :before-close="clearForm"
+      class="!w-[92vw] sm:!w-[480px] !max-w-[480px] !rounded-2xl"
     >
       <el-form 
         ref="timeSlotFormRef" 
@@ -107,19 +119,27 @@
 
 <script>
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Refresh } from '@element-plus/icons-vue'
 import moment from 'moment'
-import { supabase } from '../utils/supabaseClient' // Adjust path to your Supabase client
+import { markRaw } from 'vue'
+import { supabase } from '../utils/supabaseClient'
+import { useTimeSlotStore } from '@/store/useTimeSlotStore'
 
 export default {
   name: 'BookingTimeSlotView',
+  components: {
+    Refresh: markRaw(Refresh)
+  },
+  setup() {
+    const store = useTimeSlotStore()
+    return { store }
+  },
   data() {
     return {
-      // UI States
-      loading: false,
+      Refresh,
       submitLoading: false,
       dialogVisible: false,
       formTitle: '',
-      timeSlots: [],
 
       // Form Model
       slotForm: {
@@ -130,31 +150,15 @@ export default {
     }
   },
 
-  mounted() {
-    this.getTimeSlots()
+  async mounted() {
+    // Only fetch if store doesn't have cached data yet
+    if (this.store.timeSlots.length === 0) {
+      await this.store.getTimeSlots()
+    }
   },
 
   methods: {
-    // 1. READ: Fetch Time Slots
-    async getTimeSlots() {
-      this.loading = true
-      try {
-        const { data, error } = await supabase
-          .from('TimeSlot')
-          .select('*')
-          .order('slotTime', { ascending: true })
-
-        if (error) throw error
-        this.timeSlots = data || []
-      } catch (error) {
-        console.error(error)
-        ElMessage.error(`Failed to load time slots: ${error.message}`)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    // 2. CREATE & UPDATE: Submit Handler
+    // CREATE & UPDATE: Submit Handler
     async submitForm() {
       const formRef = this.$refs.timeSlotFormRef
       if (!formRef) return
@@ -190,7 +194,7 @@ export default {
           ElMessage.success('Time slot updated successfully.')
         }
 
-        await this.getTimeSlots()
+        await this.store.getTimeSlots()
         this.clearForm()
       } catch (error) {
         if (error && error !== false) {
@@ -219,7 +223,7 @@ export default {
       }
     },
 
-    // 3. DELETE: Remove Time Slot
+    // DELETE: Remove Time Slot
     async handleDelete(id) {
       try {
         await ElMessageBox.confirm(
@@ -228,7 +232,7 @@ export default {
           { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
         )
 
-        this.loading = true
+        this.store.loading = true
         const { error } = await supabase
           .from('TimeSlot')
           .delete()
@@ -237,14 +241,14 @@ export default {
         if (error) throw error
 
         ElMessage.success('Time slot deleted successfully.')
-        await this.getTimeSlots()
+        await this.store.getTimeSlots()
       } catch (error) {
         if (error !== 'cancel') {
           console.error(error)
           ElMessage.error('Failed to delete time slot.')
         }
       } finally {
-        this.loading = false
+        this.store.loading = false
       }
     },
 

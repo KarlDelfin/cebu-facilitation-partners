@@ -1,22 +1,33 @@
 <template>
   <div class="p-6">
     <el-card shadow="never" class="rounded-lg bg-white border border-slate-200">
-      <div class="flex justify-between items-center !mb-5 gap-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center !mb-5 gap-4">
         <div>
           <h1 class="text-xl font-bold text-slate-800 m-0">Booking Status</h1>
           <p class="text-sm text-slate-500 m-0 mt-1">Manage statuses for bookings.</p>
         </div>
-        <el-button 
-          type="primary" 
-          color="#136cb3" 
-          class="font-semibold" 
-          @click="openForm('Create Booking Status')"
-        >
-          Add Status
-        </el-button>
+        
+        <div class="flex items-center gap-2">
+          <!-- REFRESH BUTTON -->
+          <el-button 
+            :icon="Refresh" 
+            circle 
+            :loading="store.loading" 
+            @click="store.getStatuses()" 
+            title="Refresh Statuses"
+          />
+          <el-button 
+            type="primary" 
+            color="#136cb3" 
+            class="font-semibold" 
+            @click="openForm('Create Booking Status')"
+          >
+            Add Status
+          </el-button>
+        </div>
       </div>
 
-      <el-table :data="statusList" style="width: 100%" v-loading="loading">
+      <el-table :data="store.statusList" style="width: 100%" v-loading="store.loading">
         <el-table-column label="Status Name" min-width="200">
           <template #default="scope">
             <span class="font-bold text-slate-800 text-sm">
@@ -70,6 +81,7 @@
       width="420px" 
       center 
       :before-close="clearForm"
+      class="!w-[92vw] sm:!w-[480px] !max-w-[480px] !rounded-2xl"
     >
       <el-form 
         ref="statusFormRef" 
@@ -91,7 +103,7 @@
           :rules="[{ required: true, message: 'Please select status color', trigger: 'change' }]"
         >
           <div class="flex items-center gap-3">
-            <el-color-picker v-model="statusForm.color" show-alpha={false} />
+            <el-color-picker v-model="statusForm.color" :show-alpha="false" />
             <el-input v-model="statusForm.color" placeholder="#136cb3" class="w-32" />
           </div>
         </el-form-item>
@@ -108,90 +120,83 @@
 </template>
 
 <script>
-import { ElMessage, ElMessageBox } from 'element-plus'
-import moment from 'moment'
-import { supabase } from '../utils/supabaseClient'
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Refresh } from '@element-plus/icons-vue';
+import moment from 'moment';
+import { markRaw } from 'vue';
+import { supabase } from '../utils/supabaseClient';
+import { useStatusStore } from '@/store/useStatusStore';
 
 export default {
   name: 'StatusView',
+  components: {
+    Refresh: markRaw(Refresh)
+  },
+  setup() {
+    const store = useStatusStore();
+    return { store };
+  },
   data() {
     return {
-      loading: false,
+      Refresh,
       submitLoading: false,
       dialogVisible: false,
       formTitle: '',
-      statusList: [],
 
       statusForm: {
         id: null,
         name: '',
         color: '#136cb3'
       }
+    };
+  },
+
+  async mounted() {
+    if (this.store.statusList.length === 0) {
+      await this.store.getStatuses();
     }
   },
 
-  mounted() {
-    this.getStatuses()
-  },
-
   methods: {
-    async getStatuses() {
-      this.loading = true
-      try {
-        const { data, error } = await supabase
-          .from('Status')
-          .select('*')
-          .order('id', { ascending: true })
-
-        if (error) throw error
-        this.statusList = data || []
-      } catch (error) {
-        console.error(error)
-        ElMessage.error(`Failed to load statuses: ${error.message}`)
-      } finally {
-        this.loading = false
-      }
-    },
-
     async submitForm() {
-      const formRef = this.$refs.statusFormRef
-      if (!formRef) return
+      const formRef = this.$refs.statusFormRef;
+      if (!formRef) return;
 
       try {
-        await formRef.validate()
-        this.submitLoading = true
+        await formRef.validate();
+        this.submitLoading = true;
 
         const payload = {
           name: this.statusForm.name,
           color: this.statusForm.color
-        }
+        };
 
         if (this.formTitle === 'Create Booking Status') {
           const { error } = await supabase
             .from('Status')
-            .insert([payload])
+            .insert([payload]);
 
-          if (error) throw error
-          ElMessage.success('Booking status created successfully.')
+          if (error) throw error;
+          ElMessage.success('Booking status created successfully.');
         } else if (this.formTitle === 'Edit Booking Status') {
           const { error } = await supabase
             .from('Status')
             .update(payload)
-            .eq('id', this.statusForm.id)
+            .eq('id', this.statusForm.id);
 
-          if (error) throw error
-          ElMessage.success('Booking status updated successfully.')
+          if (error) throw error;
+          ElMessage.success('Booking status updated successfully.');
         }
 
-        await this.getStatuses()
-        this.clearForm()
+        await this.store.getStatuses();
+        this.clearForm();
       } catch (error) {
         if (error && error !== false) {
-          console.error(error)
-          ElMessage.error(error.message || 'Failed to save booking status.')
+          console.error(error);
+          ElMessage.error(error.message || 'Failed to save booking status.');
         }
       } finally {
-        this.submitLoading = false
+        this.submitLoading = false;
       }
     },
 
@@ -201,38 +206,38 @@ export default {
           'Are you sure you want to delete this status?',
           'Warning',
           { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
-        )
+        );
 
-        this.loading = true
+        this.store.loading = true;
         const { error } = await supabase
           .from('Status')
           .delete()
-          .eq('id', id)
+          .eq('id', id);
 
-        if (error) throw error
+        if (error) throw error;
 
-        ElMessage.success('Status deleted successfully.')
-        await this.getStatuses()
+        ElMessage.success('Status deleted successfully.');
+        await this.store.getStatuses();
       } catch (error) {
         if (error !== 'cancel') {
-          console.error(error)
-          ElMessage.error('Failed to delete status.')
+          console.error(error);
+          ElMessage.error('Failed to delete status.');
         }
       } finally {
-        this.loading = false
+        this.store.loading = false;
       }
     },
 
     openForm(title, rowData = {}) {
-      this.formTitle = title
-      this.dialogVisible = true
+      this.formTitle = title;
+      this.dialogVisible = true;
 
       if (title === 'Edit Booking Status' && rowData.id) {
-        this.statusForm.id = rowData.id
-        this.statusForm.name = rowData.name
-        this.statusForm.color = rowData.color || '#136cb3'
+        this.statusForm.id = rowData.id;
+        this.statusForm.name = rowData.name;
+        this.statusForm.color = rowData.color || '#136cb3';
       } else {
-        this.statusForm.color = '#136cb3'
+        this.statusForm.color = '#136cb3';
       }
     },
 
@@ -241,22 +246,22 @@ export default {
         id: null,
         name: '',
         color: '#136cb3'
-      }
+      };
 
       if (this.$refs.statusFormRef) {
-        this.$refs.statusFormRef.resetFields()
+        this.$refs.statusFormRef.resetFields();
       }
-      this.dialogVisible = false
+      this.dialogVisible = false;
 
       if (typeof done === 'function') {
-        done()
+        done();
       }
     },
 
     formatDate(dateString) {
-      if (!dateString) return ''
-      return moment(dateString).format('MMM DD, YYYY hh:mm A')
+      if (!dateString) return '';
+      return moment(dateString).format('MMM DD, YYYY hh:mm A');
     }
   }
-}
+};
 </script>
