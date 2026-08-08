@@ -6,8 +6,11 @@ import { supabase } from '@/utils/supabaseClient'
 export const useServiceStore = defineStore('service', {
   state: () => ({
     services: [],
+
     loading: false,
+
     searchQuery: '',
+    
     pagination: {
       currentPage: 1,
       elementsPerPage: 10,

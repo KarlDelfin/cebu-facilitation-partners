@@ -5,7 +5,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mb-5 gap-3">
         <div class="flex items-center !gap-2 !w-full sm:!w-auto">
           <el-input
-            v-model="serviceStore.searchQuery"
+            v-model="store.searchQuery"
             placeholder="Search by service..."
             class="!w-full sm:!w-80 md:!w-96"
             :prefix-icon="Search"
@@ -17,8 +17,8 @@
           <el-button 
             class="!p-2.5" 
             :icon="Refresh" 
-            :loading="serviceStore.loading" 
-            @click="handleRefresh"
+            :loading="store.loading" 
+            @click="store.fetchServices()"
             title="Refresh Services"
           />
         </div>
@@ -34,7 +34,7 @@
 
       <!-- Responsive Table Container -->
       <div class="overflow-x-auto">
-        <el-table class="mt-5! w-full" :data="serviceStore.services" v-loading="serviceStore.loading">
+        <el-table class="mt-5! w-full" :data="store.services" v-loading="store.loading">
           <el-table-column label="Date/Time Created" min-width="150">
             <template #default="scope">
               <span class="text-slate-500 font-medium text-sm">{{ scope.row.dateTimeCreated }}</span>
@@ -87,13 +87,13 @@
       <!-- Pagination Container -->
       <div class="!mt-5 flex justify-end overflow-x-auto pb-2">
         <el-pagination
-          v-model:current-page="serviceStore.pagination.currentPage"
-          v-model:page-size="serviceStore.pagination.elementsPerPage"
+          v-model:current-page="store.pagination.currentPage"
+          v-model:page-size="store.pagination.elementsPerPage"
           :page-sizes="[5, 10, 25, 50]"
-          :total="serviceStore.pagination.totalElements"
-          :layout="paginationLayout"
-          @current-change="serviceStore.fetchServices"
-          @size-change="serviceStore.fetchServices"
+          :total="store.pagination.totalElements"
+          layout="total, sizes, prev, pager, next"
+          @current-change="store.fetchServices"
+          @size-change="store.fetchServices"
         />
       </div>
     </el-card>
@@ -133,8 +133,7 @@
           prop="price"
           :rules="[
             { required: true, message: 'Please input price', trigger: 'blur' },
-            { validator: validatePrice, trigger: 'blur' }
-          ]"
+            { type: 'number', message: 'Price must be a number', trigger: 'blur' }]"
         >
           <el-input v-model.number="serviceForm.price" placeholder="Enter price" />
         </el-form-item>
@@ -146,7 +145,7 @@
             color="#136cb3" 
             class="w-full sm:w-auto font-semibold" 
             @click="submitForm" 
-            :loading="serviceStore.loading"
+            :loading="store.loading"
           >
             Confirm
           </el-button>
@@ -158,7 +157,6 @@
 
 <script>
 import { markRaw } from 'vue'
-import { mapStores } from 'pinia'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import debounce from 'lodash/debounce'
@@ -170,6 +168,10 @@ export default {
   components: {
     Search: markRaw(Search),
     Refresh: markRaw(Refresh)
+  },
+  setup() {
+    const store = useServiceStore()
+    return { store }
   },
   data() {
     return {
@@ -186,67 +188,32 @@ export default {
         price: ''
       },
 
-      debouncedFetch: null
+      debouncedSearch: null
     }
-  },
-
-  computed: {
-    ...mapStores(useServiceStore),
-
-    paginationLayout() {
-      return this.windowWidth < 640 
-        ? 'prev, pager, next' 
-        : 'total, sizes, prev, pager, next, jumper'
-    }
-  },
-
-  created() {
-    this.debouncedFetch = debounce(() => {
-      this.serviceStore.pagination.currentPage = 1
-      this.serviceStore.fetchServices()
-    }, 500)
   },
 
   mounted() {
-    if (this.serviceStore.services.length === 0) {
-      this.serviceStore.fetchServices()
+    if (this.store.services.length === 0) {
+      this.store.fetchServices()
     }
-    window.addEventListener('resize', this.handleResize)
-  },
 
-  unmounted() {
-    window.removeEventListener('resize', this.handleResize)
+    this.debouncedSearch = debounce(() => {
+      this.store.pagination.currentPage = 1
+      this.store.fetchServices()
+    }, 500)
   },
 
   methods: {
-    handleResize() {
-      this.windowWidth = window.innerWidth
-    },
-
-    validatePrice(rule, value, callback) {
-      if (value === '' || value === null || isNaN(value)) {
-        callback(new Error('Price must be a valid number'))
-      } else {
-        callback()
-      }
-    },
-
-    // Refresh Action
-    async handleRefresh() {
-      await this.serviceStore.fetchServices()
-      ElMessage.success('Services updated.')
-    },
-
     // Search Handlers
     handleSearch() {
-      if (this.debouncedFetch) {
-        this.debouncedFetch()
+      if (this.debouncedSearch) {
+        this.debouncedSearch()
       }
     },
 
     clearSearch() {
-      this.serviceStore.resetSearch()
-      this.serviceStore.fetchServices()
+      this.store.resetSearch()
+      this.store.fetchServices()
     },
 
     // Dialog & Form Handlers
@@ -287,7 +254,7 @@ export default {
 
       try {
         await formRef.validate()
-        this.serviceStore.loading = true
+        this.store.loading = true
 
         const payload = {
           name: this.serviceForm.name,
@@ -309,7 +276,7 @@ export default {
           ElMessage.success('Service updated successfully.')
         }
 
-        await this.serviceStore.fetchServices()
+        await this.store.fetchServices()
         this.clearForm()
       } catch (error) {
         if (error && error !== false) {
@@ -317,7 +284,7 @@ export default {
           ElMessage.error(error.message || 'Failed to save service.')
         }
       } finally {
-        this.serviceStore.loading = false
+        this.store.loading = false
       }
     },
 
@@ -330,7 +297,7 @@ export default {
           { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' }
         )
 
-        this.serviceStore.loading = true
+        this.store.loading = true
 
         const { error } = await supabase
           .from('Service')
@@ -340,14 +307,14 @@ export default {
         if (error) throw error
 
         ElMessage.success('Service deleted successfully.')
-        await this.serviceStore.fetchServices()
+        await this.store.fetchServices()
       } catch (error) {
         if (error !== 'cancel') {
           console.error(error)
           ElMessage.error(error.message || 'Failed to delete service.')
         }
       } finally {
-        this.serviceStore.loading = false
+        this.store.loading = false
       }
     }
   }

@@ -600,16 +600,6 @@ export default {
       await this.store.fetchDashboardData();
     }
   },
-  unmounted() {
-    if (this.debouncedSearch) {
-      this.debouncedSearch.cancel();
-    }
-  },
-  watch: {
-    'store.search.bookingName'() {
-      this.debouncedSearch();
-    }
-  }
 };
 </script>
 

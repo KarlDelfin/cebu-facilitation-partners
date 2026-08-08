@@ -25,7 +25,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 !gap-2.5 !text-sm !pt-1 items-start sm:items-center">
-          <span class="!text-slate-500 !font-medium">Title / Client:</span>
+          <span class="!text-slate-500 !font-medium">Client / Service:</span>
           <span class="sm:col-span-2 !font-bold !text-slate-800 !break-words">{{ selectedBooking.title }}</span>
 
           <span class="!text-slate-500 !font-medium">Scheduled Date:</span>
@@ -260,7 +260,7 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     this.calendarOptions.customButtons.todayCustom.click = this.handleTodayClick.bind(this)
     this.calendarOptions.customButtons.prevCustom.click = this.handlePrevClick.bind(this)
     this.calendarOptions.customButtons.nextCustom.click = this.handleNextClick.bind(this)
@@ -336,6 +336,7 @@ export default {
         return
       }
       this.pendingDropInfo = info
+      this.selectedSlotId = ''
       this.targetDate = moment(info.event.start).format('YYYY-MM-DD')
       this.rescheduleDialogVisible = true
 
