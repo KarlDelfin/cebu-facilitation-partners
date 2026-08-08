@@ -252,6 +252,7 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .bootcamp_card img {width: 100%;}
 
     .footer_cta div {width: 100%; text-align: center;}
+    .footer_cta ul li {margin: 0 auto;}
     .footer_cta ul li img { margin: 0 auto; }
     .footer_cta h2 {max-width: 100%}
 }
