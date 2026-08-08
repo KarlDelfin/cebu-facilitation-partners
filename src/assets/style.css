@@ -272,13 +272,14 @@ input[type=number] { -moz-appearance: textfield !important; appearance: textfiel
     .footer_cta {text-align: center;}
     .footer_cta a.footer_link { margin: 0 auto; }
 
+    .gallery_con p {font-size: 3rem}
     
     .footer_meta { flex-direction: column-reverse; align-items: center; text-align: center;}
 
     .footer_meta nav {width: 100%;}
     .footer_meta nav ul {flex-direction: column; height: unset; align-items: center;}
     .footer_meta nav ul li {border: 1px solid var(--defaultColor); width: 100%; padding: 10px 0 !important; max-width: 600px; margin: 0 auto; border-radius: .2rem; border-bottom: 1px solid var(--defaultColor) !important; }
-    
+    .footer_cta h2 {font-size: 2.4rem;}
 }
 
 @media (max-width: 600px) {
